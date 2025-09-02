@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/pages/loginPage.dart';
+import 'package:hospital_mobile_app/provider/doctorProvider.dart';
+import 'package:hospital_mobile_app/provider/loginProvider.dart';
+import 'package:hospital_mobile_app/routes/app_router.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(providers: [
+      ChangeNotifierProvider(create: (_)=> Loginprovider()),
+      ChangeNotifierProvider(create: (_)=> Doctorprovider())
+      
+  ],
+  child:   MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final _appRouter = AppRouter();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+    return MaterialApp.router(
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+      ),
       title: 'Hospital Management',
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      routerConfig: _appRouter.config(),
     );
   }
 }

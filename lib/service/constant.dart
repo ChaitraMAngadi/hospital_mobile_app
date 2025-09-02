@@ -1,0 +1,15 @@
+class Constants {
+  static const String baseUrl = "http://10.226.140.152:5000";
+  // static const String baseUrl =
+  //     "https://stingray-app-2-nhnb4.ondigitalocean.app";
+  // static const String baseUrl = "https://sea-lion-app-k5qg4.ondigitalocean.app";
+  // static const String newbaseUrl = "http://absolutemens.com:8080/api/v1";
+  // static const String imageBaseUrl = "https://absolutemenscdn.b-cdn.net";
+  static String token = '';
+  static String doctortoken = '';
+  static String admintoken = '';
+  static String nursetoken = '';
+  static String phone = '';
+  static String deviceId = '';
+  
+}

@@ -1,14 +1,17 @@
 // ---------------- Admin Dashboard ----------------
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-class AdminDashboard extends StatefulWidget {
-  const AdminDashboard({super.key});
+
+@RoutePage()
+class AdminDashboardPage extends StatefulWidget {
+  const AdminDashboardPage({super.key});
 
   @override
-  State<AdminDashboard> createState() => _AdminDashboardState();
+  State<AdminDashboardPage> createState() => _AdminDashboardPageState();
 }
 
-class _AdminDashboardState extends State<AdminDashboard> {
+class _AdminDashboardPageState extends State<AdminDashboardPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [

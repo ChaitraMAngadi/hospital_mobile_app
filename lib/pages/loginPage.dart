@@ -1,8 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/pages/adminDashboard.dart';
 import 'package:hospital_mobile_app/pages/doctorDashboard.dart';
 import 'package:hospital_mobile_app/pages/supportingStaffDashboard.dart';
+import 'package:hospital_mobile_app/provider/loginProvider.dart';
+import 'package:hospital_mobile_app/routes/app_router.dart';
+import 'package:provider/provider.dart';
 
+@RoutePage()
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -30,23 +35,24 @@ class _LoginPageState extends State<LoginPage> {
     if (selectedRole == "Doctor") {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const DoctorDashboard()),
+        MaterialPageRoute(builder: (_) => const DoctorDashboardPage()),
       );
     } else if (selectedRole == "Admin") {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const AdminDashboard()),
+        MaterialPageRoute(builder: (_) => const AdminDashboardPage()),
       );
     } else if (selectedRole == "Supporting Staff") {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const StaffDashboard()),
+        MaterialPageRoute(builder: (_) => const StaffDashboardPage()),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Loginprovider loginprovider = context.read<Loginprovider>();
     return Scaffold(
       body: Center(
         child: Padding(
@@ -95,6 +101,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextFormField(
                       controller: userIdController,
+                      validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter UserId';
+                                }
+
+                                return null; 
+                              },
                       decoration: InputDecoration(
                         focusedBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -140,6 +153,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextFormField(
                       controller: passwordController,
+                      validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter Password';
+                                }
+
+                                return null; 
+                              },
                       decoration: InputDecoration(
                         focusedBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -187,6 +207,13 @@ class _LoginPageState extends State<LoginPage> {
                             EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                         border: OutlineInputBorder(),
                       ),
+                      validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select the role';
+                                }
+
+                                return null; 
+                              },
                       hint: const Text('Select your role'),
                       value: selectedRole,
                       onChanged: (String? newValue) {
@@ -208,7 +235,123 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: _login,
+                          onPressed:()async {
+  if (loginformkey.currentState!.validate()) {
+    
+    
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      bool isLogged = false;
+
+      if (selectedRole == "Doctor") {
+        isLogged = await loginprovider.doctorloginphone(userIdController.text, passwordController.text, context);
+      } else if (selectedRole == "Admin") {
+        isLogged = await loginprovider.adminloginphone(userIdController.text, passwordController.text, context);
+      } else if (selectedRole == "Supporting Staff") {
+        isLogged = await loginprovider.supportingstaffloginphone(userIdController.text, passwordController.text, context);
+      }
+
+      Navigator.of(context).pop(); // close loading
+
+if (isLogged) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (selectedRole == "Doctor") {
+      context.router.replaceAll([const DoctorDashboardRoute()]);
+    } else if (selectedRole == "Admin") {
+      context.router.replaceAll([const AdminDashboardRoute()]);
+    } else {
+      context.router.replaceAll([const StaffDashboardRoute()]);
+    }
+  });
+}
+    } catch (e) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login failed: $e")));
+    }
+
+    // try {
+
+    //   bool isLogged = await loginprovider.doctorloginphone(userIdController.text, passwordController.text, context);
+
+    //     // Close loading dialog
+    //     // if (Navigator.of(context).canPop()) {
+    //     //   Navigator.of(context).pop();
+    //     // }
+    //     if (isLogged) {
+    //       if (selectedRole == "Doctor") {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (_) => const DoctorDashboard()),
+    //   );
+    // } else if (selectedRole == "Admin") {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (_) => const AdminDashboard()),
+    //   );
+    // } else if (selectedRole == "Supporting Staff") {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (_) => const StaffDashboard()),
+    //   );
+    // }
+    //       // Force rebuild of HomePage to pick up new token
+    //       // Use pushAndPopUntil to clear the navigation stack
+    //       // context.router.pushAndPopUntil(
+    //       //   HomeRoute(),
+    //       //   predicate: (_) => false,
+    //       // );
+    //     }
+
+
+    //   // if (inputText == "8217309343") {
+    //   //   bool isLogged = await authprovider.loginphone(inputText, context);
+
+    //   //   // Close loading dialog
+    //   //   if (Navigator.of(context).canPop()) {
+    //   //     Navigator.of(context).pop();
+    //   //   }
+    //   //   if (isLogged) {
+    //   //     // Force rebuild of HomePage to pick up new token
+    //   //     // Use pushAndPopUntil to clear the navigation stack
+    //   //     context.router.pushAndPopUntil(
+    //   //       HomeRoute(),
+    //   //       predicate: (_) => false,
+    //   //     );
+    //   //   }
+    //   // } else {
+    //   //   isotpsent = await authprovider.loginwithphone(inputText, context);
+
+    //   //   // Close loading dialog
+    //   //   if (Navigator.of(context).canPop()) {
+    //   //     Navigator.of(context).pop();
+    //   //   }
+
+    //   //   if (isotpsent) {
+    //   //     context.router.replaceAll([OtpVerificationRoute()]);
+    //   //   }
+    //   // }
+    // } catch (e) {
+    //   // Close loading dialog in case of error
+    //   if (Navigator.of(context).canPop()) {
+    //     Navigator.of(context).pop();
+    //   }
+      
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Login failed: ${e.toString()}')),
+    //   );
+    // }
+  }
+},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF0857C0),
                             shape: RoundedRectangleBorder(

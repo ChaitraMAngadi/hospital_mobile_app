@@ -1,14 +1,17 @@
 // ---------------- Supporting Staff Dashboard ----------------
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-class StaffDashboard extends StatefulWidget {
-  const StaffDashboard({super.key});
+
+@RoutePage()
+class StaffDashboardPage extends StatefulWidget {
+  const StaffDashboardPage({super.key});
 
   @override
-  State<StaffDashboard> createState() => _StaffDashboardState();
+  State<StaffDashboardPage> createState() => _StaffDashboardPageState();
 }
 
-class _StaffDashboardState extends State<StaffDashboard> {
+class _StaffDashboardPageState extends State<StaffDashboardPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
