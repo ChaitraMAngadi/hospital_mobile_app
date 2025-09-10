@@ -1,25 +1,25 @@
 import 'package:auto_route/auto_route.dart';
 
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/doctorController/patientInVisit/complaintDialogBox.dart';
+import 'package:hospital_mobile_app/adminController/invisitComplaintBox.dart';
+import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
-import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
-class PatientInvisitsPage extends StatefulWidget {
+class PatientAdminInvisitsPage extends StatefulWidget {
   final String patientId;
   final String name;
-  const PatientInvisitsPage({super.key, required this.patientId, required this.name});
+  const PatientAdminInvisitsPage({super.key, required this.patientId, required this.name});
 
   @override
-  State<PatientInvisitsPage> createState() => _PatientInvisitsPageState();
+  State<PatientAdminInvisitsPage> createState() => _PatientAdminInvisitsPageState();
 }
 
-class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
+class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
   late Future fetchPatientInvisits;
   late Future fetchalldoctorsnurses;
   final SecureStorage secureStorage = SecureStorage();
@@ -27,9 +27,9 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
   @override
   void initState() {
     super.initState();
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchPatientInvisits = doctorprovider.getpatientinvisits(widget.patientId);
-    fetchalldoctorsnurses = doctorprovider.getdoctorsnurses();
+    Adminprovider adminprovider = context.read<Adminprovider>();
+    fetchPatientInvisits = adminprovider.getpatientinvisits(widget.patientId);
+    fetchalldoctorsnurses = adminprovider.getdoctorsnurses();
   }
 
   String formatDate(String date) {
@@ -122,8 +122,8 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: _handleRefresh,
-      child: Consumer<Doctorprovider>(
-        builder: (context, doctorprovider, child) {
+      child: Consumer<Adminprovider>(
+        builder: (context, adminprovider, child) {
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -158,9 +158,9 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                         onPressed: () {
                           showDialog(
     context: context,
-    builder: (context) =>  ComplaintDialog(
-      alldoctors: doctorprovider.alldoctors,
-      allnurses: doctorprovider.allnurses,
+    builder: (context) =>  ComplaintDialogBox(
+      alldoctors: adminprovider.alldoctors,
+      allnurses: adminprovider.allnurses,
       patientId: widget.patientId,
     ),
   );
@@ -195,7 +195,7 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                               child: _buildShimmerList());
                         } else {
                           return SafeArea(
-                              child: doctorprovider.patientinvisits.isEmpty
+                              child: adminprovider.patientinvisits.isEmpty
                                   ? SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height*0.8,
@@ -216,10 +216,10 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                       height:
                                           MediaQuery.of(context).size.height*0.8,
                                       child: ListView.builder(
-                                        itemCount: doctorprovider
+                                        itemCount: adminprovider
                                             .patientinvisits.length,
                                         itemBuilder: (context, index) {
-                                          final item = doctorprovider
+                                          final item = adminprovider
                                               .patientinvisits[index];
 
                                           return InVisitModel(
@@ -251,15 +251,18 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                                   },
                                                 );
                                               },
-                                              diagnosisontap: () {
-                                                context.router.push(
-                                                  ViewDiagnosisRoute(name: widget.name, 
-                                                id: widget.patientId, visitingIndex: item['visit_index'], dischargeddate: item['discharged_date']??'',
-                                                )
+                                              editontap: () {
                                                 
-                                                );
                                               },
-                                              observationontap: () {},
+                                              // diagnosisontap: () {
+                                              //   context.router.push(
+                                              //     ViewDiagnosisRoute(name: widget.name, 
+                                              //   id: widget.patientId, visitingIndex: item['visit_index'], dischargeddate: item['discharged_date']??'',
+                                              //   )
+                                                
+                                              //   );
+                                              // },
+                                              // observationontap: () {},
                                               dischargedate:
                                                   item['discharged_date'] ??
                                                       '');
@@ -298,16 +301,14 @@ class InVisitModel extends StatelessWidget {
     required this.cheifcomplaint,
     required this.visitdate,
     required this.viewontap,
-    required this.diagnosisontap,
-    required this.observationontap,
-    required this.dischargedate,
+    
+    required this.dischargedate, required this.editontap,
   });
 
   final String cheifcomplaint;
   final String visitdate;
   final VoidCallback viewontap;
-  final VoidCallback diagnosisontap;
-  final VoidCallback observationontap;
+  final VoidCallback editontap;
   final String dischargedate;
 
   @override
@@ -391,11 +392,11 @@ class InVisitModel extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      onPressed: diagnosisontap,
+                      onPressed: editontap,
                       child: Row(
                         children: [
                           Text(
-                            "Diagnosis",
+                            "Edit",
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -406,39 +407,12 @@ class InVisitModel extends StatelessWidget {
                             width: 4,
                           ),
                           Icon(
-                            Icons.open_in_new,
+                            Icons.edit_square,
                             color: Colors.deepPurple.shade700,
                           ),
                         ],
                       )),
-                  // ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Colors.deepPurple.shade100,
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(20),
-                  //       ),
-                  //       padding:
-                  //           EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  //     ),
-                  //     onPressed: observationontap,
-                  //     child: Row(
-                  //       children: [
-                  //         Text(
-                  //           "Observations",
-                  //           style: TextStyle(
-                  //             fontWeight: FontWeight.bold,
-                  //             color: Colors.deepPurple.shade700,
-                  //           ),
-                  //         ),
-                  //         SizedBox(
-                  //           width: 4,
-                  //         ),
-                  //         Icon(
-                  //           Icons.open_in_new,
-                  //           color: Colors.deepPurple.shade700,
-                  //         ),
-                  //       ],
-                  //     ))
+                 
                 ],
               )
             ],

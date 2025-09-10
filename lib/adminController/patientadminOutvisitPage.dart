@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/doctorController/patientInVisit/complaintDialogBox.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/downloadPdfButton.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/supportingDocsDialogbox.dart';
+import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
@@ -11,8 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
-class PatientOutvisitsPage extends StatefulWidget {
-  const PatientOutvisitsPage({
+class PatientAdminOutvisitsPage extends StatefulWidget {
+  const PatientAdminOutvisitsPage({
     super.key,
     required this.patientId,
   });
@@ -20,20 +21,23 @@ class PatientOutvisitsPage extends StatefulWidget {
   final String patientId;
 
   @override
-  State<PatientOutvisitsPage> createState() => _PatientOutvisitsPageState();
+  State<PatientAdminOutvisitsPage> createState() => _PatientAdminOutvisitsPageState();
 }
 
 
-class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
+class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
   late Future fetchoutvisits;
+  late Future fetchalldoctorsnurses;
   final SecureStorage secureStorage = SecureStorage();
 
   @override
   void initState() {
     super.initState();
-    Doctorprovider doctorprovider =
-        context.read<Doctorprovider>();
-    fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId);
+    Adminprovider adminprovider =
+        context.read<Adminprovider>();
+    fetchoutvisits = adminprovider.getpatientoutvisits(widget.patientId);
+    fetchalldoctorsnurses = adminprovider.getdoctorsnurses();
+
   }
 
   String formatDate(String date) {
@@ -161,8 +165,8 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
       ),
       body: RefreshIndicator(
         onRefresh: _handleRefresh,
-        child: Consumer<Doctorprovider>(
-          builder: (context, doctorprovider, child) {
+        child: Consumer<Adminprovider>(
+          builder: (context, adminprovider, child) {
             return SafeArea(
               child: SingleChildScrollView(
                 child: Column(
@@ -179,6 +183,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                             builder: (context) {
                               return RegisterVisitModel(
                                 patientId: widget.patientId,
+                                alldoctors: adminprovider.alldoctors,
                               );
                             },
                           );
@@ -218,7 +223,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                           );
                         } else {
                           return SafeArea(
-                            child: doctorprovider.patientoutvisits.isEmpty
+                            child: adminprovider.patientoutvisits.isEmpty
                                 ? SizedBox(
                                     height: MediaQuery.of(context).size.height * 0.81,
                                     child: const Center(child: Text(
@@ -232,9 +237,9 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                 : SizedBox(
                                     height: MediaQuery.of(context).size.height * 0.81,
                                     child: ListView.builder(
-                                      itemCount: doctorprovider.patientoutvisits.length,
+                                      itemCount: adminprovider.patientoutvisits.length,
                                       itemBuilder: (context, index) {
-                                        final item = doctorprovider.patientoutvisits[index];
+                                        final item = adminprovider.patientoutvisits[index];
                                        
                                       
                                         return VisitModel(
@@ -243,17 +248,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                           complaintId: item['id'],
                                           patientId: widget.patientId,
                                           // createdtime: 'formatDate(complaint["createdAt"])',
-                                          supportingimagesontap: () {
-                                           showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return OutvisitSupportingFilesDialogBox(
-                                            patientId: widget.patientId,
-                                            complaintId: item["complaintId"],
-                                          );
-                                        },
-                                      );
-                                          },
+                                          
                                           viewontap: () {
                                             showDialog(
                                               context: context,
@@ -266,18 +261,13 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                                   temprature: item["temperature"] ?? "",
                                                   heartrate: item["heart_rate"] ?? "",
                                                   visitdate: formatDate(item["visit_date"]),
+                                                  associateddoctor: '${item['associatedDoctor']['name']}, ${item['associatedDoctor']['userid']}',
                                                 );
                                               },
                                             );
-                                          },
-                                          startdiagnosisontap: () {
-                                            context.router.push(
-                                              DiagnosisRoute(
-                                              patientId: widget.patientId,
-                                              complaintId:item['id'],
-                                            ));
-                                          },
-                                          buttonText: item['diagnosis_summary']??'',
+                                          }, isDiagnosed: item['isDiagnosed'],
+                                        
+                                         
                                         );
                                       },
                                     ),
@@ -297,13 +287,13 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
   }
 
   Future<void> _handleRefresh() async {
-    Doctorprovider doctorprovider =
-        context.read<Doctorprovider>();
+    Adminprovider adminprovider =
+        context.read<Adminprovider>();
 
     await Future.delayed(Duration(seconds: 2));
-    Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     setState(() {
-      fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId);
+      fetchoutvisits = adminprovider.getpatientoutvisits(widget.patientId);
     });
   }
 }
@@ -318,10 +308,8 @@ class VisitModel extends StatelessWidget {
     // required this.createdtime,
     // required this.supportingimaesontap,
     required this.viewontap,
-    required this.buttonText,
-    required this.startdiagnosisontap,
     required this.complaintId,
-    required this.patientId, required this.supportingimagesontap,
+    required this.patientId, required this.isDiagnosed,
   });
 
   final String cheifcomplaint;
@@ -329,19 +317,17 @@ class VisitModel extends StatelessWidget {
   // final List<dynamic> supportingimages;
   final String complaintId;
   final String patientId;
+  final bool isDiagnosed;
 
   // final String createdtime;
-  final VoidCallback supportingimagesontap;
   final VoidCallback viewontap;
-  final VoidCallback startdiagnosisontap;
-  final String buttonText;
 
   @override
   Widget build(BuildContext context) {
-    print(buttonText);
+   
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 16,
+        horizontal: 16
       ),
       child: Card(
         child: Padding(
@@ -349,6 +335,7 @@ class VisitModel extends StatelessWidget {
             left: 16,
             right: 16,
             bottom: 16,
+            top: 16,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -374,23 +361,13 @@ class VisitModel extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                          onPressed: viewontap,
-                          icon: const Icon(
-                            Icons.remove_red_eye,
-                            color: Color(0Xff2556B9),
-                          )),
-                      IconButton(
-                          onPressed: supportingimagesontap,
-                          icon: const Icon(
-                            Icons.attach_file,
-                            color: Color(0Xff2556B9),
-                          )),
-                    ],
-                  ),
+                  IconButton(
+                      onPressed: viewontap,
+                      icon: const Icon(
+                        Icons.remove_red_eye,
+                        color: Color(0Xff2556B9),
+                      )),
+                 
                 ],
               ),
               const SizedBox(
@@ -414,28 +391,15 @@ class VisitModel extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(
-                height: 20,
+                height: 4,
               ),
-              if (buttonText == "")
-                ElevatedButton(
-                  onPressed: startdiagnosisontap,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                  ),
-                  child: const Text("Start Diagnosis",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      )),
-                ),
-              if (buttonText != "")
-                DownloadPdfButton(
-                    complaintId: complaintId, patientId: patientId)
+               Text(isDiagnosed? 'Visit Completed': 'Not Visited',
+                 style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isDiagnosed ? Colors.green.shade700 : Colors.red.shade700,
+                 ),
+                 )
             ],
           ),
         ),
@@ -453,10 +417,11 @@ class VisitViewModel extends StatelessWidget {
     required this.bp,
     required this.temprature,
     required this.heartrate,
-    required this.visitdate,
+    required this.visitdate, required this.associateddoctor,
   });
 
   final String cheifcomplaint;
+  final String associateddoctor;
   final String height;
   final String weight;
   final String bp;
@@ -497,6 +462,26 @@ class VisitViewModel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
+                  "Associated Doctor: ",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                Flexible(
+                  child: Text(
+                    "$associateddoctor",
+                    style: const TextStyle(fontSize: 14),
+                    softWrap: true,
+                  ),
+                ),
+                
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
                   "Chief Complaint: ",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -507,16 +492,10 @@ class VisitViewModel extends StatelessWidget {
                     softWrap: true,
                   ),
                 ),
-                // Text(
-                //   "${cheifcomplaint}",
-                //   style: TextStyle(fontSize: 14),
-
-                // ),
+               
               ],
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            SizedBox(height: 8,),
             if (height != "") ...[
               Row(
                 children: [
@@ -621,9 +600,12 @@ class VisitViewModel extends StatelessWidget {
 class RegisterVisitModel extends StatefulWidget {
   const RegisterVisitModel({
     super.key,
-    required this.patientId,
+    required this.patientId, required this.alldoctors,
   });
   final String patientId;
+  final List<Map<String, dynamic>> alldoctors;
+
+
 
   @override
   State<RegisterVisitModel> createState() => _RegisterVisitModelState();
@@ -638,6 +620,9 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
   final TextEditingController heartrateController = TextEditingController();
   final TextEditingController temperatureController = TextEditingController();
 
+    Map<String, dynamic>? selectedConsultingDoctor;
+
+
   final formkey = GlobalKey<FormState>();
 
   DateTime today = DateTime.now();
@@ -646,8 +631,8 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
 
   @override
   Widget build(BuildContext context) {
-    Doctorprovider doctorprovider =
-        context.read<Doctorprovider>();
+    Adminprovider adminprovider =
+        context.read<Adminprovider>();
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(
@@ -879,15 +864,52 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                     ),
                   ],
                 ),
+               SizedBox(height: 8,), 
+                const Text("Consulting Doctor*",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                DropdownSearch<Map<String, dynamic>>(
+                  items: widget.alldoctors,
+                  itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
+                  selectedItem: selectedConsultingDoctor,
+                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      hintText: "Select Consulting Doctor",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF0857C0)),
+                      ),
+                    ),
+                  ),
+                           validator: (value) {
+                    if (value == null) {
+                      return "Please select a Consulting Doctor";
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      selectedConsultingDoctor = value;
+                    });
+                    debugPrint("Consulting Doctor ID: ${value?['userid']}");
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
+                    onPressed:adminprovider.addingoutvisit? null: () async {
                       if (formkey.currentState!.validate()) {
-                        doctorprovider.addoutvisit(
+                         setState(() {
+                                  adminprovider.addingoutvisit = true;
+                                });
+                        adminprovider.addoutvisit(
                           widget.patientId,
                           cheifcomplaintController.text,
                           heartrateController.text,
@@ -895,16 +917,17 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                           bpController.text,
                           temperatureController.text,
                           heartrateController.text,
+                          selectedConsultingDoctor?['userid'],
                           context,
                         );
 
-                        await doctorprovider.getpatientoutvisits(widget.patientId);
+                        await adminprovider.getpatientoutvisits(widget.patientId);
                       }
 
                       // context.router.pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF0857C0),
+                      backgroundColor:adminprovider.addingoutvisit? Colors.grey.shade300: Color(0xFF0857C0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

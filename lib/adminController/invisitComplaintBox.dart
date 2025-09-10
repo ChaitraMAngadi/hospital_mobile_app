@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:hospital_mobile_app/provider/doctorProvider.dart';
+import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class ComplaintDialog extends StatefulWidget {
+class ComplaintDialogBox extends StatefulWidget {
   final List<Map<String, dynamic>> alldoctors;
   final List<Map<String, dynamic>> allnurses;
   final String patientId;
 
-  const ComplaintDialog({
+  const ComplaintDialogBox({
     super.key,
     required this.alldoctors,
     required this.allnurses,
@@ -17,14 +17,15 @@ class ComplaintDialog extends StatefulWidget {
   });
 
   @override
-  State<ComplaintDialog> createState() => _ComplaintDialogState();
+  State<ComplaintDialogBox> createState() => _ComplaintDialogBoxState();
 }
 
-class _ComplaintDialogState extends State<ComplaintDialog> {
+class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
   final TextEditingController complaintController = TextEditingController();
 
   Map<String, dynamic>? selectedDutyDoctor;
   Map<String, dynamic>? selectedVisitingDoctor;
+  Map<String, dynamic>? selectedConsultingDoctor;
   Map<String, dynamic>? selectedNurse;
 
   final formkey = GlobalKey<FormState>();
@@ -33,7 +34,7 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
 
   @override
   Widget build(BuildContext context) {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
+    Adminprovider adminprovider = context.read<Adminprovider>();
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(
@@ -44,6 +45,7 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Title Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -55,15 +57,14 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                       ),
                     ),
                     IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        icon: const Icon(Icons.close))
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.close),
+                    )
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
 
                 /// Visit Date
                 Text(
@@ -81,9 +82,9 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                   maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter cheif complaint';
+                      return 'Please enter chief complaint';
                     }
-                    return null; // Return null if validation is successful
+                    return null;
                   },
                   decoration: InputDecoration(
                     hintText: "Enter Chief complaint",
@@ -94,21 +95,20 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                 ),
                 const SizedBox(height: 16),
 
-                /// Duty Doctor
-                const Text("Duty Doctor",
+                /// Consulting Doctor
+                const Text("Consulting Doctor*",
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
                 DropdownSearch<Map<String, dynamic>>(
                   items: widget.alldoctors,
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
-                  selectedItem: selectedDutyDoctor,
+                  selectedItem: selectedConsultingDoctor,
                   popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
-                      hintText: "Select Duty Doctor",
+                      hintText: "Select Consulting Doctor",
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12), // rounded corners
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -116,12 +116,57 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                       ),
                     ),
                   ),
-                  //         validator: (value) {
-                  //   if (value == null) {
-                  //     return "Please select a Duty Doctor";
-                  //   }
-                  //   return null;
-                  // },
+                           validator: (value) {
+                    if (value == null) {
+                      return "Please select a Consulting Doctor";
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      selectedConsultingDoctor = value;
+
+                      // Reset duty doctor if same as consulting doctor
+                      if (selectedDutyDoctor?['userid'] ==
+                          selectedConsultingDoctor?['userid']) {
+                        selectedDutyDoctor = null;
+                      }
+
+                      // Reset visiting doctor if same as consulting doctor
+                      if (selectedVisitingDoctor?['userid'] ==
+                          selectedConsultingDoctor?['userid']) {
+                        selectedVisitingDoctor = null;
+                      }
+                    });
+                    debugPrint("Consulting Doctor ID: ${value?['userid']}");
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                /// Duty Doctor
+                const Text("Duty Doctor",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                DropdownSearch<Map<String, dynamic>>(
+                  items: widget.alldoctors
+                      .where((doc) =>
+                          doc['userid'] != selectedConsultingDoctor?['userid'])
+                      .toList(),
+                  itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
+                  selectedItem: selectedDutyDoctor,
+                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      hintText: "Select Duty Doctor",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF0857C0)),
+                      ),
+                    ),
+                  ),
                   onChanged: (value) {
                     setState(() {
                       selectedDutyDoctor = value;
@@ -144,7 +189,8 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                 DropdownSearch<Map<String, dynamic>>(
                   items: widget.alldoctors
                       .where((doc) =>
-                          doc['userid'] != selectedDutyDoctor?['userid'])
+                          doc['userid'] != selectedDutyDoctor?['userid'] &&
+                          doc['userid'] != selectedConsultingDoctor?['userid'])
                       .toList(),
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedVisitingDoctor,
@@ -153,8 +199,7 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Visiting Doctor",
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12), // rounded corners
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -162,17 +207,13 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                       ),
                     ),
                   ),
-                  //         validator: (value) {
-                  //   if (value == null) {
-                  //     return "Please select a Visiting Doctor";
-                  //   }
-                  //   return null;
-                  // },
                   onChanged: (value) {
-                    if (value?['userid'] == selectedDutyDoctor?['userid']) {
+                    if (value?['userid'] == selectedDutyDoctor?['userid'] ||
+                        value?['userid'] ==
+                            selectedConsultingDoctor?['userid']) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text(
-                              "Visiting doctor cannot be the same as duty doctor")));
+                              "Visiting doctor cannot be the same as Duty or Consulting doctor")));
                       return;
                     }
                     setState(() {
@@ -192,14 +233,12 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                   itemAsString: (nurse) =>
                       "${nurse['name']} | ${nurse['userid']}",
                   selectedItem: selectedNurse,
-
                   popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Nurse",
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12), // rounded corners
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -207,12 +246,6 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                       ),
                     ),
                   ),
-                  //         validator: (value) {
-                  //   if (value == null) {
-                  //     return "Please select a Supporting staff";
-                  //   }
-                  //   return null;
-                  // },
                   onChanged: (value) {
                     setState(() {
                       selectedNurse = value;
@@ -220,42 +253,47 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                     debugPrint("Nurse ID: ${value?['userid']}");
                   },
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
+
+                /// Submit Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
+                    onPressed:adminprovider.addinginvisit? null : () async {
                       if (formkey.currentState!.validate()) {
+                         setState(() {
+                                  adminprovider.addinginvisit = true;
+                                });
                         debugPrint("Complaint: ${complaintController.text}");
+                        debugPrint(
+                            "Consulting Doctor ID: ${selectedConsultingDoctor?['userid']}");
                         debugPrint(
                             "Duty Doctor ID: ${selectedDutyDoctor?['userid']}");
                         debugPrint(
                             "Visiting Doctor ID: ${selectedVisitingDoctor?['userid']}");
                         debugPrint("Nurse ID: ${selectedNurse?['userid']}");
 
-                        doctorprovider.addinvisit(
+                        adminprovider.addinvisit(
                           widget.patientId,
                           complaintController.text,
-                          selectedVisitingDoctor?['userid']??'',
-                          selectedDutyDoctor?['userid']??'',
-                          selectedNurse?['userid']??'',
+                          selectedConsultingDoctor?['userid'] ?? '',
+                          selectedVisitingDoctor?['userid'] ?? '',
+                          selectedDutyDoctor?['userid'] ?? '',
+                          selectedNurse?['userid'] ?? '',
                           context,
+                        
                         );
                       }
-
-                      // context.router.pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF0857C0),
+                      backgroundColor:adminprovider.addinginvisit?Colors.grey.shade300: const Color(0xFF0857C0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                     ),
-                    child: Text("Submit",
+                    child: const Text("Submit",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

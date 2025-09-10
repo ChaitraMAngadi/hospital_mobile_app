@@ -11,25 +11,32 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
-class DiagnosisPage extends StatefulWidget {
-  const DiagnosisPage({
+class AddDiagnosisPage extends StatefulWidget {
+  const AddDiagnosisPage({
     super.key,
     required this.patientId,
-    required this.complaintId,
+    required this.complaintId, required this.visitIndex,
+
   });
 
   final String patientId;
   final String complaintId;
+  final int visitIndex;
 
   @override
-  State<DiagnosisPage> createState() => _DiagnosisPageState();
+  State<AddDiagnosisPage> createState() => _AddDiagnosisPageState();
 }
 
-class _DiagnosisPageState extends State<DiagnosisPage> {
+class _AddDiagnosisPageState extends State<AddDiagnosisPage> {
   List<MedicationFieldSet> medicationFieldSets = [];
   List<MedicationControllers> medicationControllersList = [];
   String formatedJoiDate = "";
 
+  List<VitalControllers> vitalsControllersList = [];
+
+
+
+  final TextEditingController complaintController = TextEditingController();
   final TextEditingController diagnosisController = TextEditingController();
   final TextEditingController medicaladviceController = TextEditingController();
   final TextEditingController labtestController = TextEditingController();
@@ -37,14 +44,21 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
   final TextEditingController dateController = TextEditingController();
   final formkey = GlobalKey<FormState>();
 
-  final GlobalKey diagnosisFieldKey = GlobalKey();
+  final GlobalKey complaintFieldKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     medicationControllersList.add(MedicationControllers());
+    vitalsControllersList.add(VitalControllers());
   }
+
+  void addVital() {
+  setState(() {
+    vitalsControllersList.add(VitalControllers());
+  });
+}
 
   void addMedication() {
     setState(() {
@@ -82,6 +96,9 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
     for (var controllers in medicationControllersList) {
       controllers.dispose();
     }
+     for (var controllers in vitalsControllersList) {
+    controllers.dispose();
+  }
     super.dispose();
   }
 
@@ -137,13 +154,35 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Diagnosis*",
+               const Text(
+                "Complaint*",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
               TextFormField(
-                key: diagnosisFieldKey,
+                key: complaintFieldKey,
+                controller: complaintController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Complaint';
+                  }
+                  return null;
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter Complaint',
+                ),
+              ),
+              SizedBox(height: 12,),
+              const Text(
+                "Diagnosis",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+               
                 controller: diagnosisController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 maxLines: 3,
@@ -159,6 +198,39 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                 ),
               ),
               const SizedBox(height: 12),
+              
+const Text(
+  "Vitals",
+  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+),
+const SizedBox(height: 6),
+
+...vitalsControllersList.asMap().entries.map((entry) {
+  final index = entry.key;
+  final controllers = entry.value;
+  return VitalsFieldSet(
+    controllers: controllers,
+  );
+}).toList(),
+
+const SizedBox(height: 6),
+ElevatedButton(
+  onPressed: addVital,
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Color(0xFF0857C0),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  ),
+  child: const Text(
+    "Add Vital",
+    style: TextStyle(fontSize: 16, color: Colors.white),
+  ),
+),
+
+const SizedBox(height: 12),
+
               
               // Updated medication field sets with autocomplete
               ...medicationControllersList
@@ -376,14 +448,16 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:doctorprovider.isSavingOutdisagnosis ? null : () async {
+                  onPressed:doctorprovider.isSavingIndiagnosis ? null : () async {
+
                      setState(() {
-                                  doctorprovider.isSavingOutdisagnosis = true;
+                                  doctorprovider.isSavingIndiagnosis = true;
                                 });
+                                
                     if (!formkey.currentState!.validate()) {
                       if (diagnosisController.text.isEmpty) {
                         Scrollable.ensureVisible(
-                          diagnosisFieldKey.currentContext!,
+                          complaintFieldKey.currentContext!,
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.easeInOut,
                         );
@@ -406,30 +480,46 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                       };
                     }).toList();
 
-                    await doctorprovider.adddiagnosis(
+                    List<Map<String, dynamic>> vitalsList = vitalsControllersList
+    .where((controllers) => controllers.nameController.text.trim().isNotEmpty)
+    .map((controllers) {
+  return {
+    'name': controllers.nameController.text,
+    'value': controllers.valueController.text,
+  };
+}).toList();
+
+print(vitalsList);
+                    await doctorprovider.addinpatientdiagnosis(
                         widget.patientId,
                         widget.complaintId,
+                        widget.visitIndex,
+                        complaintController.text,
                         diagnosisController.text,
                         medicaladviceController.text,
                         labtestController.text,
                         doctorremarkController.text,
                         formatedJoiDate,
+                        vitalsList,
                         medicationList,
+                        
                         selectedFiles,
                         context);
 
                     // doctorprovider todaysvisitprovider = context.read<Todayvisitprovider>();
-                    await doctorprovider.getpatientoutvisits(widget.patientId);
+                    await doctorprovider.getpatientdiagnosis(widget.patientId,widget.visitIndex);
                     doctorprovider.notify();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:doctorprovider.isSavingOutdisagnosis ? Colors.grey : Color(0xFF0857C0),
+                    backgroundColor: doctorprovider.isSavingIndiagnosis ? Colors.grey :Color(0xFF0857C0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
-                  child:doctorprovider.isSavingOutdisagnosis ? const CircularProgressIndicator() : const Text("Save Report",
+                  child:
+                  doctorprovider.isSavingIndiagnosis ? const CircularProgressIndicator():
+                   const Text("Save Report",
                       style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,
@@ -916,3 +1006,54 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
     );
   }
 }
+
+class VitalControllers {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController valueController = TextEditingController();
+
+  void dispose() {
+    nameController.dispose();
+    valueController.dispose();
+  }
+}
+
+class VitalsFieldSet extends StatelessWidget {
+  final VitalControllers controllers;
+
+  const VitalsFieldSet({
+    Key? key,
+    required this.controllers,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controllers.nameController,
+              decoration: const InputDecoration(
+                hintText: 'Name (e.g. Temperature)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: controllers.valueController,
+              decoration: const InputDecoration(
+                hintText: 'Value (e.g. 101°F)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+

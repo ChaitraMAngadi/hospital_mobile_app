@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/doctorController/patientInVisit/patientInvisitsPage.dart';
+import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
@@ -8,14 +8,14 @@ import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class ActiveInvisitsPage extends StatefulWidget {
-  const ActiveInvisitsPage({super.key});
+class ActiveAdminInvisitsPage extends StatefulWidget {
+  const ActiveAdminInvisitsPage({super.key});
 
   @override
-  State<ActiveInvisitsPage> createState() => _ActiveInvisitsPageState();
+  State<ActiveAdminInvisitsPage> createState() => _ActiveAdminInvisitsPageState();
 }
 
-class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
+class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
   late Future fetchactiveallinvisits;
   final SecureStorage secureStorage = SecureStorage();
 
@@ -24,10 +24,10 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
   @override
   void initState() {
     super.initState();
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchactiveallinvisits = doctorprovider.getactiveinvisits().then((_) {
+    Adminprovider adminprovider = context.read<Adminprovider>();
+    fetchactiveallinvisits = adminprovider.getactiveinvisits().then((_) {
       setState(() {
-        doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
+        adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
       });
     });
 
@@ -36,10 +36,10 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
       setState(() {
         if (query.isEmpty) {
           // Reset to full list when search is cleared
-          doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
+          adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
         } else {
-          doctorprovider.filteredactiveinvisits =
-              doctorprovider.activeinvisits.where((visit) {
+          adminprovider.filteredactiveinvisits =
+              adminprovider.activeinvisits.where((visit) {
             final name = visit['name']?.toLowerCase() ?? '';
             final chiefcomplaint =
                 visit['chief_complaint']?.toLowerCase() ?? '';
@@ -199,8 +199,8 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
     return Scaffold(
         body: RefreshIndicator(
       onRefresh: _handleRefresh,
-      child: Consumer<Doctorprovider>(
-        builder: (context, doctorprovider, child) {
+      child: Consumer<Adminprovider>(
+        builder: (context, adminprovider, child) {
           return SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -232,7 +232,7 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                               child: _buildShimmerList());
                         } else {
                           return SafeArea(
-                            child: doctorprovider.filteredactiveinvisits.isEmpty
+                            child: adminprovider.filteredactiveinvisits.isEmpty
                                 ? SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.76,
@@ -250,10 +250,10 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                                     height: MediaQuery.of(context).size.height *
                                         0.76,
                                     child: ListView.builder(
-                                      itemCount: doctorprovider
+                                      itemCount: adminprovider
                                           .filteredactiveinvisits.length,
                                       itemBuilder: (context, index) {
-                                        final item = doctorprovider
+                                        final item = adminprovider
                                             .filteredactiveinvisits[index];
                                         return ActiveInvisitModel(
                                           patientname: item['name'],
@@ -317,9 +317,14 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                                               },
                                             );
                                           },
-                                          startdiagnosisonTap: () {
-                                            context.router.push(ViewDiagnosisRoute(name: item['name'], id: item['patientId'], visitingIndex: item['invisitIndex'],dischargeddate: ''));
+                                          editonTap: (){},
+                                          viewallvisitsonTap: (){
+                                            context.router.push(PatientAdminInvisitsRoute(patientId: item['patientId'], name: item['name'],
+                                                ));
                                           },
+                                          // startdiagnosisonTap: () {
+                                          //   context.router.push(ViewDiagnosisRoute(name: item['name'], id: item['patientId'], visitingIndex: item['invisitIndex'],dischargeddate: ''));
+                                          // },
                                           chiefcomplaint:
                                               item['chief_complaint'] ?? '',
                                           diagnosissummary:
@@ -361,13 +366,14 @@ class ActiveInvisitModel extends StatelessWidget {
     required this.patientname,
     required this.patientId,
     required this.viewonTap,
-    required this.startdiagnosisonTap,
+    required this.viewallvisitsonTap,
     required this.chiefcomplaint,
-    required this.diagnosissummary,
+    required this.diagnosissummary, required this.editonTap,
   });
   final String patientname;
   final VoidCallback viewonTap;
-  final VoidCallback startdiagnosisonTap;
+  final VoidCallback editonTap;
+  final VoidCallback viewallvisitsonTap;
   final String patientId;
   final String chiefcomplaint;
   final String diagnosissummary;
@@ -409,20 +415,7 @@ class ActiveInvisitModel extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                        onPressed: viewonTap,
-                        icon: const Icon(
-                          Icons.remove_red_eye_outlined,
-                          color: Color(0xFF0857C0),
-                        )),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Text(''),
-                  ],
-                )
+                
               ],
             ),
             Row(
@@ -458,42 +451,97 @@ class ActiveInvisitModel extends StatelessWidget {
             const SizedBox(
               height: 16,
             ),
-
-            ElevatedButton(
-              onPressed: startdiagnosisonTap,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple.shade100,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                       style: ElevatedButton.styleFrom(
+                      backgroundColor:Colors.green.shade100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    ),
+                        onPressed: viewonTap,
+                        child: Row(
+                          children: [
+                            Text('View',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.green.shade800,
+                            ),),
+                            SizedBox(width: 4,),
+                             Icon(
+                              Icons.remove_red_eye_outlined,
+                               color: Colors.green.shade800,
+                            ),
+                          ],
+                        )),
+                    SizedBox(
+                      width: 6,
+                    ),
+                    ElevatedButton(
+                       style: ElevatedButton.styleFrom(
+                      backgroundColor:Colors.deepOrange.shade100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    ),
+                        onPressed: editonTap,
+                        child: Row(
+                          children: [
+                            Text('Edit',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.deepOrange.shade800,
+                            ),),
+                            SizedBox(width: 4,),
+                             Icon(
+                              Icons.edit,
+                              color: Colors.deepOrange.shade800,
+                            ),
+                          ],
+                        )),
+                        SizedBox(
+                      width: 6,
+                    ),
+                    ElevatedButton(
+                       style: ElevatedButton.styleFrom(
+                      backgroundColor:Colors.blue.shade100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    ),
+                        onPressed: viewallvisitsonTap,
+                        child: Row(
+                          children: [
+                            Text('All invisits',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.blue.shade800,
+                            ),),
+                            SizedBox(width: 4,),
+                             Icon(
+                              Icons.open_in_new,
+                              color: Colors.blue.shade800,
+                            ),
+                          ],
+                        )),
+                    
+                   
+                  ],
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.open_in_new,
-                    color: Colors.deepPurple.shade700,
-                  ),
-                  const SizedBox(
-                    width: 6,
-                  ),
-                  Text("Diagnosis",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple.shade700)),
-                ],
-              ),
-            ),
-            // if (diagnosissummary != "")
-            // // Text("Download pdf button"),
-            //   DownloadPdfButton(complaintId: complaintId, patientId: patientId),
 
-            //    const SizedBox(
-            //   height: 16,
-            // ),
+            
+           
           ],
         ),
       ),

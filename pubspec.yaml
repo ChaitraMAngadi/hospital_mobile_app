@@ -43,6 +43,16 @@ dependencies:
   flutter_picker: ^2.1.0
   file_picker: ^8.3.2
   dropdown_search: 5.0.6
+  flutter_html: ^3.0.0-beta.2
+  printing: ^5.13.4
+  pdf: ^3.10.7
+  shimmer: ^3.0.0
+  url_launcher: ^6.3.0
+  gallery_saver_updated: ^3.0.0
+  share_plus: ^11.1.0
+  path_provider: ^2.1.5
+  flutter_pdfview: ^1.4.1+1
+  permission_handler: ^11.3.1
 
 
 

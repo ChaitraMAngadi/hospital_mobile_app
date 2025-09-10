@@ -1,6 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/adminController/editPatientAdminPage.dart';
+import 'package:hospital_mobile_app/adminController/patienadmintInvisitPage.dart';
+import 'package:hospital_mobile_app/adminController/patientadminOutvisitPage.dart';
+import 'package:hospital_mobile_app/adminController/registerNewPatientPage.dart';
 import 'package:hospital_mobile_app/doctorController/editPatientPage.dart';
+import 'package:hospital_mobile_app/doctorController/patientInVisit/addDiagnosisPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/patientInvisitsPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosisPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/diagnosisPage.dart';
@@ -58,19 +63,22 @@ class AppRouter extends _$AppRouter {
          AutoRoute(
           page: ViewDiagnosisRoute.page,
         ),
-        // AutoRoute(
-        //   page: HomeRoute.page,
-        //   initial: true,
-        // ),
-        // AutoRoute(
-        //   page: DashboardRoute.page,
-        // ),
-        // AutoRoute(
-        //   page: EditProfileRoute.page,
-        // ),
-        // AutoRoute(
-        //   page: SelectNotificationTimesRoute.page,
-        // ),
+        AutoRoute(
+          page: AddDiagnosisRoute.page,
+        ),
+        AutoRoute(
+          page: RegisterNewPatientRoute.page,
+          
+        ),
+        AutoRoute(
+          page: EditPatientAdminRoute.page,
+        ),
+        AutoRoute(
+          page: PatientAdminInvisitsRoute.page,
+        ),
+        AutoRoute(
+          page: PatientAdminOutvisitsRoute.page,
+        ),
         // AutoRoute(
         //   page: RecordsRoute.page,
         //   // initial: true,

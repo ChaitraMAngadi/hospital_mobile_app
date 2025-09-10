@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/provider/loginProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
@@ -8,7 +9,8 @@ void main() {
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (_)=> Loginprovider()),
-      ChangeNotifierProvider(create: (_)=> Doctorprovider())
+      ChangeNotifierProvider(create: (_)=> Doctorprovider()),
+      ChangeNotifierProvider(create: (_)=> Adminprovider())
       
   ],
   child:   MyApp()));

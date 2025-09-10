@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/doctorController/patientOutVisit/pdfViewerPage.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 
 class DownloadPdfButton extends StatelessWidget {
@@ -29,19 +30,19 @@ class DownloadPdfButton extends StatelessWidget {
           ),
         ),
       ),
-      onPressed: () {
+      // onPressed: () {
         
-      },
-      // onPressed: () =>
-      //  Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) => PdfViewerPage(
-      //         complaintId: complaintId,
-      //         patientId: patientId,
-      //       ),
-      //     ),
-      //   ),
+      // },
+      onPressed: () =>
+       Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerPage(
+              complaintId: complaintId,
+              patientId: patientId,
+            ),
+          ),
+        ),
           // _downloadAndPrintPdf(context), // Directly show printing layout
       child: const Text(
         "View Report",

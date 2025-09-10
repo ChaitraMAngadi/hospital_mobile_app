@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/doctorController/patientInVisit/diagnosisPdfViewerPage.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 
 class DownloadInvisitPdfButton extends StatelessWidget {
-  final String visitIndex;
   final String patientId;
+  final String complaintId;
+  final String diagnosisId;
 
   const DownloadInvisitPdfButton({
-    required this.visitIndex,
     required this.patientId,
+     required this.complaintId,
+    required this.diagnosisId,
     Key? key,
   }) : super(key: key);
 
@@ -29,19 +32,19 @@ class DownloadInvisitPdfButton extends StatelessWidget {
           ),
         ),
       ),
-      onPressed: () {
+      // onPressed: () {
         
-      },
-      // onPressed: () =>
-      //  Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) => PdfViewerPage(
-      //         complaintId: complaintId,
-      //         patientId: patientId,
-      //       ),
-      //     ),
-      //   ),
+      // },
+      onPressed: () =>
+       Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DiagnosisPdfViewerPage(
+              complaintId: complaintId,
+              patientId: patientId, diagnosisId: diagnosisId,
+            ),
+          ),
+        ),
           // _downloadAndPrintPdf(context), // Directly show printing layout
       child: const Text(
         "View Report",
