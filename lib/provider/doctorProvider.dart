@@ -543,11 +543,13 @@ getpatientoutvisits(patientId);
           content: Text(responseData["msg"],
               style: TextStyle(fontWeight: FontWeight.bold)),
         ));
+         isSavingOutdisagnosis = false;
       }
     } catch (e) {
       print("Error: $e");
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
+           isSavingOutdisagnosis = false;
     }
   }
 
@@ -913,11 +915,13 @@ getpatientdiagnosis(patientId, visitIndex);
           content: Text(responseData["msg"],
               style: TextStyle(fontWeight: FontWeight.bold)),
         ));
+        isSavingIndiagnosis = false;
       }
     } catch (e) {
       print("Error: $e");
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
+          isSavingIndiagnosis = false;
     }
   }
 

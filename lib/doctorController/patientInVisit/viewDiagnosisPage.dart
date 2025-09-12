@@ -5,6 +5,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/dischargeDialogBox.dart';
+import 'package:hospital_mobile_app/doctorController/patientInVisit/dischargePdfViewReport.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/downloadInvisitPdfButton.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/invistSupportingDialogBox.dart';
 import 'package:hospital_mobile_app/doctorController/pdfViewPage.dart';
@@ -170,8 +171,10 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Row(
+                          
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            if(widget.dischargeddate == '')
                             ElevatedButton(
                               onPressed: () {
                                 showDialog(
@@ -197,8 +200,44 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                     color: Colors.white,
                                   )),
                             ),
-                            // SizedBox(width: 16,),
+                            // SizedBox(width: 8,),
 
+                            if(widget.dischargeddate != '')
+                            ElevatedButton(
+                              onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DischargePdfViewerPage(
+             patientId: widget.id,
+                                    complaintId: doctorprovider.invisitId,
+            ),
+          ),
+        ),
+                              // onPressed: () {
+                                // showDialog(
+                                //       context: context,
+                                //       builder: (context) {
+                                //         print(doctorprovider.invisitId);
+                                //         return DischargeDialogBox(patientId: widget.id, complaintId: doctorprovider.invisitId);
+                                //       },
+                                //     );
+                                // context.router.push(RegisterPatientRoute());
+                              // },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green.shade700,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 10),
+                              ),
+                              child: Text("Discharge Report",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                  )),
+                            ),
+//  SizedBox(width: 8,),
                             if(widget.dischargeddate == '')
                             ElevatedButton(
                               onPressed: () {
@@ -221,7 +260,13 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                     color: Colors.white,
                                   )),
                             ),
-
+//  SizedBox(width: 8,),
+                            
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
@@ -276,14 +321,21 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                     // );
                                   }
                                 },
-                                child: Icon(
-                                  Icons.remove_red_eye_outlined,
+                                child:
+                                Text('View All diagnosis',
+                                style: TextStyle(
+                                  fontSize: 15,
                                   color: Colors.white,
-                                )),
-
+                                ),),
+                                //  Icon(
+                                //   Icons.remove_red_eye_outlined,
+                                //   color: Colors.white,
+                                // ),
+                                ),
+//  SizedBox(width: 8,),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
+                                backgroundColor: Colors.brown,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -334,10 +386,16 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                   // );
                                 }
                               },
-                              child: Icon(
-                                Icons.ac_unit_outlined,
-                                color: Colors.white,
-                              ),
+                              child:
+                               Text('View All Observations',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                ),),
+                              //  Icon(
+                              //   Icons.ac_unit_outlined,
+                              //   color: Colors.white,
+                              // ),
                             ),
                           ],
                         ),

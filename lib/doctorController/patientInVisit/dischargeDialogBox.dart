@@ -1,7 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
-import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

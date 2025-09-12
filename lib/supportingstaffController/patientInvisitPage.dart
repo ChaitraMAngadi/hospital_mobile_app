@@ -1,38 +1,35 @@
 import 'package:auto_route/auto_route.dart';
 
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/adminController/editComplaintBox.dart';
-import 'package:hospital_mobile_app/adminController/invisitComplaintBox.dart';
-import 'package:hospital_mobile_app/provider/adminProvider.dart';
+import 'package:hospital_mobile_app/doctorController/patientInVisit/complaintDialogBox.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
+import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
+import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
-class PatientAdminInvisitsPage extends StatefulWidget {
+class SupportingstaffPatientInvisitsPage extends StatefulWidget {
   final String patientId;
   final String name;
-  const PatientAdminInvisitsPage(
-      {super.key, required this.patientId, required this.name});
+  const SupportingstaffPatientInvisitsPage({super.key, required this.patientId, required this.name});
 
   @override
-  State<PatientAdminInvisitsPage> createState() =>
-      _PatientAdminInvisitsPageState();
+  State<SupportingstaffPatientInvisitsPage> createState() => _SupportingstaffPatientInvisitsPageState();
 }
 
-class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
+class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPatientInvisitsPage> {
   late Future fetchPatientInvisits;
-  late Future fetchalldoctorsnurses;
+ 
   final SecureStorage secureStorage = SecureStorage();
 
   @override
   void initState() {
     super.initState();
-    Adminprovider adminprovider = context.read<Adminprovider>();
-    fetchPatientInvisits = adminprovider.getpatientinvisits(widget.patientId);
-    fetchalldoctorsnurses = adminprovider.getdoctorsnurses();
+    Supportingstaffprovider supportingstaffprovider = context.read<Supportingstaffprovider>();
+    fetchPatientInvisits = supportingstaffprovider.getpatientinvisits(widget.patientId);
   }
 
   String formatDate(String date) {
@@ -125,8 +122,8 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: _handleRefresh,
-      child: Consumer<Adminprovider>(
-        builder: (context, adminprovider, child) {
+      child: Consumer<Supportingstaffprovider>(
+        builder: (context, supportingstaffprovider, chilsd) {
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -143,66 +140,65 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16, top: 8),
-                      child: ElevatedButton(
-                        style: const ButtonStyle(
-                          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(
-                              vertical: 14, horizontal: 24)),
-                          backgroundColor:
-                              WidgetStatePropertyAll(Color(0XFF0857C0)),
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(14)),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => ComplaintDialogBox(
-                              alldoctors: adminprovider.alldoctors,
-                              allnurses: adminprovider.allnurses,
-                              patientId: widget.patientId,
-                            ),
-                          );
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.person_add_alt_1_outlined,
-                                color: Colors.white),
-                            SizedBox(width: 6),
-                            Text(
-                              'Add InVisit',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.only(right: 16, top: 8),
+  //                     child: ElevatedButton(
+  //                       style: const ButtonStyle(
+  //                         padding: WidgetStatePropertyAll(EdgeInsets.symmetric(
+  //                             vertical: 14, horizontal: 24)),
+  //                         backgroundColor:
+  //                             WidgetStatePropertyAll(Color(0XFF0857C0)),
+  //                         shape: WidgetStatePropertyAll(
+  //                           RoundedRectangleBorder(
+  //                             borderRadius:
+  //                                 BorderRadius.all(Radius.circular(14)),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       onPressed: () {
+  //                         showDialog(
+  //   context: context,
+  //   builder: (context) =>  ComplaintDialog(
+  //     alldoctors: doctorprovider.alldoctors,
+  //     allnurses: doctorprovider.allnurses,
+  //     patientId: widget.patientId,
+  //   ),
+  // );
+  //                       },
+  //                       child: const Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: [
+  //                           Icon(Icons.person_add_alt_1_outlined,
+  //                               color: Colors.white),
+  //                           SizedBox(width: 6),
+  //                           Text(
+  //                             'Add InVisit',
+  //                             style: TextStyle(
+  //                                 color: Colors.white,
+  //                                 fontSize: 16,
+  //                                 fontWeight: FontWeight.bold),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+                    // SizedBox(
+                    //   height: 16,
+                    // ),
                     FutureBuilder(
                       future: fetchPatientInvisits,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.8,
+                              height: MediaQuery.of(context).size.height*0.8,
                               child: _buildShimmerList());
                         } else {
                           return SafeArea(
-                              child: adminprovider.patientinvisits.isEmpty
+                              child: supportingstaffprovider.patientinvisits.isEmpty
                                   ? SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              0.8,
+                                          MediaQuery.of(context).size.height*0.8,
                                       child: const Center(
                                           child: Padding(
                                         padding: EdgeInsets.symmetric(
@@ -218,13 +214,12 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                                       )))
                                   : SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              0.8,
+                                          MediaQuery.of(context).size.height*0.8,
                                       child: ListView.builder(
-                                        itemCount: adminprovider
+                                        itemCount: supportingstaffprovider
                                             .patientinvisits.length,
                                         itemBuilder: (context, index) {
-                                          final item = adminprovider
+                                          final item = supportingstaffprovider
                                               .patientinvisits[index];
 
                                           return InVisitModel(
@@ -245,46 +240,33 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                                                                 'consultingDoctor']
                                                             ['name'],
                                                         dutydoctor:
-                                                            item['dutyDoctor']
-                                                                    ?['name'] ??
-                                                                '',
-                                                        visitingdoctor:
-                                                            item['visitingDoctor']
-                                                                    ?['name'] ??
-                                                                '',
-                                                        associatedstaff:
-                                                            item['associatedNurse']
-                                                                    ?['name'] ??
-                                                                '');
+                                                            item['dutyDoctor']?
+                                                                ['name']??'',
+                                                        visitingdoctor: item[
+                                                                'visitingDoctor']?
+                                                            ['name']??'',
+                                                        associatedstaff: item[
+                                                                'associatedNurse']?
+                                                            ['name']??'');
                                                   },
-                                                );
-                                              },
-                                              editontap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      EditComplaintDialogBox(
-                                                    alldoctors: adminprovider
-                                                        .alldoctors,
-                                                    allnurses:
-                                                        adminprovider.allnurses,
-                                                    patientId: widget.patientId,
-                                                    complaintId: item['id'],
-                                                  ),
                                                 );
                                               },
                                               // diagnosisontap: () {
                                               //   context.router.push(
-                                              //     ViewDiagnosisRoute(name: widget.name,
+                                              //     ViewDiagnosisRoute(name: widget.name, 
                                               //   id: widget.patientId, visitingIndex: item['visit_index'], dischargeddate: item['discharged_date']??'',
                                               //   )
-
+                                                
                                               //   );
                                               // },
-                                              // observationontap: () {},
-                                              dischargedate:
-                                                  item['discharged_date'] ??
-                                                      '');
+                                              observationontap: () {
+
+                                              },
+                                              // dischargedate:
+                                              //     item['discharged_date'] ??
+                                              //         '',
+                                                      
+                                                      );
                                         },
                                       ),
                                     ));
@@ -302,14 +284,14 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
   }
 
   Future<void> _handleRefresh() async {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
+    Supportingstaffprovider supportingstaffprovider = context.read<Supportingstaffprovider>();
 
     await Future.delayed(Duration(seconds: 2));
-    Constants.doctortoken =
-        await secureStorage.readSecureData('doctortoken') ?? '';
+    Constants.nursetoken =
+        await secureStorage.readSecureData('nursetoken') ?? '';
     setState(() {
       fetchPatientInvisits =
-          doctorprovider.getpatientinvisits(widget.patientId);
+          supportingstaffprovider.getpatientinvisits(widget.patientId);
     });
   }
 }
@@ -320,15 +302,17 @@ class InVisitModel extends StatelessWidget {
     required this.cheifcomplaint,
     required this.visitdate,
     required this.viewontap,
-    required this.dischargedate,
-    required this.editontap,
+    // required this.diagnosisontap,
+    required this.observationontap,
+    // required this.dischargedate,
   });
 
   final String cheifcomplaint;
   final String visitdate;
   final VoidCallback viewontap;
-  final VoidCallback editontap;
-  final String dischargedate;
+  // final VoidCallback diagnosisontap;
+  final VoidCallback observationontap;
+  // final String dischargedate;
 
   @override
   Widget build(BuildContext context) {
@@ -352,19 +336,19 @@ class InVisitModel extends StatelessWidget {
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                        color: dischargedate == ""
-                            ? Colors.green.shade400
-                            : Colors.red.shade400),
-                    child: Text(
-                      dischargedate == "" ? "Active" : "Discharged",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ),
+                  // Container(
+                  //   padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  //   decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.all(Radius.circular(30)),
+                  //       color: dischargedate == ""
+                  //           ? Colors.green.shade400
+                  //           : Colors.red.shade400),
+                  //   child: Text(
+                  //     dischargedate == "" ? "Active" : "Discharged",
+                  //     style: const TextStyle(
+                  //         fontWeight: FontWeight.bold, color: Colors.white),
+                  //   ),
+                  // ),
                 ],
               ),
               const SizedBox(
@@ -402,38 +386,60 @@ class InVisitModel extends StatelessWidget {
                         Icons.remove_red_eye,
                         color: Color(0Xff2556B9),
                       )),
+                  // ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: Colors.deepPurple.shade100,
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(20),
+                  //       ),
+                  //       padding:
+                  //           EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  //     ),
+                  //     onPressed: diagnosisontap,
+                  //     child: Row(
+                  //       children: [
+                  //         Text(
+                  //           "Diagnosis",
+                  //           style: TextStyle(
+                  //             fontSize: 15,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.deepPurple.shade700,
+                  //           ),
+                  //         ),
+                  //         SizedBox(
+                  //           width: 4,
+                  //         ),
+                  //         Icon(
+                  //           Icons.open_in_new,
+                  //           color: Colors.deepPurple.shade700,
+                  //         ),
+                  //       ],
+                  //     )),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: dischargedate == ''
-                            ? Colors.deepPurple.shade100
-                            : Colors.grey.shade100,
+                        backgroundColor: Colors.deepPurple.shade100,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       ),
-                      onPressed: dischargedate == '' ? editontap : null,
+                      onPressed: observationontap,
                       child: Row(
                         children: [
                           Text(
-                            "Edit",
+                            "Observations",
                             style: TextStyle(
-                              fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: dischargedate == ''
-                                  ? Colors.deepPurple.shade700
-                                  : Colors.grey.shade700,
+                              color: Colors.deepPurple.shade700,
                             ),
                           ),
                           SizedBox(
                             width: 4,
                           ),
                           Icon(
-                            Icons.edit_square,
-                            color: dischargedate == ''
-                                ? Colors.deepPurple.shade700
-                                : Colors.grey.shade700,
+                            Icons.open_in_new,
+                            color: Colors.deepPurple.shade700,
                           ),
                         ],
                       )),

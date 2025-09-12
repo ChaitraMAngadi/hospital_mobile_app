@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/adminController/editComplaintBox.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
@@ -17,6 +18,7 @@ class ActiveAdminInvisitsPage extends StatefulWidget {
 
 class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
   late Future fetchactiveallinvisits;
+  late Future fetchalldoctorsnurses;
   final SecureStorage secureStorage = SecureStorage();
 
   TextEditingController _searchController = TextEditingController();
@@ -30,6 +32,8 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
         adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
       });
     });
+
+    fetchalldoctorsnurses = adminprovider.getdoctorsnurses();
 
     _searchController.addListener(() {
       final query = _searchController.text.toLowerCase();
@@ -317,7 +321,20 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                                               },
                                             );
                                           },
-                                          editonTap: (){},
+                                          editonTap: (){
+                                            showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      EditComplaintDialogBox(
+                                                    alldoctors: adminprovider
+                                                        .alldoctors,
+                                                    allnurses:
+                                                        adminprovider.allnurses,
+                                                    patientId: item['patientId'],
+                                                    complaintId: item['id'],
+                                                  ),
+                                                );
+                                          },
                                           viewallvisitsonTap: (){
                                             context.router.push(PatientAdminInvisitsRoute(patientId: item['patientId'], name: item['name'],
                                                 ));

@@ -6,8 +6,8 @@ import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 
-class Adminprovider extends ChangeNotifier {
-    List<Map<String, dynamic>> admindetailedprofile = [];
+class Supportingstaffprovider extends ChangeNotifier {
+    List<Map<String, dynamic>> supportingstaffdetailedprofile = [];
     List<Map<String, dynamic>> patients = [];
     List<Map<String, dynamic>> filteredPatients = [];
     List<Map<String, dynamic>> allpatients = [];
@@ -39,16 +39,16 @@ class Adminprovider extends ChangeNotifier {
 
 
   Future<void> getadmindetailedprofile() async {
-    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getmydetailprofile";
+    String url = "${Constants.baseUrl}/api/v1/hospitalnurse/getmydetailprofile";
 
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    Constants.nursetoken = await secureStorage.readSecureData('nursetoken') ?? '';
     
     try {
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Authorization': 'Bearer ${Constants.nursetoken}',
         },
       );
 
@@ -56,13 +56,13 @@ class Adminprovider extends ChangeNotifier {
         var data = json.decode(response.body)['myprofile'];
 
         if (data is List) {
-          admindetailedprofile = List<Map<String, dynamic>>.from(data);
+          supportingstaffdetailedprofile = List<Map<String, dynamic>>.from(data);
           
 
           notifyListeners();
         } else if (data is Map) {
-          admindetailedprofile = [Map<String, dynamic>.from(data)];
-          print('doctor details : $admindetailedprofile');
+          supportingstaffdetailedprofile = [Map<String, dynamic>.from(data)];
+          print('Supporting staff details : $supportingstaffdetailedprofile');
           // print(doctordetailedprofile);
         }
         notifyListeners();
@@ -109,18 +109,18 @@ Future<void> getpatientbydoctor() async {
 
 Future<void> getPatientsByPageWithSearch(int page, String searchQuery) async {
   final String url = searchQuery.isNotEmpty 
-      ? "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page&search=${Uri.encodeComponent(searchQuery)}"
-      : "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page";
+      ? "${Constants.baseUrl}/api/v1/hospitalnurse/getassociatedpatients?page=$page&search=${Uri.encodeComponent(searchQuery)}"
+      : "${Constants.baseUrl}/api/v1/hospitalnurse/getassociatedpatients?page=$page";
 
-  Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-  print(Constants.admintoken);
+  Constants.nursetoken = await secureStorage.readSecureData('nursetoken') ?? '';
+  print(Constants.nursetoken);
 
   try {
     final response = await http.get(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.admintoken}',
+        'Authorization': 'Bearer ${Constants.nursetoken}',
       },
     );
 
@@ -716,69 +716,6 @@ Future<void> getdoctorsnurses() async {
     }
   }
 
-  // Future<void> getpatientdiagnosis(String id, int visitindex) async {
-  //   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getindiagnosis/$id/$visitindex";
-  //   print(url);
-  //   // '${Constants.baseUrl}/app/log-in/phone-otp'
-  //   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse(url),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer ${Constants.doctortoken}',
-  //       },
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body);
-  //       print(responseData);
-  //       invisitId = json.decode(response.body)['invisitId'];
-  //       print(invisitId);
-  //       patientdiagnosis =
-  //           json.decode(response.body)['diagnosis'].cast<Map<String, dynamic>>();
-
-  //       notifyListeners();
-  //     } else if (response.statusCode == 404) {
-  //       final responseData = jsonDecode(response.body);
-  //       // print(responseData);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-  // Future<void> getallpatientdiagnosis(String id, String complaintid) async {
-  //   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getalldiagnosis/$id/$complaintid";
-  //   print(url);
-  //   // '${Constants.baseUrl}/app/log-in/phone-otp'
-  //   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse(url),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer ${Constants.doctortoken}',
-  //       },
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body);
-  //       print(responseData);
-  //       // invisitId = json.decode(response.body)['invisitId'];
-  //       // print(invisitId);
-  //       patientalldiagnosis =
-  //           json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
-  //       notifyListeners();
-  //     } else if (response.statusCode == 404) {
-  //       final responseData = jsonDecode(response.body);
-  //       // print(responseData);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
 
 

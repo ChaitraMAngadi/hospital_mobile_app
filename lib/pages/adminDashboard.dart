@@ -1,4 +1,3 @@
-// ---------------- Admin Dashboard ----------------
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/adminController/adminActiveInvisitPage.dart';
@@ -36,7 +35,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           color: Colors.white,
         ),)),
       body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: 
+      BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
