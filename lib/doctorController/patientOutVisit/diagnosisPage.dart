@@ -377,10 +377,9 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed:doctorprovider.isSavingOutdisagnosis ? null : () async {
-                     setState(() {
-                                  doctorprovider.isSavingOutdisagnosis = true;
-                                });
+                    
                     if (!formkey.currentState!.validate()) {
+                     
                       if (diagnosisController.text.isEmpty) {
                         Scrollable.ensureVisible(
                           diagnosisFieldKey.currentContext!,
@@ -405,6 +404,10 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                         'special_instruction': controllers.specialInstructionController.text,
                       };
                     }).toList();
+
+                      setState(() {
+                                  doctorprovider.isSavingOutdisagnosis = true;
+                                });
 
                     await doctorprovider.adddiagnosis(
                         widget.patientId,

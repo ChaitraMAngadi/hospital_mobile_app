@@ -226,8 +226,12 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
+                    onPressed:doctorprovider.addinginvisit? null: () async {
+
                       if (formkey.currentState!.validate()) {
+                         setState(() {
+                                  doctorprovider.addinginvisit = true;
+                                });
                         debugPrint("Complaint: ${complaintController.text}");
                         debugPrint(
                             "Duty Doctor ID: ${selectedDutyDoctor?['userid']}");
@@ -248,14 +252,16 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                       // context.router.pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF0857C0),
+                      backgroundColor:doctorprovider.addinginvisit? Colors.grey: Color(0xFF0857C0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     ),
-                    child: Text("Submit",
+                    child:
+                    doctorprovider.addinginvisit? CircularProgressIndicator():
+                     Text("Submit",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

@@ -127,7 +127,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                "Patient InVisit",
+                widget.name,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -260,7 +260,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
                                               //   );
                                               // },
                                               observationontap: () {
-
+                                                context.router.push(ObservationRoute(name: widget.name, id: widget.patientId, visitingIndex: item['visit_index']));
                                               },
                                               // dischargedate:
                                               //     item['discharged_date'] ??

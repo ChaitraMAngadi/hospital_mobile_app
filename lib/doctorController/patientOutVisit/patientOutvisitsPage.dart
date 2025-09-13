@@ -249,7 +249,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                         builder: (context) {
                                           return OutvisitSupportingFilesDialogBox(
                                             patientId: widget.patientId,
-                                            complaintId: item["complaintId"],
+                                            complaintId: item["id"],
                                           );
                                         },
                                       );
@@ -885,8 +885,11 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
+                    onPressed:doctorprovider.addingoutvisit? null : () async {
                       if (formkey.currentState!.validate()) {
+                         setState(() {
+                                  doctorprovider.addingoutvisit = true;
+                                });
                         doctorprovider.addoutvisit(
                           widget.patientId,
                           cheifcomplaintController.text,
@@ -904,14 +907,14 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                       // context.router.pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF0857C0),
+                      backgroundColor:doctorprovider.addingoutvisit? Colors.grey: Color(0xFF0857C0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     ),
-                    child: Text("Submit",
+                    child:doctorprovider.addingoutvisit? CircularProgressIndicator(): Text("Submit",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

@@ -1,4 +1,5 @@
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
@@ -6,6 +7,8 @@ import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../routes/app_router.dart';
 
 class SupportingStaffProfilePage extends StatefulWidget {
   const SupportingStaffProfilePage({super.key});
@@ -453,6 +456,7 @@ class _SupportingStaffProfilePageState extends State<SupportingStaffProfilePage>
                         await secureStorage.readSecureData('admintoken') ?? '';
                     Constants.nursetoken =
                         await secureStorage.readSecureData('nursetoken') ?? '';
+                        context.router.replaceAll([const LoginRoute()]);
                     // context.router.replaceAll([HomeRoute()]);
                     // homePageProvider.selectedIndex = 0;
                     // homePageProvider.notify();

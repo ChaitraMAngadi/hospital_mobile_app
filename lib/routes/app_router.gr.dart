@@ -27,6 +27,18 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    AddObservationRoute.name: (routeData) {
+      final args = routeData.argsAs<AddObservationRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: AddObservationPage(
+          key: args.key,
+          patientId: args.patientId,
+          complaintId: args.complaintId,
+          visitIndex: args.visitIndex,
+        ),
+      );
+    },
     AdminDashboardRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -74,6 +86,18 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const LoginPage(),
+      );
+    },
+    ObservationRoute.name: (routeData) {
+      final args = routeData.argsAs<ObservationRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ObservationPage(
+          key: args.key,
+          name: args.name,
+          id: args.id,
+          visitingIndex: args.visitingIndex,
+        ),
       );
     },
     PatientAdminInvisitsRoute.name: (routeData) {
@@ -142,6 +166,17 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const StaffDashboardPage(),
       );
     },
+    SupportingstaffPatientInvisitsRoute.name: (routeData) {
+      final args = routeData.argsAs<SupportingstaffPatientInvisitsRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: SupportingstaffPatientInvisitsPage(
+          key: args.key,
+          patientId: args.patientId,
+          name: args.name,
+        ),
+      );
+    },
     ViewDiagnosisRoute.name: (routeData) {
       final args = routeData.argsAs<ViewDiagnosisRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -203,6 +238,54 @@ class AddDiagnosisRouteArgs {
   @override
   String toString() {
     return 'AddDiagnosisRouteArgs{key: $key, patientId: $patientId, complaintId: $complaintId, visitIndex: $visitIndex}';
+  }
+}
+
+/// generated route for
+/// [AddObservationPage]
+class AddObservationRoute extends PageRouteInfo<AddObservationRouteArgs> {
+  AddObservationRoute({
+    Key? key,
+    required String patientId,
+    required String complaintId,
+    required int visitIndex,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AddObservationRoute.name,
+          args: AddObservationRouteArgs(
+            key: key,
+            patientId: patientId,
+            complaintId: complaintId,
+            visitIndex: visitIndex,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'AddObservationRoute';
+
+  static const PageInfo<AddObservationRouteArgs> page =
+      PageInfo<AddObservationRouteArgs>(name);
+}
+
+class AddObservationRouteArgs {
+  const AddObservationRouteArgs({
+    this.key,
+    required this.patientId,
+    required this.complaintId,
+    required this.visitIndex,
+  });
+
+  final Key? key;
+
+  final String patientId;
+
+  final String complaintId;
+
+  final int visitIndex;
+
+  @override
+  String toString() {
+    return 'AddObservationRouteArgs{key: $key, patientId: $patientId, complaintId: $complaintId, visitIndex: $visitIndex}';
   }
 }
 
@@ -365,6 +448,54 @@ class LoginRoute extends PageRouteInfo<void> {
   static const String name = 'LoginRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ObservationPage]
+class ObservationRoute extends PageRouteInfo<ObservationRouteArgs> {
+  ObservationRoute({
+    Key? key,
+    required String name,
+    required String id,
+    required int visitingIndex,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ObservationRoute.name,
+          args: ObservationRouteArgs(
+            key: key,
+            name: name,
+            id: id,
+            visitingIndex: visitingIndex,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ObservationRoute';
+
+  static const PageInfo<ObservationRouteArgs> page =
+      PageInfo<ObservationRouteArgs>(name);
+}
+
+class ObservationRouteArgs {
+  const ObservationRouteArgs({
+    this.key,
+    required this.name,
+    required this.id,
+    required this.visitingIndex,
+  });
+
+  final Key? key;
+
+  final String name;
+
+  final String id;
+
+  final int visitingIndex;
+
+  @override
+  String toString() {
+    return 'ObservationRouteArgs{key: $key, name: $name, id: $id, visitingIndex: $visitingIndex}';
+  }
 }
 
 /// generated route for
@@ -585,6 +716,50 @@ class StaffDashboardRoute extends PageRouteInfo<void> {
   static const String name = 'StaffDashboardRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SupportingstaffPatientInvisitsPage]
+class SupportingstaffPatientInvisitsRoute
+    extends PageRouteInfo<SupportingstaffPatientInvisitsRouteArgs> {
+  SupportingstaffPatientInvisitsRoute({
+    Key? key,
+    required String patientId,
+    required String name,
+    List<PageRouteInfo>? children,
+  }) : super(
+          SupportingstaffPatientInvisitsRoute.name,
+          args: SupportingstaffPatientInvisitsRouteArgs(
+            key: key,
+            patientId: patientId,
+            name: name,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'SupportingstaffPatientInvisitsRoute';
+
+  static const PageInfo<SupportingstaffPatientInvisitsRouteArgs> page =
+      PageInfo<SupportingstaffPatientInvisitsRouteArgs>(name);
+}
+
+class SupportingstaffPatientInvisitsRouteArgs {
+  const SupportingstaffPatientInvisitsRouteArgs({
+    this.key,
+    required this.patientId,
+    required this.name,
+  });
+
+  final Key? key;
+
+  final String patientId;
+
+  final String name;
+
+  @override
+  String toString() {
+    return 'SupportingstaffPatientInvisitsRouteArgs{key: $key, patientId: $patientId, name: $name}';
+  }
 }
 
 /// generated route for

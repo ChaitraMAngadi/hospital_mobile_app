@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
+import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -289,7 +290,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
                   // ),
                   // Search Box
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     child: TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
@@ -346,9 +347,10 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
       itemCount: supportingstaffprovider.allpatients.length + (_hasMore && _isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
         if (index < supportingstaffprovider.allpatients.length) {
-          final sorted = supportingstaffprovider.allpatients
-            ..sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
-          final item = sorted[index];
+          // final sorted = supportingstaffprovider.allpatients
+          //   ..sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
+          // final item = sorted[index];
+          final item = supportingstaffprovider.allpatients[index];
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -372,6 +374,8 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
               
             }, 
               invisitonTap: (){
+                context.router.push(SupportingstaffPatientInvisitsRoute(patientId: item['patientId'], name: item['name']));
+
               // context.router.push(PatientAdminInvisitsRoute(patientId: item['patientId'], name: item['name']));
             },),
           );
@@ -417,9 +421,17 @@ class ListTileModel extends StatelessWidget {
           children: [
            
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
               children: [
                 Text(
+                  "Name: ",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    // overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                 Text(
                   patientname,
                   style: const TextStyle(
                     fontSize: 15,
@@ -427,13 +439,19 @@ class ListTileModel extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                IconButton(onPressed: viewonTap, icon: const Icon(Icons.remove_red_eye_outlined,
-                color:Color(0xFF0857C0) ,))
               ],
             ),
-            Text(
-              patientId,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Text(
+                  "PatientId: ",
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  patientId,
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
             SizedBox(height: 10,),
             
@@ -442,8 +460,11 @@ class ListTileModel extends StatelessWidget {
         
         subtitle:
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                IconButton(onPressed: viewonTap, icon: const Icon(Icons.remove_red_eye_outlined,
+                color:Color(0xFF0857C0) ,)),
+                SizedBox(width: 20,),
                 ElevatedButton(
                    style: ElevatedButton.styleFrom(
                       backgroundColor:Colors.blue.shade100,
@@ -462,7 +483,9 @@ class ListTileModel extends StatelessWidget {
                   SizedBox(width: 4,),
                   Icon(Icons.open_in_new,
                   color: Color(0xFF0857C0),),
-                ],)),
+                ],),
+                ),
+                
           // ElevatedButton(
           //          style: ElevatedButton.styleFrom(
           //             backgroundColor:Colors.green.shade100,

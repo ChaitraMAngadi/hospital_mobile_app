@@ -450,11 +450,10 @@ const SizedBox(height: 12),
                 child: ElevatedButton(
                   onPressed:doctorprovider.isSavingIndiagnosis ? null : () async {
 
-                     setState(() {
-                                  doctorprovider.isSavingIndiagnosis = true;
-                                });
+                   
                                 
                     if (!formkey.currentState!.validate()) {
+                       
                       if (diagnosisController.text.isEmpty) {
                         Scrollable.ensureVisible(
                           complaintFieldKey.currentContext!,
@@ -490,6 +489,10 @@ const SizedBox(height: 12),
 }).toList();
 
 print(vitalsList);
+
+ setState(() {
+                                  doctorprovider.isSavingIndiagnosis = true;
+                                });
                     await doctorprovider.addinpatientdiagnosis(
                         widget.patientId,
                         widget.complaintId,

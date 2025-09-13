@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/downloadPdfButton.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/patientOutvisitsPage.dart';
+import 'package:hospital_mobile_app/doctorController/patientOutVisit/supportingDocsDialogbox.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
@@ -347,7 +348,17 @@ void initState() {
                                               complaintId:item['id'],
                                             ));
                 },
-                supportingimagesonTap: () {},
+                supportingimagesonTap: () {
+                   showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return OutvisitSupportingFilesDialogBox(
+                                            patientId:item['patientId'],
+                                            complaintId: item["id"],
+                                          );
+                                        },
+                                      );
+                },
                 chiefcomplaint: item['chief_complaint'] ?? '',
                 diagnosissummary: item['diagnosis_summary'] ?? '',
                 complaintId: item['id'],

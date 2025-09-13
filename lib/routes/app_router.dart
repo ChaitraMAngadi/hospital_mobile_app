@@ -16,6 +16,9 @@ import 'package:hospital_mobile_app/pages/doctorDashboard.dart';
 import 'package:hospital_mobile_app/pages/loginPage.dart';
 import 'package:hospital_mobile_app/pages/splashPage.dart';
 import 'package:hospital_mobile_app/pages/supportingStaffDashboard.dart';
+import 'package:hospital_mobile_app/supportingstaffController/addObservationPage.dart';
+import 'package:hospital_mobile_app/supportingstaffController/observationPage.dart';
+import 'package:hospital_mobile_app/supportingstaffController/patientInvisitPage.dart';
 
 
 part 'app_router.gr.dart';
@@ -78,6 +81,15 @@ class AppRouter extends _$AppRouter {
         ),
         AutoRoute(
           page: PatientAdminOutvisitsRoute.page,
+        ),
+        AutoRoute(
+          page: SupportingstaffPatientInvisitsRoute.page,
+        ),
+        AutoRoute(
+          page: ObservationRoute.page,
+        ),
+         AutoRoute(
+          page: AddObservationRoute.page,
         ),
         // AutoRoute(
         //   page: RecordsRoute.page,

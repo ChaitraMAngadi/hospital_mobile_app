@@ -32,6 +32,8 @@ class Doctorprovider extends ChangeNotifier {
        bool isDeleting = false;
        bool isSavingOutdisagnosis = false;
        bool isSavingIndiagnosis = false;
+        bool addinginvisit = false;
+       bool addingoutvisit = false;  
 
 
 
@@ -415,6 +417,7 @@ Future<void> addoutvisit(
       );
 
       if (response.statusCode == 200) {
+         addingoutvisit = false;
         // Successful POST request, handle the response here
         final responseData = jsonDecode(response.body);
         print(responseData);
@@ -444,10 +447,12 @@ Future<void> addoutvisit(
               style: const TextStyle(fontWeight: FontWeight.bold),
             ));
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        addingoutvisit = false;
       }
     } catch (e) {
       final error = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(error);
+      addingoutvisit = false;
     }
   }
 
@@ -651,6 +656,7 @@ Future<void> getdoctorsnurses() async {
       );
 
       if (response.statusCode == 201) {
+        addinginvisit = false;
         // Successful POST request, handle the response here
         final responseData = jsonDecode(response.body);
         print(responseData);
@@ -680,10 +686,12 @@ Future<void> getdoctorsnurses() async {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ));
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        addinginvisit = false;
       }
     } catch (e) {
       final error = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(error);
+      addinginvisit = false;
     }
   }
 
@@ -1140,6 +1148,7 @@ Future<void> dischargeInPatient(
             ));
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
         Navigator.of(context).pop();
+        isDeleting = true;
         // print(responseData);
       }
     } catch (e) {
