@@ -800,6 +800,10 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
               final index = entry.key;
               final d = entry.value;
 
+                            final docname = d["doneBy"]?["name"] ?? "Unknown";
+                            final docuserid = d["doneBy"]?["userid"] ?? "Unknown";
+                            final role = d['doneByType'];
+
               return Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 20),
@@ -859,7 +863,28 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                       ),
 
                     const SizedBox(height: 12),
+                     Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Done by: $docname - ",
+                            style: const TextStyle(fontSize: 14)),
+                        Text(docuserid,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                    const SizedBox(height: 12, ),
+                     Card(
+                      color: Colors.green.shade100,
+                      
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Role: $role",
+                                style: const TextStyle(fontSize: 14)),
+                          ),
+                        ),
 
+                        const SizedBox( height: 12,),
                     // Diagnosis Summary
                     if (d["diagnosis_summary"] != null)
                       Column(
@@ -872,6 +897,7 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                         ],
                       ),
 
+                    if (d["diagnosis_summary"] != null)
                     const SizedBox(height: 12),
 
                     // Medical Advice
@@ -886,6 +912,7 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                         ],
                       ),
 
+                    if (d["medical_advice"] != null)
                     const SizedBox(height: 12),
 
                     // Lab Tests
@@ -900,6 +927,7 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                         ],
                       ),
 
+                    if (d["lab_test"] != null)
                     const SizedBox(height: 12),
 
                     // Doctor's Remark
@@ -914,6 +942,8 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                         ],
                       ),
 
+
+                    if (d["doctors_remark"] != null)
                     const SizedBox(height: 12),
 
                     // Medication
@@ -942,6 +972,9 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                         ],
                       ),
 
+                    if (d["medication"] != null &&
+                        d["medication"] is List &&
+                        d["medication"].isNotEmpty)
                     const SizedBox(height: 12),
 
                     // Supporting Documents / Images

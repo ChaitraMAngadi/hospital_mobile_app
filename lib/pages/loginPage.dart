@@ -105,7 +105,15 @@ class _LoginPageState extends State<LoginPage> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter UserId';
                                 }
+                                 if (value.contains(' ')) {
+                    return 'Spaces are not allowed';
+                  }
+                  const useridRegex = r'^\d{10}_\d{3}$';
 
+                              
+                                if (!RegExp(useridRegex).hasMatch(value!)) {
+                                  return 'Enter a valid userId';
+                                }
                                 return null; 
                               },
                       decoration: InputDecoration(
@@ -157,7 +165,9 @@ class _LoginPageState extends State<LoginPage> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter Password';
                                 }
-
+                                 if (value.contains(' ')) {
+                    return 'Spaces are not allowed';
+                  }
                                 return null; 
                               },
                       decoration: InputDecoration(

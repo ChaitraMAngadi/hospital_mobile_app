@@ -222,7 +222,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                 ? SizedBox(
                                     height: MediaQuery.of(context).size.height * 0.81,
                                     child: const Center(child: Text(
-                                          "No Outvisits for thsi pateint \nPlaese add Outvisit",
+                                          "No Outvisits for this pateint \nPlaese add Outvisit",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,

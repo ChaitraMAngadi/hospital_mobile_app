@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,33 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
 
   String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
+
+Widget _customDropdownBuilder(
+      BuildContext context, Map<String, dynamic>? item) {
+    if (item == null) {
+      return const Text("Select option");
+    }
+    return Text(
+      "${item['name']} | ${item['userid']}",
+      style: const TextStyle(fontSize: 14),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  /// 🔹 Helper popup item builder (truncates in search list also)
+  Widget _customPopupItemBuilder(
+      BuildContext context, Map<String, dynamic> item, bool isSelected) {
+    return ListTile(
+      selected: isSelected,
+      title: Text(
+        "${item['name']} | ${item['userid']}",
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
@@ -42,6 +70,7 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
           child: Form(
             key: formkey,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -102,10 +131,28 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                   items: widget.alldoctors,
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedDutyDoctor,
-                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  // popupProps: const PopupProps.menu(showSearchBox: true),
+                  popupProps:  PopupProps.menu(
+    showSearchBox: true,
+    showSelectedItems: false,
+     constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height*widget.alldoctors.length), // limit size
+  fit: FlexFit.loose, // don’t stretch
+  
+  ),
+  // dropdownBuilder: (context, selectedItem) {
+  //   // 👇 force showing only text, no blank widget
+  //   return Text(
+  //     selectedItem == null
+  //         ? "Select Duty Doctor"
+  //         : "${selectedItem['name']} | ${selectedItem['userid']}",
+  //     overflow: TextOverflow.ellipsis,
+  //   );
+  // },
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Duty Doctor",
+                        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12, vertical: 12), 
                       border: OutlineInputBorder(
                         borderRadius:
                             BorderRadius.circular(12), // rounded corners
@@ -122,6 +169,7 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                   //   }
                   //   return null;
                   // },
+                  
                   onChanged: (value) {
                     setState(() {
                       selectedDutyDoctor = value;
@@ -148,7 +196,13 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                       .toList(),
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedVisitingDoctor,
-                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  popupProps:  PopupProps.menu(showSearchBox: true,
+                  showSelectedItems: false,
+                  constraints: BoxConstraints(maxHeight:300
+                  //  MediaQuery.of(context).size.height*widget.alldoctors.length
+                   ), // limit size
+  fit: FlexFit.loose,
+                  ),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Visiting Doctor",
@@ -192,8 +246,14 @@ class _ComplaintDialogState extends State<ComplaintDialog> {
                   itemAsString: (nurse) =>
                       "${nurse['name']} | ${nurse['userid']}",
                   selectedItem: selectedNurse,
-
-                  popupProps: const PopupProps.menu(showSearchBox: true),
+ popupProps:  PopupProps.menu(showSearchBox: true,
+showSelectedItems: false,
+                  constraints: BoxConstraints(maxHeight:300
+                  //  MediaQuery.of(context).size.height*widget.alldoctors.length
+                   ), // limit size
+  fit: FlexFit.loose,
+                  ),
+                  // popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Nurse",

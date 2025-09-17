@@ -613,9 +613,11 @@ class ViewModel extends StatelessWidget {
                 ),
               ],
             ),
+            if(email.isNotEmpty)
             const SizedBox(
               height: 8,
             ),
+            if(email.isNotEmpty)
             Row(
               children: [
                 const Text(

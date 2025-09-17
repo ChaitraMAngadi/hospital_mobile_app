@@ -265,30 +265,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  // Register Patient Button
-                  // Padding(
-                  //   padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-                  //   child: ElevatedButton(
-                  //     // onPressed: (){},
-                  //     onPressed: () => context.router.push(RegisterNewPatientRoute()),
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Color(0xFF0857C0),
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(12),
-                  //       ),
-                  //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  //     ),
-                  //     child: const Row(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         Icon(Icons.person_add_alt_1_outlined, color: Colors.white),
-                  //         SizedBox(width: 6),
-                  //         Text("Register Patient", style: TextStyle(fontSize: 16, color: Colors.white)),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // Search Box
+                
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     child: TextField(
@@ -419,7 +396,27 @@ class ListTileModel extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "PatientId: ",
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      patientId,
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                IconButton(onPressed: viewonTap, icon: const Icon(Icons.remove_red_eye_outlined,
+                color:Color(0xFF0857C0) ,)),
+              ],
+            ),
+
             Row(
 
               children: [
@@ -441,30 +438,15 @@ class ListTileModel extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
-              children: [
-                Text(
-                  "PatientId: ",
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  patientId,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            SizedBox(height: 10,),
+            
+            SizedBox(height: 16,),
             
           ],
         ),
         
         subtitle:
             Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(onPressed: viewonTap, icon: const Icon(Icons.remove_red_eye_outlined,
-                color:Color(0xFF0857C0) ,)),
-                SizedBox(width: 20,),
                 ElevatedButton(
                    style: ElevatedButton.styleFrom(
                       backgroundColor:Colors.blue.shade100,
@@ -485,51 +467,9 @@ class ListTileModel extends StatelessWidget {
                   color: Color(0xFF0857C0),),
                 ],),
                 ),
-                
-          // ElevatedButton(
-          //          style: ElevatedButton.styleFrom(
-          //             backgroundColor:Colors.green.shade100,
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(20),
-          //             ),
-          //             padding:
-          //                 EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          //           ),
-          //         onPressed: outvisitonTap,
-          //          child:  Row(children: [
-          //         Text("Outvisits",
-          //         style: TextStyle(
-          //           fontWeight: FontWeight.bold,
-          //           color: Colors.green.shade700,
-          //         ),),
-          //         SizedBox(width: 4,),
-          //         Icon(Icons.open_in_new,
-          //         color: Colors.green.shade700,),
-          //       ],)),
-                // ElevatedButton(
-                //    style: ElevatedButton.styleFrom(
-                //       backgroundColor:Colors.brown.shade100,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(20),
-                //       ),
-                //       padding:
-                //           EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                //     ),
-                //   onPressed: editonTap,
-                //    child:  Row(children: [
-                //   Text("Edit",
-                //   style: TextStyle(
-                //     fontWeight: FontWeight.bold,
-                //     color: Colors.brown.shade700,
-                //   ),),
-                //   SizedBox(width: 4,),
-                //   Icon(Icons.edit_square,
-                //   color: Colors.brown.shade700,),
-                // ],)),
-                // IconButton(onPressed: editonTap, icon: const Icon(Icons.edit_square,
-                // color:Color(0xFF0857C0) ,))
-          
-        ]),
+                Text(''),
+              ],
+            ),
       ),
     );
   }
@@ -601,9 +541,11 @@ class ViewModel extends StatelessWidget {
                 ),
               ],
             ),
+            if(email.isNotEmpty)
             const SizedBox(
               height: 8,
             ),
+            if(email.isNotEmpty)
             Row(
               children: [
                 const Text(

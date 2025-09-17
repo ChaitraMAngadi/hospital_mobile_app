@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/doctorController/patientInVisit/patientInvisitsPage.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
@@ -626,6 +625,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
           ],
         ),
          SizedBox(height: 4,),
+         if(email.isNotEmpty)
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -634,6 +634,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
             Flexible(child: Text(email)),
           ],
         ),
+        if(email.isNotEmpty)
          SizedBox(height: 4,),
          if(createdbydoctor != '')
          Row(
@@ -689,6 +690,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
           ],
         ),
          SizedBox(height: 4,),
+         if(visitingdoctor.isNotEmpty)
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -697,7 +699,9 @@ class ActiveInVisitViewModel extends StatelessWidget {
             Flexible(child: Text("$visitingdoctor - $visitingdocid")),
           ],
         ),
+        if(visitingdoctor.isNotEmpty)
          SizedBox(height: 4,),
+         if(dutydoctor.isNotEmpty)
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -706,7 +710,9 @@ class ActiveInVisitViewModel extends StatelessWidget {
             Flexible(child: Text("$dutydoctor - $dutydocid")),
           ],
         ),
+        if(dutydoctor.isNotEmpty)
          SizedBox(height: 4,),
+         if(associatedstaff.isNotEmpty)
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -715,6 +721,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
             Flexible(child: Text("$associatedstaff - $supportingstaffid")),
           ],
         ),
+        if(associatedstaff.isNotEmpty)
          SizedBox(height: 4,),
         Row(
           children: [
@@ -727,392 +734,5 @@ class ActiveInVisitViewModel extends StatelessWidget {
     ),
   ),
 );
-
-    // return Dialog(
-    //   insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-    //   child: Padding(
-    //     padding: const EdgeInsets.all(16),
-    //     child: Column(
-    //       mainAxisSize: MainAxisSize.min,
-    //       children: [
-    //         Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //             const Text(
-    //               "Patient Details",
-    //               style: TextStyle(
-    //                 fontSize: 20,
-    //                 fontWeight: FontWeight.bold,
-    //               ),
-    //             ),
-    //             const SizedBox(
-    //               height: 10,
-    //             ),
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 const Text(
-    //                   "Patient Name: ",
-    //                   style:
-    //                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //                 ),
-    //                 Flexible(
-    //                   fit: FlexFit.loose,
-    //                                         child: Text(
-    //                     "$name",
-    //                     style: const TextStyle(fontSize: 14),
-    //                     softWrap: true,
-    //                   ),
-    //                 ),
-    //                 // Text(
-    //                 //   "${cheifcomplaint}",
-    //                 //   style: TextStyle(fontSize: 14),
-
-    //                 // ),
-    //               ],
-    //             ),
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 const Text(
-    //                   "Patient Id: ",
-    //                   style:
-    //                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //                 ),
-    //                 Text(
-    //                   "$id",
-    //                   style: const TextStyle(fontSize: 14),
-    //                 ),
-    //               ],
-    //             ),
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 const Text(
-    //                   "Age: ",
-    //                   style:
-    //                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //                 ),
-    //                 Flexible(
-    //                   fit: FlexFit.loose,
-    //                   child: Text(
-    //                     "$age",
-    //                     style: const TextStyle(fontSize: 14),
-    //                     softWrap: true,
-    //                   ),
-    //                 ),
-    //                 // Text(
-    //                 //   "${cheifcomplaint}",
-    //                 //   style: TextStyle(fontSize: 14),
-
-    //                 // ),
-    //               ],
-    //             ),
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 const Text(
-    //                   "Gender: ",
-    //                   style:
-    //                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //                 ),
-    //                 Flexible(
-    //                   fit: FlexFit.loose,
-    //                   child: Text(
-    //                     "$gender",
-    //                     style: const TextStyle(fontSize: 14),
-    //                     softWrap: true,
-    //                   ),
-    //                 ),
-    //                 // Text(
-    //                 //   "${cheifcomplaint}",
-    //                 //   style: TextStyle(fontSize: 14),
-
-    //                 // ),
-    //               ],
-    //             ),
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 const Text(
-    //                   "Phone: ",
-    //                   style:
-    //                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //                 ),
-    //                 Flexible(
-    //                   fit: FlexFit.loose,
-    //                   child: Text(
-    //                     "$phone",
-    //                     style: const TextStyle(fontSize: 14),
-    //                     softWrap: true,
-    //                   ),
-    //                 ),
-    //                 // Text(
-    //                 //   "${cheifcomplaint}",
-    //                 //   style: TextStyle(fontSize: 14),
-
-    //                 // ),
-    //               ],
-    //             ),
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 const Text(
-    //                   "Date of birth: ",
-    //                   style:
-    //                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //                 ),
-    //                 Flexible(
-    //                   fit: FlexFit.loose,
-    //                   child: Text(
-    //                     "$dob",
-    //                     style: const TextStyle(fontSize: 14),
-    //                     softWrap: true,
-    //                   ),
-    //                 ),
-    //                 // Text(
-    //                 //   "${cheifcomplaint}",
-    //                 //   style: TextStyle(fontSize: 14),
-
-    //                 // ),
-    //               ],
-    //             ),
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 const Text(
-    //                   "Email: ",
-    //                   style:
-    //                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //                 ),
-    //                 Flexible(
-    //                   fit: FlexFit.loose,
-    //                   child: Text(
-    //                     "$email",
-    //                     style: const TextStyle(fontSize: 14),
-    //                     softWrap: true,
-    //                   ),
-    //                 ),
-    //                 if (createdbydoctor != '')
-    //                   Row(
-    //                     crossAxisAlignment: CrossAxisAlignment.start,
-    //                     children: [
-    //                       const Text(
-    //                         "Created By Doctor: ",
-    //                         style: TextStyle(
-    //                             fontSize: 14, fontWeight: FontWeight.bold),
-    //                       ),
-    //                       Flexible(
-    //                         fit: FlexFit.loose,
-    //                         child: Text(
-    //                           "$createdbydoctor -",
-    //                           style: const TextStyle(fontSize: 14),
-    //                           softWrap: true,
-    //                         ),
-    //                       ),
-    //                       Text(
-    //                         "$createdbydoctorid",
-    //                         style: TextStyle(fontSize: 14),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                 if (createdbydoctor == '')
-    //                   Row(
-    //                     crossAxisAlignment: CrossAxisAlignment.start,
-    //                     children: [
-    //                       const Text(
-    //                         "Created By Admin: ",
-    //                         style: TextStyle(
-    //                             fontSize: 14, fontWeight: FontWeight.bold),
-    //                       ),
-    //                       Flexible(
-    //                         fit: FlexFit.loose,
-    //                         child: Text(
-    //                           "$createdbyadmin -",
-    //                           style: const TextStyle(fontSize: 14),
-    //                           softWrap: true,
-    //                         ),
-    //                       ),
-    //                       Text(
-    //                         "${createdbyadminid}",
-    //                         style: TextStyle(fontSize: 14),
-    //                       ),
-    //                     ],
-    //                   ),
-
-    //                 // Text(
-    //                 //   "${cheifcomplaint}",
-    //                 //   style: TextStyle(fontSize: 14),
-
-    //                 // ),
-    //               ],
-    //             ),
-    //             Divider(
-    //               height: 1,
-    //             ),
-    //             SizedBox(
-    //               height: 4,
-    //             ),
-    //             Divider(
-    //               height: 1,
-    //             ),
-    //             const Text(
-    //               "Complaint Details",
-    //               style: TextStyle(
-    //                 fontSize: 20,
-    //                 fontWeight: FontWeight.bold,
-    //               ),
-    //             ),
-    //             IconButton(
-    //                 onPressed: () {
-    //                   context.router.pop();
-    //                 },
-    //                 icon: const Icon(Icons.close))
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           height: 10,
-    //         ),
-    //         Row(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             const Text(
-    //               "Chief Complaint: ",
-    //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //             ),
-    //             Flexible(
-    //               fit: FlexFit.loose,
-    //               child: Text(
-    //                 "$cheifcomplaint",
-    //                 style: const TextStyle(fontSize: 14),
-    //                 softWrap: true,
-    //               ),
-    //             ),
-    //             // Text(
-    //             //   "${cheifcomplaint}",
-    //             //   style: TextStyle(fontSize: 14),
-
-    //             // ),
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           height: 8,
-    //         ),
-    //         Row(
-    //           children: [
-    //             const Text(
-    //               "Consulting Doctor: ",
-    //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //             ),
-    //             Flexible(
-    //               fit: FlexFit.loose,
-    //                 child: Text(
-    //               consultingdoctor,
-    //               style: TextStyle(fontSize: 14),
-    //               softWrap: true,
-    //             )),
-    //             Text(
-    //               "- $consultingdocid",
-    //               style: TextStyle(fontSize: 14),
-    //             ),
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           height: 8,
-    //         ),
-    //         Row(
-    //           children: [
-    //             const Text(
-    //               "Visiting Doctor: ",
-    //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //             ),
-    //             Flexible(
-    //               fit: FlexFit.loose,
-    //                 child: Text(
-    //               visitingdoctor,
-    //               style: TextStyle(fontSize: 14),
-    //               softWrap: true,
-    //             )),
-    //             Text(
-    //               "- $visitingdocid",
-    //               style: TextStyle(fontSize: 14),
-    //             ),
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           height: 8,
-    //         ),
-    //         Row(
-    //           children: [
-    //             const Text(
-    //               "Duty Doctor: ",
-    //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //             ),
-    //             Flexible(
-    //               fit: FlexFit.loose,
-    //                 child: Text(
-    //               dutydoctor,
-    //               style: TextStyle(fontSize: 14),
-    //               softWrap: true,
-    //             )),
-    //             Text(
-    //               "- $dutydocid",
-    //               style: TextStyle(fontSize: 14),
-    //             ),
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           height: 8,
-    //         ),
-    //         Row(
-    //           children: [
-    //             const Text(
-    //               "Associated Staff: ",
-    //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //             ),
-    //             Flexible(
-    //               fit: FlexFit.loose,
-    //                 child: Text(
-    //               associatedstaff,
-    //               style: TextStyle(fontSize: 14),
-    //               softWrap: true,
-    //             )),
-    //             Text(
-    //               "- $supportingstaffid",
-    //               style: TextStyle(fontSize: 14),
-    //             ),
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           height: 8,
-    //         ),
-    //         Row(
-    //           children: [
-    //             const Text(
-    //               "Visit Date: ",
-    //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //             ),
-    //             Text("${visitdate}", style: TextStyle(fontSize: 14)),
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           height: 8,
-    //         ),
-    //         // Row(
-    //         //   children: [
-    //         //     const Text(
-    //         //       "Creation Time: ",
-    //         //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    //         //     ),
-    //         //     Text("${createdat}", style: TextStyle(fontSize: 14)),
-    //         //   ],
-    //         // ),
-    //         // const SizedBox(
-    //         //   height: 8,
-    //         // ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

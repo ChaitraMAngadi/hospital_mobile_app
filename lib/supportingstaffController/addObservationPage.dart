@@ -246,13 +246,42 @@ class VitalControllers {
   }
 }
 
-class VitalsFieldSet extends StatelessWidget {
+class VitalsFieldSet extends StatefulWidget {
   final VitalControllers controllers;
 
   const VitalsFieldSet({
     Key? key,
     required this.controllers,
   }) : super(key: key);
+
+  @override
+  State<VitalsFieldSet> createState() => _VitalsFieldSetState();
+}
+
+class _VitalsFieldSetState extends State<VitalsFieldSet> {
+  bool isValueEnabled = false;
+
+ @override
+  void initState() {
+    super.initState();
+    // Listen to changes in name field
+    widget.controllers.nameController.addListener(_checkNameField);
+  }
+
+   void _checkNameField() {
+    final isNotEmpty = widget.controllers.nameController.text.trim().isNotEmpty;
+    if (isNotEmpty != isValueEnabled) {
+      setState(() {
+        isValueEnabled = isNotEmpty;
+      });
+    }
+  }
+
+    @override
+  void dispose() {
+    widget.controllers.nameController.removeListener(_checkNameField);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +291,7 @@ class VitalsFieldSet extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              controller: controllers.nameController,
+              controller: widget.controllers.nameController,
               decoration: const InputDecoration(
                 hintText: 'Name (e.g. Temperature)',
                 border: OutlineInputBorder(),
@@ -272,7 +301,8 @@ class VitalsFieldSet extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
-              controller: controllers.valueController,
+              controller: widget.controllers.valueController,
+              enabled: isValueEnabled,
               decoration: const InputDecoration(
                 hintText: 'Value (e.g. 101°F)',
                 border: OutlineInputBorder(),

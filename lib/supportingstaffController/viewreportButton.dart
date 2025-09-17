@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/doctorController/patientInVisit/diagnosisPdfViewerPage.dart';
+import 'package:hospital_mobile_app/supportingstaffController/viewReportPdfViewerPage.dart';
 
-class DownloadInvisitPdfButton extends StatelessWidget {
+class ViewreportInvisitPdfButton extends StatelessWidget {
   final String patientId;
   final String complaintId;
   final String diagnosisId;
 
-  const DownloadInvisitPdfButton({
+  const ViewreportInvisitPdfButton({
     required this.patientId,
      required this.complaintId,
     required this.diagnosisId,
@@ -38,9 +38,10 @@ class DownloadInvisitPdfButton extends StatelessWidget {
        Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DiagnosisPdfViewerPage(
+            builder: (context) => ViewreportPdfViewerPage(
               complaintId: complaintId,
-              patientId: patientId, diagnosisId: diagnosisId,
+              patientId: patientId, 
+              diagnosisId: diagnosisId,
             ),
           ),
         ),

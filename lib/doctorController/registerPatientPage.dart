@@ -113,7 +113,7 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _emailController,
-                    // autovalidateMode: AutovalidateMode.onUserInteraction,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
                           RegExp(r'[a-zA-Z0-9.@]')),
@@ -124,7 +124,8 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                       }
 
                       const emailRegex =
-                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|in|io|co|me|info|biz|xyz)$';
+                          // r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
                       if (!RegExp(emailRegex).hasMatch(value!)) {
                         return 'Enter a valid email address';
                       }
@@ -272,19 +273,23 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      style: const ButtonStyle(
-                        padding: WidgetStatePropertyAll(
+                      style:  ButtonStyle(
+                        padding: const WidgetStatePropertyAll(
                             EdgeInsets.symmetric(vertical: 14)),
-                        backgroundColor:
-                            WidgetStatePropertyAll(Color(0XFF0857C0)),
-                        shape: WidgetStatePropertyAll(
+                        backgroundColor:doctorprovider.addingpatient? const WidgetStatePropertyAll(Colors.grey):
+                            const WidgetStatePropertyAll(Color(0XFF0857C0)),
+                        shape: const WidgetStatePropertyAll(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(14)),
                           ),
                         ),
                       ),
-                      onPressed: () async {
+                      onPressed:doctorprovider.addingpatient? null :() async {
                         if (formkey.currentState!.validate()) {
+
+                          setState(() {
+                            doctorprovider.addingpatient = true;
+                          });
                           await doctorprovider.addpatient(
                               _nameController.text,
                               _phoneController.text,
@@ -298,7 +303,7 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                           // patientpageprovider.notify();
                         }
                       },
-                      child: const Text(
+                      child:doctorprovider.addingpatient? CircularProgressIndicator(): const Text(
                         'Register Patient',
                         style: TextStyle(
                             color: Colors.white,

@@ -321,9 +321,9 @@ Future<void> getallpatientdiagnosis(String id, String invisitid) async {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        print(responseData);
+        print("responseData: $responseData" );
         invisitId = json.decode(response.body)['invisitId'];
-        print(invisitId);
+        // print(invisitId);
         patientobservations =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
 

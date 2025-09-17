@@ -235,6 +235,8 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
                             const SizedBox(height: 8),
                             TextFormField(
                               controller: _emailController,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'[a-zA-Z0-9.@]')),
@@ -244,8 +246,11 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
                                   return null;
                                 }
 
-                                const emailRegex =
-                                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                                 const emailRegex =
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|in|io|co|me|info|biz|xyz)$';
+
+                                // const emailRegex =
+                                //     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
                                 if (!RegExp(emailRegex).hasMatch(value!)) {
                                   return 'Enter a valid email address';
                                 }
@@ -398,20 +403,23 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                style: const ButtonStyle(
-                                  padding: WidgetStatePropertyAll(
+                                style:  ButtonStyle(
+                                  padding: const WidgetStatePropertyAll(
                                       EdgeInsets.symmetric(vertical: 14)),
-                                  backgroundColor:
-                                      WidgetStatePropertyAll(Color(0XFF0857C0)),
-                                  shape: WidgetStatePropertyAll(
+                                  backgroundColor: adminprovider.editingpatient ? const WidgetStatePropertyAll(Colors.grey):
+                                      const WidgetStatePropertyAll(Color(0XFF0857C0)),
+                                  shape: const WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(14)),
                                     ),
                                   ),
                                 ),
-                                onPressed: () async {
+                                onPressed:adminprovider.editingpatient? null : () async {
                                   if (formkey.currentState!.validate()) {
+                                    setState(() {
+                                      adminprovider.editingpatient = true;
+                                    });
                                     await adminprovider.editpatient(
                                       widget.patientId,
                                       _nameController.text,
@@ -427,7 +435,7 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
                                     // patientpageprovider.notify();
                                   }
                                 },
-                                child: const Text(
+                                child:adminprovider.editingpatient? CircularProgressIndicator(): const Text(
                                   'Edit Patient',
                                   style: TextStyle(
                                       color: Colors.white,

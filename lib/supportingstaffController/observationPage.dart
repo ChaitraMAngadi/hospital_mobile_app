@@ -10,6 +10,7 @@ import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/supportingstaffController/viewreportButton.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -560,7 +561,7 @@ class DiagnosisModel extends StatelessWidget {
                 // SizedBox(
                 //   width: 20,
                 // ),
-                DownloadInvisitPdfButton(
+                ViewreportInvisitPdfButton(
                   patientId: patientId,
                   complaintId: complaintId,
                   diagnosisId: diagnosisId,

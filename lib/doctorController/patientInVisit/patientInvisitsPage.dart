@@ -204,7 +204,7 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 16),
                                         child: Text(
-                                          "No Invisits for thsi pateint \nPlaese add Invisit",
+                                          "No Invisits for this pateint \nPlaese add Invisit",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -723,9 +723,11 @@ class InVisitViewModel extends StatelessWidget {
                 )),
               ],
             ),
+            if(visitingdoctor.isNotEmpty)
             const SizedBox(
               height: 8,
             ),
+            if(visitingdoctor.isNotEmpty)
             Row(
               children: [
                 const Text(
@@ -740,9 +742,11 @@ class InVisitViewModel extends StatelessWidget {
                 )),
               ],
             ),
+            if(dutydoctor.isNotEmpty)
             const SizedBox(
               height: 8,
             ),
+            if(dutydoctor.isNotEmpty)
             Row(
               children: [
                 const Text(
@@ -757,9 +761,11 @@ class InVisitViewModel extends StatelessWidget {
                 )),
               ],
             ),
+            if(associatedstaff.isNotEmpty)
             const SizedBox(
               height: 8,
             ),
+            if(associatedstaff.isNotEmpty)
             Row(
               children: [
                 const Text(

@@ -33,6 +33,8 @@ class Adminprovider extends ChangeNotifier {
        bool addinginvisit = false;
        bool addingoutvisit = false;  
        bool updatinginvisit = false;
+       bool addingpatient = false;
+       bool editingpatient = false;
 
 
   final SecureStorage secureStorage = SecureStorage();
@@ -181,6 +183,7 @@ Future<void> getPatientsByPage(int page) async {
 
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
+        addingpatient = false;
         print(responseData);
         notifyListeners();
 
@@ -196,6 +199,7 @@ Future<void> getPatientsByPage(int page) async {
         Navigator.pop(context);
       } else {
         print(response.body);
+        addingpatient = false;
         final responseData = jsonDecode(response.body);
         final snackbar = SnackBar(
             backgroundColor: Colors.red[400],
@@ -206,6 +210,7 @@ Future<void> getPatientsByPage(int page) async {
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
       }
     } catch (e) {
+      addingpatient = false;
       final error = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(error);
     }
@@ -225,6 +230,7 @@ Future<void> getPatientsByPage(int page) async {
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body)['data'];
+
         if (data is List) {
           patientdetails = List<Map<String, dynamic>>.from(data);
           notifyListeners();
@@ -255,16 +261,17 @@ Future<void> getPatientsByPage(int page) async {
         "name": name,
         "gender": gender,
         "DOB": dob,
-        "phone": phone
+        "phone": phone,
+        "email": email,
       };
 
       // if (phone.isNotEmpty) {
       //   requestBody["memberphone"] = phone;
       // }
 
-      if (email.isNotEmpty) {
-        requestBody["email"] = email;
-      }
+      // if (email.isNotEmpty) {
+      //   requestBody["email"] = email;
+      // }
 
       String url = "${Constants.baseUrl}/api/v1/hospitaladmin/editpatient/$id";
       final response = await http.put(
@@ -278,8 +285,9 @@ Future<void> getPatientsByPage(int page) async {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        editingpatient = false;
         await getpatient(id);
-
+        
         notifyListeners();
         print(responseData);
         final msg = SnackBar(
@@ -296,6 +304,7 @@ Future<void> getPatientsByPage(int page) async {
         notifyListeners();
       } else {
         final responseData = jsonDecode(response.body);
+       editingpatient = false;
         final msg = SnackBar(
             backgroundColor: Colors.red[400],
             content: Text(
@@ -305,6 +314,7 @@ Future<void> getPatientsByPage(int page) async {
         ScaffoldMessenger.of(context).showSnackBar(msg);
       }
     } catch (e) {
+      editingpatient = false;
       final error = SnackBar(
           backgroundColor: Colors.red[400], content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(error);
@@ -657,6 +667,8 @@ Future<void> getdoctorsnurses() async {
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
         getpatientinvisits(patientId);
+        getinvisitbyid(patientId,complaintId);
+        
         getactiveinvisits();
 
         notifyListeners();

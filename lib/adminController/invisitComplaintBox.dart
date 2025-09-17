@@ -103,7 +103,15 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                   items: widget.alldoctors,
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedConsultingDoctor,
-                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  popupProps: PopupProps.menu(
+                    showSearchBox: true,
+                    showSelectedItems: false,
+                    constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height *
+                            widget.alldoctors.length), // limit size
+                    fit: FlexFit.loose, // don’t stretch
+                  ),
+                  // popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Consulting Doctor",
@@ -116,7 +124,7 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                       ),
                     ),
                   ),
-                           validator: (value) {
+                  validator: (value) {
                     if (value == null) {
                       return "Please select a Consulting Doctor";
                     }
@@ -154,7 +162,15 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                       .toList(),
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedDutyDoctor,
-                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  popupProps: PopupProps.menu(
+                    showSearchBox: true,
+                    showSelectedItems: false,
+                    constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height *
+                            widget.alldoctors.length), // limit size
+                    fit: FlexFit.loose, // don’t stretch
+                  ),
+                  // popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Duty Doctor",
@@ -194,7 +210,15 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                       .toList(),
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedVisitingDoctor,
-                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  popupProps: PopupProps.menu(
+                    showSearchBox: true,
+                    showSelectedItems: false,
+                    constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height *
+                            widget.alldoctors.length), // limit size
+                    fit: FlexFit.loose, // don’t stretch
+                  ),
+                  // popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Visiting Doctor",
@@ -233,7 +257,15 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                   itemAsString: (nurse) =>
                       "${nurse['name']} | ${nurse['userid']}",
                   selectedItem: selectedNurse,
-                  popupProps: const PopupProps.menu(showSearchBox: true),
+                  popupProps: PopupProps.menu(
+                    showSearchBox: true,
+                    showSelectedItems: false,
+                    constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height *
+                            widget.alldoctors.length), // limit size
+                    fit: FlexFit.loose, // don’t stretch
+                  ),
+                  // popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       hintText: "Select Nurse",
@@ -259,34 +291,39 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed:adminprovider.addinginvisit? null : () async {
-                      if (formkey.currentState!.validate()) {
-                         setState(() {
-                                  adminprovider.addinginvisit = true;
-                                });
-                        debugPrint("Complaint: ${complaintController.text}");
-                        debugPrint(
-                            "Consulting Doctor ID: ${selectedConsultingDoctor?['userid']}");
-                        debugPrint(
-                            "Duty Doctor ID: ${selectedDutyDoctor?['userid']}");
-                        debugPrint(
-                            "Visiting Doctor ID: ${selectedVisitingDoctor?['userid']}");
-                        debugPrint("Nurse ID: ${selectedNurse?['userid']}");
+                    onPressed: adminprovider.addinginvisit
+                        ? null
+                        : () async {
+                            if (formkey.currentState!.validate()) {
+                              setState(() {
+                                adminprovider.addinginvisit = true;
+                              });
+                              debugPrint(
+                                  "Complaint: ${complaintController.text}");
+                              debugPrint(
+                                  "Consulting Doctor ID: ${selectedConsultingDoctor?['userid']}");
+                              debugPrint(
+                                  "Duty Doctor ID: ${selectedDutyDoctor?['userid']}");
+                              debugPrint(
+                                  "Visiting Doctor ID: ${selectedVisitingDoctor?['userid']}");
+                              debugPrint(
+                                  "Nurse ID: ${selectedNurse?['userid']}");
 
-                        adminprovider.addinvisit(
-                          widget.patientId,
-                          complaintController.text,
-                          selectedConsultingDoctor?['userid'] ?? '',
-                          selectedVisitingDoctor?['userid'] ?? '',
-                          selectedDutyDoctor?['userid'] ?? '',
-                          selectedNurse?['userid'] ?? '',
-                          context,
-                        
-                        );
-                      }
-                    },
+                              adminprovider.addinvisit(
+                                widget.patientId,
+                                complaintController.text,
+                                selectedConsultingDoctor?['userid'] ?? '',
+                                selectedVisitingDoctor?['userid'] ?? '',
+                                selectedDutyDoctor?['userid'] ?? '',
+                                selectedNurse?['userid'] ?? '',
+                                context,
+                              );
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:adminprovider.addinginvisit?Colors.grey.shade300: const Color(0xFF0857C0),
+                      backgroundColor: adminprovider.addinginvisit
+                          ? Colors.grey.shade300
+                          : const Color(0xFF0857C0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

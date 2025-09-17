@@ -123,8 +123,11 @@ class _RegisterNewPatientPageState extends State<RegisterNewPatientPage> {
                         return null; // No error for empty value
                       }
 
-                      const emailRegex =
-                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                       const emailRegex =
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|in|io|co|me|info|biz|xyz)$';
+
+                      // const emailRegex =
+                      //     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
                       if (!RegExp(emailRegex).hasMatch(value!)) {
                         return 'Enter a valid email address';
                       }
@@ -272,19 +275,22 @@ class _RegisterNewPatientPageState extends State<RegisterNewPatientPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      style: const ButtonStyle(
-                        padding: WidgetStatePropertyAll(
+                      style:  ButtonStyle(
+                        padding: const WidgetStatePropertyAll(
                             EdgeInsets.symmetric(vertical: 14)),
-                        backgroundColor:
-                            WidgetStatePropertyAll(Color(0XFF0857C0)),
-                        shape: WidgetStatePropertyAll(
+                        backgroundColor: adminprovider.addingpatient? const WidgetStatePropertyAll( Colors.grey):
+                            const WidgetStatePropertyAll(Color(0XFF0857C0)),
+                        shape: const WidgetStatePropertyAll(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(14)),
                           ),
                         ),
                       ),
-                      onPressed: () async {
+                      onPressed: adminprovider.addingpatient? null: () async {
                         if (formkey.currentState!.validate()) {
+                          setState(() {
+                            adminprovider.addingpatient = true;
+                          });
                           await adminprovider.addpatient(
                               _nameController.text,
                               _phoneController.text,
@@ -298,7 +304,7 @@ class _RegisterNewPatientPageState extends State<RegisterNewPatientPage> {
                           // patientpageprovider.notify();
                         }
                       },
-                      child: const Text(
+                      child:adminprovider.addingpatient? CircularProgressIndicator(): const Text(
                         'Register Patient',
                         style: TextStyle(
                             color: Colors.white,

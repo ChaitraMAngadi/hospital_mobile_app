@@ -34,6 +34,8 @@ class Doctorprovider extends ChangeNotifier {
        bool isSavingIndiagnosis = false;
         bool addinginvisit = false;
        bool addingoutvisit = false;  
+       bool addingpatient = false;
+       bool editingpatient = false;
 
 
 
@@ -183,6 +185,7 @@ Future<void> getPatientsByPage(int page) async {
 
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
+        addingpatient = false;
         print(responseData);
         notifyListeners();
 
@@ -206,10 +209,14 @@ Future<void> getPatientsByPage(int page) async {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ));
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        addingpatient = false;
+        notifyListeners();
       }
     } catch (e) {
       final error = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(error);
+      addingpatient = false;
+      notifyListeners();
     }
   }
 
@@ -257,7 +264,7 @@ Future<void> getPatientsByPage(int page) async {
         "name": name,
         "gender": gender,
         "DOB": dob,
-        
+        "email": email,
         "phone": phone
       };
 
@@ -265,9 +272,9 @@ Future<void> getPatientsByPage(int page) async {
       //   requestBody["memberphone"] = phone;
       // }
 
-      if (email.isNotEmpty) {
-        requestBody["email"] = email;
-      }
+      // if (email.isNotEmpty) {
+      //   requestBody["email"] = email;
+      // }
 
       String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/editpatient/$id";
       final response = await http.put(
@@ -281,6 +288,7 @@ Future<void> getPatientsByPage(int page) async {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        editingpatient = false;
         await getpatient(id);
 
         notifyListeners();
@@ -299,6 +307,7 @@ Future<void> getPatientsByPage(int page) async {
         notifyListeners();
       } else {
         final responseData = jsonDecode(response.body);
+        editingpatient = false;
         final msg = SnackBar(
             backgroundColor: Colors.red[400],
             content: Text(
@@ -308,6 +317,7 @@ Future<void> getPatientsByPage(int page) async {
         ScaffoldMessenger.of(context).showSnackBar(msg);
       }
     } catch (e) {
+      editingpatient = false;
       final error = SnackBar(
           backgroundColor: Colors.red[400], content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(error);
