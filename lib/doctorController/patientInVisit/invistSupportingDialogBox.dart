@@ -2,12 +2,13 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_saver_updated/gallery_saver.dart';
+// import 'package:gallery_saver_updated/gallery_saver.dart';
 import 'package:hospital_mobile_app/doctorController/pdfViewPage.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 
 class InvisitSupportingFilesDialogBox extends StatefulWidget {
@@ -168,32 +169,68 @@ class _InvisitSupportingFilesDialogBoxState extends State<InvisitSupportingFiles
     );
   }
 
-  void downloadImage(String url, String filename) async {
-    try {
-      log('url: $url');
+  // void downloadImage(String url, String filename) async {
+  //   try {
+  //     log('url: $url');
 
-      final bytes = (await get(Uri.parse(url))).bodyBytes;
-      final dir = await getTemporaryDirectory();
+  //     final bytes = (await get(Uri.parse(url))).bodyBytes;
+  //     final dir = await getTemporaryDirectory();
 
-      final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+  //     final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
 
-      log('filePath: ${file.path}');
-      //save image to gallery
-      await GallerySaver.saveImage(file.path, albumName: 'Hospital Management')
-          .then((success) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.green.shade300,
-          content: const Text('Image Downloaded to Gallery!'),
-        ));
-      });
-    } catch (e) {
+  //     log('filePath: ${file.path}');
+  //     //save image to gallery
+  //     await GallerySaver.saveImage(file.path, albumName: 'Hospital Management')
+  //         .then((success) {
+  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         backgroundColor: Colors.green.shade300,
+  //         content: const Text('Image Downloaded to Gallery!'),
+  //       ));
+  //     });
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       backgroundColor: Colors.red.shade300,
+  //       content: const Text('Something went wrong'),
+  //     ));
+  //     log('downloadImageE: $e');
+  //   }
+  // }
+
+  Future<void> downloadImage(BuildContext context, String url, String filename) async {
+  try {
+    log('url: $url');
+
+    final bytes = (await get(Uri.parse(url))).bodyBytes;
+    final dir = await getTemporaryDirectory();
+
+    final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+
+    log('filePath: ${file.path}');
+
+    // Save image to gallery (with custom album)
+    final result = await SaverGallery.saveFile(
+      file: file.path,
+      name: filename,
+      androidRelativePath: 'Pictures/Hospital Management',
+      androidExistNotSave: false,
+    );
+
+    if (result.isSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red.shade300,
-        content: const Text('Something went wrong'),
+        backgroundColor: Colors.green.shade300,
+        content: const Text('Image Downloaded to Gallery!'),
       ));
-      log('downloadImageE: $e');
+    } else {
+      throw Exception(result.errorMessage);
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.red.shade300,
+      content: const Text('Something went wrong'),
+    ));
+    log('downloadImageE: $e');
   }
+}
 
   void shareImage(String url, String filename) async {
     try {
@@ -232,7 +269,7 @@ class _InvisitSupportingFilesDialogBoxState extends State<InvisitSupportingFiles
                   onPressed: () => shareImage(imageUrl, filename),
                   icon: const Icon(Icons.share)),
               IconButton(
-                  onPressed: () => downloadImage(imageUrl, filename),
+                  onPressed: () => downloadImage(context, imageUrl, filename),
                   icon: const Icon(Icons.download)),
               // IconButton(
               //   onPressed: () {

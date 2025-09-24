@@ -38,19 +38,20 @@ dependencies:
   provider: ^6.1.2
   http: ^1.2.2
   auto_route: ^7.2.0
-  flutter_secure_storage: ^4.2.1
+  flutter_secure_storage: ^9.2.4
   intl: ^0.18.1
-  file_picker: ^5.2.7
+  file_picker: ^8.0.0+1
   dropdown_search: 5.0.6
   flutter_html: ^3.0.0-beta.2
   printing: ^5.11.0
   pdf: ^3.8.2
   shimmer: ^3.0.0
-  gallery_saver_updated: ^3.0.0
-  share_plus: ^6.3.0
+  # gallery_saver_updated: ^3.0.0
+  share_plus: ^7.0.0
   path_provider: ^2.0.14
   permission_handler: ^11.3.1
   flutter_pdfview: 1.2.7
+  saver_gallery: ^3.0.6
 
 
 

@@ -131,7 +131,7 @@ class _DischargePdfViewerPageState extends State<DischargePdfViewerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Diagnosis Report',
+          'Discharge Report',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         // backgroundColor: const Color(0XFF0857C0),
