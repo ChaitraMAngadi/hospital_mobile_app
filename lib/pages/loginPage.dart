@@ -74,6 +74,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/3.png',
+                        height: 80,),
+                      ],
+                    ),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

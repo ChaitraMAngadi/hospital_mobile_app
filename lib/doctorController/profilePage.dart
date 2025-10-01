@@ -350,6 +350,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 style: const TextStyle(
                                                     fontSize: 16),
                                                 softWrap: true,
+                                                textAlign: TextAlign.start,
                                                 overflow: TextOverflow.visible,
                                               ),
                                             ),
@@ -395,7 +396,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             )
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 6,
                                         ),
                                         Row(

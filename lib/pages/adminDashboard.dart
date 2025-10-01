@@ -46,7 +46,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_pin_rounded),
-                  label: 'Active In visits',
+                  label: 'Active InPatients',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),

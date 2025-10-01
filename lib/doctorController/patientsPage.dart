@@ -473,67 +473,83 @@ class ListTileModel extends StatelessWidget {
         
         subtitle:
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton(
-                   style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.blue.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                Expanded(
+                  child: ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                        backgroundColor:Colors.blue.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    ),
-                  onPressed: invisitonTap, child: const Row(children: [
-                  Text("Invisits",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF0857C0),
-                  ),),
-                  SizedBox(width: 4,),
-                  Icon(Icons.open_in_new,
-                  color: Color(0xFF0857C0),),
-                ],)),
-          ElevatedButton(
-                   style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.green.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    onPressed: invisitonTap, child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:
+                     [
+
+                    Text("Invisits",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0857C0),
+                    ),),
+                    SizedBox(width: 4,),
+                    Icon(Icons.open_in_new,
+                    color: Color(0xFF0857C0),),
+                  ],)),
+                ),
+                SizedBox(width: 8),
+          Expanded(
+            child: ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                        backgroundColor:Colors.green.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    ),
-                  onPressed: outvisitonTap,
-                   child:  Row(children: [
-                  Text("Outvisits",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green.shade700,
-                  ),),
-                  SizedBox(width: 4,),
-                  Icon(Icons.open_in_new,
-                  color: Colors.green.shade700,),
-                ],)),
-                ElevatedButton(
-                   style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.brown.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    onPressed: outvisitonTap,
+                     child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                    Text("Outvisits",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade700,
+                    ),),
+                    SizedBox(width: 4,),
+                    Icon(Icons.open_in_new,
+                    color: Colors.green.shade700,),
+                  ],)),
+          ),
+          SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                        backgroundColor:Colors.brown.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    ),
-                  onPressed: editonTap,
-                   child:  Row(children: [
-                  Text("Edit",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown.shade700,
-                  ),),
-                  SizedBox(width: 4,),
-                  Icon(Icons.edit_square,
-                  color: Colors.brown.shade700,),
-                ],)),
+                    onPressed: editonTap,
+                     child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                    Text("Edit",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown.shade700,
+                    ),),
+                    SizedBox(width: 4,),
+                    Icon(Icons.edit_square,
+                    color: Colors.brown.shade700,),
+                  ],)),
+                ),
                 // IconButton(onPressed: editonTap, icon: const Icon(Icons.edit_square,
                 // color:Color(0xFF0857C0) ,))
           

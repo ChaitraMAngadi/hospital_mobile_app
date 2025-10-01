@@ -241,7 +241,7 @@ const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: addMedication,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0857C0),
+                  backgroundColor: const Color(0xFF0857C0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

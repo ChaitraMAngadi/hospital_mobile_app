@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.hospital_mobile_app"
+    namespace "com.ppldoc.hospital_mobile_app"
     compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
@@ -47,7 +47,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.example.hospital_mobile_app"
+        applicationId "com.ppldoc.hospital_mobile_app"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()

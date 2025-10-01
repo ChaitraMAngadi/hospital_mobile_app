@@ -479,89 +479,99 @@ class ActiveInvisitModel extends StatelessWidget {
               height: 16,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton(
-                       style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.green.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    Expanded(
+                      child: ElevatedButton(
+                         style: ElevatedButton.styleFrom(
+                        backgroundColor:Colors.green.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          onPressed: viewonTap,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('View',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.green.shade800,
+                              ),),
+                              SizedBox(width: 4,),
+                               Icon(
+                                Icons.remove_red_eye_outlined,
+                                 color: Colors.green.shade800,
+                              ),
+                            ],
+                          )),
                     ),
-                        onPressed: viewonTap,
-                        child: Row(
-                          children: [
-                            Text('View',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.green.shade800,
-                            ),),
-                            SizedBox(width: 4,),
-                             Icon(
-                              Icons.remove_red_eye_outlined,
-                               color: Colors.green.shade800,
-                            ),
-                          ],
-                        )),
                     SizedBox(
-                      width: 6,
+                      width: 8,
                     ),
-                    ElevatedButton(
-                       style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.deepOrange.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    Expanded(
+                      child: ElevatedButton(
+                         style: ElevatedButton.styleFrom(
+                        backgroundColor:Colors.deepOrange.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          onPressed: editonTap,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Edit',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.deepOrange.shade800,
+                              ),),
+                              SizedBox(width: 4,),
+                               Icon(
+                                Icons.edit,
+                                color: Colors.deepOrange.shade800,
+                              ),
+                            ],
+                          )),
                     ),
-                        onPressed: editonTap,
-                        child: Row(
-                          children: [
-                            Text('Edit',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.deepOrange.shade800,
-                            ),),
-                            SizedBox(width: 4,),
-                             Icon(
-                              Icons.edit,
-                              color: Colors.deepOrange.shade800,
-                            ),
-                          ],
-                        )),
                         SizedBox(
-                      width: 6,
+                      width: 8,
                     ),
-                    ElevatedButton(
-                       style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.blue.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                         style: ElevatedButton.styleFrom(
+                        backgroundColor:Colors.blue.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          onPressed: viewallvisitsonTap,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('All invisits',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.blue.shade800,
+                              ),),
+                              SizedBox(width: 4,),
+                               Icon(
+                                Icons.open_in_new,
+                                color: Colors.blue.shade800,
+                              ),
+                            ],
+                          )),
                     ),
-                        onPressed: viewallvisitsonTap,
-                        child: Row(
-                          children: [
-                            Text('All invisits',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.blue.shade800,
-                            ),),
-                            SizedBox(width: 4,),
-                             Icon(
-                              Icons.open_in_new,
-                              color: Colors.blue.shade800,
-                            ),
-                          ],
-                        )),
                     
                    
                   ],
