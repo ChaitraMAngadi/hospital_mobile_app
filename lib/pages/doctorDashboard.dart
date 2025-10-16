@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/doctorController/activeInvisitsPage.dart';
+import 'package:hospital_mobile_app/doctorController/importPatientPage.dart';
 import 'package:hospital_mobile_app/doctorController/todaysOutVisitsPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientsPage.dart';
 import 'package:hospital_mobile_app/doctorController/profilePage.dart';
@@ -22,6 +23,7 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
     const PatientsPage(),
     const TodaysOutvisitsPage(),
     const ActiveInvisitsPage(),
+  
     const ProfilePage(),
   ];
   // [

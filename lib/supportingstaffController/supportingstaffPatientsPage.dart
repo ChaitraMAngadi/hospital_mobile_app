@@ -457,7 +457,7 @@ class ListTileModel extends StatelessWidget {
                           EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     ),
                   onPressed: invisitonTap, child: const Row(children: [
-                  Text("Invisits",
+                  Text("Inpatients",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF0857C0),

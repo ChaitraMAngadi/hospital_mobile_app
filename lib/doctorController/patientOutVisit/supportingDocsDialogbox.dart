@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-// import 'package:gallery_saver_updated/gallery_saver.dart';
 import 'package:hospital_mobile_app/doctorController/pdfViewPage.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:http/http.dart';
@@ -50,8 +49,6 @@ class _OutvisitSupportingFilesDialogBoxState extends State<OutvisitSupportingFil
     
     _shimmerController.repeat();
     
-    // Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    // fetchSupportingFiles = doctorprovider.getoutvisitsupportingfiles(widget.patientId, widget.complaintId);
   }
 
   @override
@@ -170,32 +167,7 @@ class _OutvisitSupportingFilesDialogBoxState extends State<OutvisitSupportingFil
     );
   }
 
-  // void downloadImage(String url, String filename) async {
-  //   try {
-  //     log('url: $url');
 
-  //     final bytes = (await get(Uri.parse(url))).bodyBytes;
-  //     final dir = await getTemporaryDirectory();
-
-  //     final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
-
-  //     log('filePath: ${file.path}');
-  //     //save image to gallery
-  //     await GallerySaver.saveImage(file.path, albumName: 'Hospital Management')
-  //         .then((success) {
-  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         backgroundColor: Colors.green.shade300,
-  //         content: const Text('Image Downloaded to Gallery!'),
-  //       ));
-  //     });
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       backgroundColor: Colors.red.shade300,
-  //       content: const Text('Something went wrong'),
-  //     ));
-  //     log('downloadImageE: $e');
-  //   }
-  // }
 
   Future<void> downloadImage(BuildContext context, String url, String filename) async {
   try {
@@ -272,26 +244,7 @@ class _OutvisitSupportingFilesDialogBoxState extends State<OutvisitSupportingFil
               IconButton(
                   onPressed: () => downloadImage(context, imageUrl, filename),
                   icon: const Icon(Icons.download)),
-              // IconButton(
-              //   onPressed: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => SupportingFilesAi(
-              //           patientId: widget.patientId,
-              //           complaintId: widget.complaintId,
-              //           fileUrl: imageUrl,
-              //         ),
-              //       ),
-              //     );
-              //   },
-              //   icon:
-              //   SvgPicture.asset('assets/images/iconai.svg',
-              //   height: 30,
-              //   width: 40,
-              //   )
-              //   //  const Icon(Icons.lightbulb),
-              // ),
+             
             ],
           ),
           body: Center(

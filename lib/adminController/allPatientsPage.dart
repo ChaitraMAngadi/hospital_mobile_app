@@ -484,7 +484,7 @@ class ListTileModel extends StatelessWidget {
                     onPressed: invisitonTap, child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                    Text("Invisits",
+                    Text("Inpatient",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF0857C0),
@@ -507,7 +507,7 @@ class ListTileModel extends StatelessWidget {
                    child:  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                  Text("Outvisits",
+                  Text("Outpatient",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.green.shade700,

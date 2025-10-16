@@ -24,9 +24,14 @@ class Doctorprovider extends ChangeNotifier {
     List<Map<String, dynamic>> filteredactiveinvisits = [];
     List<Map<String, dynamic>> patientdiagnosis = [];
     List<Map<String, dynamic>> patientalldiagnosis = [];
+    List<Map<String, dynamic>> importpatientalldiagnosis = [];
     List<Map<String, dynamic>> patientallobservations = [];
     List<dynamic> outvisitsupportingfiles = [];
     List<dynamic> invisitsupportingfiles = [];
+    List<Map<String, dynamic>> allsharedpatients = [];
+    List<Map<String, dynamic>> filteredallsharedpatients = [];
+    List<Map<String, dynamic>> sharedpatientinvisits = [];
+    List<Map<String, dynamic>> sharedpatientoutvisits = [];
 
     String invisitId = '';
        bool isDeleting = false;
@@ -947,6 +952,7 @@ Future<void> dischargeInPatient(
       String patientId,
       String complaintId,
       String dischargesummary,
+      String followupdate,
       BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
@@ -954,6 +960,10 @@ Future<void> dischargeInPatient(
       final Map<String, dynamic> requestBody = {
         "discharge_summary": dischargesummary,
       };
+
+      if (followupdate.isNotEmpty) {
+      requestBody["followup_date"] = followupdate;
+    }
 
 
       final response = await http.post(
@@ -1159,6 +1169,302 @@ Future<void> dischargeInPatient(
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
         Navigator.of(context).pop();
         isDeleting = true;
+        // print(responseData);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+  Future<void> getallsharedpatients() async {
+  
+   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getallsharedpatients";
+
+  Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Constants.doctortoken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+
+      // Get new patients from response
+      List<Map<String, dynamic>> newPatients = json.decode(response.body)['patients'].cast<Map<String, dynamic>>();
+
+      allsharedpatients = newPatients;
+
+
+      // if (page == 1) {
+      //   // First page or new search - replace existing data
+      //   allpatients = newPatients;
+      //   filteredPatients = [...allpatients];
+      // } else {
+      //   // Subsequent pages - append data
+      //   allpatients.addAll(newPatients);
+      //   filteredPatients = [...allpatients];
+      // }
+      
+      notifyListeners();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+    }
+  } catch (e) {
+    print("Exception in getPatientsByPageWithSearch: $e");
+  }
+}
+
+Future<bool> requsetaccess(String phone,String dob, BuildContext context) async {
+    
+    String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/reqpatienthistory";
+    print(url);
+    print(phone);
+    print(dob);
+    // '${Constants.baseUrl}/app/log-in/phone-otp'
+
+      Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+           'Authorization': 'Bearer ${Constants.doctortoken}',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'phone': phone,
+          'DOB': dob,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+
+        final sucessSnackbar = SnackBar(
+            backgroundColor: Colors.green[400],
+            content: Text(
+              'OTP sent sucessfully',
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+
+        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+        return true;
+        // context.router.popAndPush(OtpVerificationRoute());
+      } else {
+        final responseData = jsonDecode(response.body);
+        final snackbar = SnackBar(
+            backgroundColor: Colors.red[400],
+            content: Text(
+              responseData['msg'],
+              style: TextStyle(color: Colors.white),
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      final error = SnackBar(
+          backgroundColor: Colors.red[400], content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(error);
+      return false;
+    }
+  }
+
+  Future<bool> requsetdirectaccess(String phone,String dob, BuildContext context) async {
+    
+    String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/requestpatienthistory8217309343";
+    print(url);
+    print(phone);
+    print(dob);
+
+      Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+           'Authorization': 'Bearer ${Constants.doctortoken}',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'phone': phone,
+          'DOB': dob,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+
+        final sucessSnackbar = SnackBar(
+            backgroundColor: Colors.green[400],
+            content: Text(
+              'Patient data fetched sucessfully',
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+
+        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+         getallsharedpatients();
+         notifyListeners();
+        return true;
+        // context.router.popAndPush(OtpVerificationRoute());
+      } else {
+        final responseData = jsonDecode(response.body);
+        final snackbar = SnackBar(
+            backgroundColor: Colors.red[400],
+            content: Text(
+              responseData['msg'],
+              style: TextStyle(color: Colors.white),
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      final error = SnackBar(
+          backgroundColor: Colors.red[400], content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(error);
+      return false;
+    }
+  }
+
+  Future<void> verifyphoneOtp(
+      String phone,String dob, String otp, BuildContext context) async {
+    String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/verifypatienthistoryotp";
+    print(dob);
+    print(phone);
+    print(otp);
+
+          Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+    try {
+
+        final Map<String, dynamic> requestBody = {
+        'phone': phone,
+          'DOB': dob,
+          'otp': otp,
+      };
+
+print(requestBody);
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+           'Authorization': 'Bearer ${Constants.doctortoken}',
+
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        // Successful POST request, handle the response here
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+        
+
+        final sucessSnackbar = SnackBar(
+            backgroundColor: Colors.green[400],
+            content: Text(
+              responseData['msg'],
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+
+        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+        getallsharedpatients();
+         
+        notifyListeners();
+      } else {
+        final responseData = jsonDecode(response.body);
+        final snackbar = SnackBar(
+            backgroundColor: Colors.red[400],
+            content: Text(responseData['msg'],
+                style: TextStyle(color: Colors.grey[50])));
+       
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        
+      }
+      //  else {
+      //   // result = '';
+
+      //   // If the server returns an error response, throw an exception
+      //   Constants.otpverification = false;
+      //   throw Exception(response.body);
+      // }
+    } catch (e) {
+      final error = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(error);
+      
+    }
+  }
+
+  Future<void> getsharedpatientinoutvisits(String patientid) async {
+  
+   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getsharedpatientinoutvisits/$patientid";
+
+  Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Constants.doctortoken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+
+      
+       sharedpatientinvisits = json.decode(response.body)['invisits'].cast<Map<String, dynamic>>();
+       print(sharedpatientinvisits);
+
+sharedpatientoutvisits = json.decode(response.body)['outvisits'].cast<Map<String, dynamic>>();
+      print(sharedpatientoutvisits);
+      
+      notifyListeners();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+    }
+  } catch (e) {
+    print("Exception in getPatientsByPageWithSearch: $e");
+  }
+}
+
+Future<void> getimportpatientalldiagnosis(String id, String invisitId) async {
+    String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getallshareddiagnosis/$id/$invisitId";
+    print(url);
+    // '${Constants.baseUrl}/app/log-in/phone-otp'
+    Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.doctortoken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+        // invisitId = json.decode(response.body)['invisitId'];
+        // print(invisitId);
+        importpatientalldiagnosis =
+            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+
+        notifyListeners();
+      } else if (response.statusCode == 404) {
+        final responseData = jsonDecode(response.body);
         // print(responseData);
       }
     } catch (e) {

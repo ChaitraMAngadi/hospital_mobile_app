@@ -271,25 +271,49 @@ class _PatientsPageState extends State<PatientsPage> {
                 children: [
                   // Register Patient Button
                   Padding(
-                    padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-                    child: ElevatedButton(
-                      // onPressed: (){},
-                      onPressed: () => context.router.push(RegisterPatientRoute()),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF0857C0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          // onPressed: (){},
+                          onPressed: () => context.router.push(ImportPatientsRoute()),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF0857C0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.medical_services, color: Colors.white),
+                              SizedBox(width: 6),
+                              Text("Import Patient", style: TextStyle(fontSize: 16, color: Colors.white)),
+                            ],
+                          ),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.person_add_alt_1_outlined, color: Colors.white),
-                          SizedBox(width: 6),
-                          Text("Register Patient", style: TextStyle(fontSize: 16, color: Colors.white)),
-                        ],
-                      ),
+                        ElevatedButton(
+                          // onPressed: (){},
+                          onPressed: () => context.router.push(RegisterPatientRoute()),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF0857C0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.person_add_alt_1_outlined, color: Colors.white),
+                              SizedBox(width: 6),
+                              Text("Register Patient", style: TextStyle(fontSize: 16, color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   // Search Box
@@ -483,14 +507,14 @@ class ListTileModel extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                            EdgeInsets.symmetric(horizontal: 6, vertical: 12),
                       ),
                     onPressed: invisitonTap, child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children:
                      [
 
-                    Text("Invisits",
+                    Text("Inpatient",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF0857C0),
@@ -509,13 +533,13 @@ class ListTileModel extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                            EdgeInsets.symmetric(horizontal: 6, vertical: 12),
                       ),
                     onPressed: outvisitonTap,
                      child:  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                    Text("Outvisits",
+                    Text("Outpatient",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.green.shade700,
@@ -534,7 +558,7 @@ class ListTileModel extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                            EdgeInsets.symmetric(horizontal: 6, vertical: 12),
                       ),
                     onPressed: editonTap,
                      child:  Row(

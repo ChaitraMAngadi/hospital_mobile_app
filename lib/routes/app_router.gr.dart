@@ -82,6 +82,23 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    ImportPatientsRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ImportPatientsPage(),
+      );
+    },
+    ImportedPatientsVisitRoute.name: (routeData) {
+      final args = routeData.argsAs<ImportedPatientsVisitRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ImportedPatientsVisitPage(
+          key: args.key,
+          patientId: args.patientId,
+          name: args.name,
+        ),
+      );
+    },
     LoginRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -433,6 +450,64 @@ class EditPatientRouteArgs {
   @override
   String toString() {
     return 'EditPatientRouteArgs{key: $key, patientId: $patientId}';
+  }
+}
+
+/// generated route for
+/// [ImportPatientsPage]
+class ImportPatientsRoute extends PageRouteInfo<void> {
+  const ImportPatientsRoute({List<PageRouteInfo>? children})
+      : super(
+          ImportPatientsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ImportPatientsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ImportedPatientsVisitPage]
+class ImportedPatientsVisitRoute
+    extends PageRouteInfo<ImportedPatientsVisitRouteArgs> {
+  ImportedPatientsVisitRoute({
+    Key? key,
+    required String patientId,
+    required String name,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ImportedPatientsVisitRoute.name,
+          args: ImportedPatientsVisitRouteArgs(
+            key: key,
+            patientId: patientId,
+            name: name,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ImportedPatientsVisitRoute';
+
+  static const PageInfo<ImportedPatientsVisitRouteArgs> page =
+      PageInfo<ImportedPatientsVisitRouteArgs>(name);
+}
+
+class ImportedPatientsVisitRouteArgs {
+  const ImportedPatientsVisitRouteArgs({
+    this.key,
+    required this.patientId,
+    required this.name,
+  });
+
+  final Key? key;
+
+  final String patientId;
+
+  final String name;
+
+  @override
+  String toString() {
+    return 'ImportedPatientsVisitRouteArgs{key: $key, patientId: $patientId, name: $name}';
   }
 }
 
