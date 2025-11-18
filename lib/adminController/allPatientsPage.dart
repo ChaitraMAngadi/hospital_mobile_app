@@ -469,9 +469,10 @@ class ListTileModel extends StatelessWidget {
         
         subtitle:
             Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
+                  flex: 3,
                   child: ElevatedButton(
                      style: ElevatedButton.styleFrom(
                         backgroundColor:Colors.blue.shade100,
@@ -493,31 +494,36 @@ class ListTileModel extends StatelessWidget {
                     Icon(Icons.open_in_new,
                     color: Color(0xFF0857C0),),
                   ],)),
-                ),SizedBox(width: 8,),
-          ElevatedButton(
-                   style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.green.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                ),
+                // SizedBox(width: 6,),
+          Expanded(
+            flex: 3,
+            child: ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                        backgroundColor:Colors.green.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                    ),
-                  onPressed: outvisitonTap,
-                   child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                  Text("Outpatient",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green.shade700,
-                  ),),
-                  SizedBox(width: 4,),
-                  Icon(Icons.open_in_new,
-                  color: Colors.green.shade700,),
-                ],)),
-                SizedBox(width: 8,),
+                    onPressed: outvisitonTap,
+                     child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                    Text("Outpatient",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade700,
+                    ),),
+                    SizedBox(width: 4,),
+                    Icon(Icons.open_in_new,
+                    color: Colors.green.shade700,),
+                  ],)),
+          ),
+                // SizedBox(width: 6,),
                 Expanded(
+                  flex: 2,
                   child: ElevatedButton(
                      style: ElevatedButton.styleFrom(
                         backgroundColor:Colors.brown.shade100,

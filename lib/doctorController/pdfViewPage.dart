@@ -1,9 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+// import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -27,7 +28,7 @@ class PdfViewerPage extends StatefulWidget {
 
 class _PdfViewerPageState extends State<PdfViewerPage>
     with SingleTickerProviderStateMixin {
-  PDFViewController? _pdfController;
+  // PDFViewController? _pdfController;
   int _totalPages = 0;
   int _currentPage = 0;
   bool _isLoading = true;
@@ -287,11 +288,11 @@ class _PdfViewerPageState extends State<PdfViewerPage>
     }
   }
 
-  void _goToPage(int page) {
-    if (_pdfController != null && page >= 0 && page < _totalPages) {
-      _pdfController!.setPage(page);
-    }
-  }
+  // void _goToPage(int page) {
+  //   if (_pdfController != null && page >= 0 && page < _totalPages) {
+  //     _pdfController!.setPage(page);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -350,27 +351,33 @@ class _PdfViewerPageState extends State<PdfViewerPage>
                 )
               : Stack(
                   children: [
-                    PDFView(
-                      filePath: _filePath!,
-                      enableSwipe: true,
-                      swipeHorizontal: false,
-                      autoSpacing: true,
-                      pageSnap: true,
-                      fitPolicy: FitPolicy.BOTH,
-                      // onRender: (pages) {
-                      //   setState(() {
-                      //     _totalPages = pages ?? 0;
-                      //   });
-                      // },
-                      // onViewCreated: (PDFViewController pdfViewController) {
-                      //   _pdfController = pdfViewController;
-                      // },
-                      // onPageChanged: (page, total) {
-                      //   setState(() {
-                      //     _currentPage = page ?? 0;
-                      //   });
-                      // },
-                    ),
+                    PdfPreview(
+        build: (context) async {
+          final response = await http.get(Uri.parse(widget.url));
+          return response.bodyBytes;
+        },
+      ),
+                    // PDFView(
+                    //   filePath: _filePath!,
+                    //   enableSwipe: true,
+                    //   swipeHorizontal: false,
+                    //   autoSpacing: true,
+                    //   pageSnap: true,
+                    //   fitPolicy: FitPolicy.BOTH,
+                    //   // onRender: (pages) {
+                    //   //   setState(() {
+                    //   //     _totalPages = pages ?? 0;
+                    //   //   });
+                    //   // },
+                    //   // onViewCreated: (PDFViewController pdfViewController) {
+                    //   //   _pdfController = pdfViewController;
+                    //   // },
+                    //   // onPageChanged: (page, total) {
+                    //   //   setState(() {
+                    //   //     _currentPage = page ?? 0;
+                    //   //   });
+                    //   // },
+                    // ),
                     // Positioned navigation controls (commented out as in original)
                   ],
                 ),
