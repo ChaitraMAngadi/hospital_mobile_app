@@ -249,7 +249,7 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                 const SizedBox(height: 20),
 
                 /// Associated Nurse
-                const Text("Associated Nurse",
+                const Text("Associated Staff",
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
                 DropdownSearch<Map<String, dynamic>>(
@@ -268,7 +268,7 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                   // popupProps: const PopupProps.menu(showSearchBox: true),
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
-                      hintText: "Select Nurse",
+                      hintText: "Select Staff",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

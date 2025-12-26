@@ -472,7 +472,7 @@ class ListTileModel extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  flex: 3,
+                  
                   child: ElevatedButton(
                      style: ElevatedButton.styleFrom(
                         backgroundColor:Colors.blue.shade100,
@@ -485,7 +485,7 @@ class ListTileModel extends StatelessWidget {
                     onPressed: invisitonTap, child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                    Text("Inpatient",
+                    Text("IPD",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF0857C0),
@@ -495,9 +495,9 @@ class ListTileModel extends StatelessWidget {
                     color: Color(0xFF0857C0),),
                   ],)),
                 ),
-                // SizedBox(width: 6,),
+                SizedBox(width: 10,),
           Expanded(
-            flex: 3,
+          
             child: ElevatedButton(
                      style: ElevatedButton.styleFrom(
                         backgroundColor:Colors.green.shade100,
@@ -511,7 +511,7 @@ class ListTileModel extends StatelessWidget {
                      child:  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                    Text("Outpatient",
+                    Text("OPD",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.green.shade700,
@@ -521,9 +521,9 @@ class ListTileModel extends StatelessWidget {
                     color: Colors.green.shade700,),
                   ],)),
           ),
-                // SizedBox(width: 6,),
+                SizedBox(width: 10,),
                 Expanded(
-                  flex: 2,
+                 
                   child: ElevatedButton(
                      style: ElevatedButton.styleFrom(
                         backgroundColor:Colors.brown.shade100,

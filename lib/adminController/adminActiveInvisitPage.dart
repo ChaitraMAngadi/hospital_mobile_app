@@ -60,6 +60,8 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
 
   }
 
+
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -208,6 +210,13 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
       onRefresh: _handleRefresh,
       child: Consumer<Adminprovider>(
         builder: (context, adminprovider, child) {
+          final List sortedList =
+              List.from(adminprovider.filteredactiveinvisits)
+                ..sort((a, b) {
+                  final dateA = DateTime.parse(a['visit_date']);
+                  final dateB = DateTime.parse(b['visit_date']);
+                  return dateB.compareTo(dateA); // latest first
+                });
           return SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -247,7 +256,7 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                                         ? _buildNoSearchResults() // <-- show no results UI if searching
                                         : const Center(
                                             child: Text(
-                                              "No Out Visits to show",
+                                              "No Active In Visits to show",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
@@ -256,12 +265,13 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                                 : SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.76,
+
                                     child: ListView.builder(
+                                      
                                       itemCount: adminprovider
                                           .filteredactiveinvisits.length,
                                       itemBuilder: (context, index) {
-                                        final item = adminprovider
-                                            .filteredactiveinvisits[index];
+                                        final item = sortedList[index];
                                         return ActiveInvisitModel(
                                           patientname: item['name'],
                                           patientId: item['patientId'],

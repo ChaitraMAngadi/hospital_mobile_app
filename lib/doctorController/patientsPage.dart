@@ -283,14 +283,14 @@ class _PatientsPageState extends State<PatientsPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.medical_services, color: Colors.white),
-                              SizedBox(width: 6),
-                              Text("Import Patient", style: TextStyle(fontSize: 16, color: Colors.white)),
+                              SizedBox(width: 4),
+                              Text("Import Patient", style: TextStyle(fontSize: 15, color: Colors.white)),
                             ],
                           ),
                         ),
@@ -302,14 +302,14 @@ class _PatientsPageState extends State<PatientsPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.person_add_alt_1_outlined, color: Colors.white),
-                              SizedBox(width: 6),
-                              Text("Register Patient", style: TextStyle(fontSize: 16, color: Colors.white)),
+                              SizedBox(width: 4),
+                              Text("Register Patient", style: TextStyle(fontSize: 15, color: Colors.white)),
                             ],
                           ),
                         ),
@@ -514,7 +514,7 @@ class ListTileModel extends StatelessWidget {
                       children:
                      [
 
-                    Text("Inpatient",
+                    Text("IPD",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF0857C0),
@@ -524,7 +524,7 @@ class ListTileModel extends StatelessWidget {
                     color: Color(0xFF0857C0),),
                   ],)),
                 ),
-                SizedBox(width: 8),
+                SizedBox(width: 10),
           Expanded(
             child: ElevatedButton(
                      style: ElevatedButton.styleFrom(
@@ -539,7 +539,7 @@ class ListTileModel extends StatelessWidget {
                      child:  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                    Text("Outpatient",
+                    Text("OPD",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.green.shade700,
@@ -549,7 +549,7 @@ class ListTileModel extends StatelessWidget {
                     color: Colors.green.shade700,),
                   ],)),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
                      style: ElevatedButton.styleFrom(

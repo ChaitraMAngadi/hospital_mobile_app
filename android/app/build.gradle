@@ -77,7 +77,7 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             // signingConfig = signingConfigs.debug
             //  signingConfig = signingConfigs.getByName("release")
-               signingConfig = signingConfigs.getByName("debug")
+            //    signingConfig = signingConfigs.getByName("debug")
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -101,9 +101,9 @@ flutter {
     source "../.."
 }
 
-// dependencies {
-//     // implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-// }
+dependencies {
+    // implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
 dependencies {
         coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
     // implementation platform('com.google.firebase:firebase-bom:33.9.0')

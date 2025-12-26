@@ -1203,6 +1203,12 @@ Future<void> downloadImage(BuildContext context, String url, String filename) as
     }
   }
 
+String formatToIST(String dateTime) {
+  final utcTime = DateTime.parse(dateTime).toUtc();
+  final istTime = utcTime.add(const Duration(hours: 5, minutes: 30));
+  return DateFormat("dd MMM yyyy, hh:mm a").format(istTime);
+}
+
   void _viewImage(String imageUrl, String filename) {
     Navigator.push(
       context,
@@ -1285,10 +1291,14 @@ Future<void> downloadImage(BuildContext context, String url, String filename) as
               final d = entry.value;
 
               final nurseName = d["doneByNurse"]?["name"] ?? "Unknown";
+              // final createdAt = d["createdAt"] != null
+              //     ? DateFormat("dd MMM yyyy, hh:mm a")
+              //         .format(DateTime.parse(d["createdAt"]))
+              //     : "Unknown";
+
               final createdAt = d["createdAt"] != null
-                  ? DateFormat("dd MMM yyyy, hh:mm a")
-                      .format(DateTime.parse(d["createdAt"]))
-                  : "Unknown";
+    ? formatToIST(d["createdAt"])
+    : "Unknown";
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 20),

@@ -308,6 +308,11 @@ class _ViewreportPdfViewerPageState extends State<ViewreportPdfViewerPage> {
         canChangePageFormat: false,
         canDebug: false,
         initialPageFormat: PdfPageFormat.a4,
+
+       previewPageMargin: EdgeInsets.all(0),
+
+         maxPageWidth: MediaQuery.of(context).size.width,
+
         pdfFileName: "${widget.patientId}_Diagnosis_Report}.pdf",
       );
     }

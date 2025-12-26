@@ -56,11 +56,11 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.description),
-                  label: 'Todays OutPatients',
+                  label: 'Todays OPD',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_pin_rounded),
-                  label: 'Active InPatients',
+                  label: 'Active IPD',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),

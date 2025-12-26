@@ -120,24 +120,25 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _handleRefresh,
-      child: Consumer<Doctorprovider>(
-        builder: (context, doctorprovider, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                "Patient InVisit",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+    return Scaffold(
+          appBar: AppBar(
+            title:  Text(
+              "${widget.name}'s InVisit",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              centerTitle: true,
             ),
-            body: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
+            centerTitle: true,
+          ),
+          body: Consumer<Doctorprovider>(
+            builder:(context, doctorprovider, child) {
+            return RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Padding(
@@ -157,13 +158,13 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                         ),
                         onPressed: () {
                           showDialog(
-    context: context,
-    builder: (context) =>  ComplaintDialog(
-      alldoctors: doctorprovider.alldoctors,
-      allnurses: doctorprovider.allnurses,
-      patientId: widget.patientId,
-    ),
-  );
+                    context: context,
+                    builder: (context) =>  ComplaintDialog(
+                alldoctors: doctorprovider.alldoctors,
+                allnurses: doctorprovider.allnurses,
+                patientId: widget.patientId,
+                    ),
+                  );
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -191,14 +192,14 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return SizedBox(
-                              height: MediaQuery.of(context).size.height*0.8,
+                              height: MediaQuery.of(context).size.height*0.76,
                               child: _buildShimmerList());
                         } else {
                           return SafeArea(
                               child: doctorprovider.patientinvisits.isEmpty
                                   ? SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height*0.8,
+                                          MediaQuery.of(context).size.height*0.76,
                                       child: const Center(
                                           child: Padding(
                                         padding: EdgeInsets.symmetric(
@@ -214,14 +215,14 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                       )))
                                   : SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height*0.8,
+                                          MediaQuery.of(context).size.height*0.76,
                                       child: ListView.builder(
                                         itemCount: doctorprovider
                                             .patientinvisits.length,
                                         itemBuilder: (context, index) {
                                           final item = doctorprovider
                                               .patientinvisits[index];
-
+                
                                           return InVisitModel(
                                               cheifcomplaint:
                                                   item['chief_complaint'],
@@ -271,12 +272,12 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           );
-        },
-      ),
-    );
+          },),
+        );
+    
   }
 
   Future<void> _handleRefresh() async {

@@ -18,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final List<String> roles = ['Doctor', 'Admin', 'Supporting Staff'];
   String? selectedRole;
+  bool _obscureText = true;
 
   final TextEditingController userIdController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -166,6 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 6,
                     ),
                     TextFormField(
+                      obscureText: _obscureText,
                       controller: passwordController,
                       validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -177,34 +179,47 @@ class _LoginPageState extends State<LoginPage> {
                                 return null; 
                               },
                       decoration: InputDecoration(
-                        focusedBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5)),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.only(
-                            left: 16, top: 14, bottom: 14),
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5)),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                        hintText: 'Enter Password',
-                        hintStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xff333333).withOpacity(0.5)),
-                      ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscureText
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _obscureText = !_obscureText;
+                                      });
+                                    },
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.shade400,
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 16, top: 14, bottom: 14),
+                                  border: OutlineInputBorder(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.shade400,
+                                    ),
+                                  ),
+                                  hintText: 'Enter password',
+                                  hintStyle: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xff333333)
+                                          .withOpacity(0.5))),
                     ),
                     SizedBox(
                       height: 10,

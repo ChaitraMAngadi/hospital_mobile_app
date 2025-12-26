@@ -95,37 +95,7 @@ class _ImportPdfViewerPageState extends State<ImportPdfViewerPage> {
     }
   }
 
-  // Future<void> _downloadAndPrintPdf() async {
-  //   if (pdfBytes == null) return;
 
-  //   setState(() {
-  //     isDownloading = true;
-  //   });
-
-  //   try {
-  //     await Printing.layoutPdf(
-  //       onLayout: (PdfPageFormat format) async => pdfBytes!,
-  //       name: "${widget.patientId}_Diagnosis_Report_${languages[selectedLanguage]}.pdf",
-  //     );
-  //   } catch (error) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Failed to print/download: $error")),
-  //     );
-  //   } finally {
-  //     setState(() {
-  //       isDownloading = false;
-  //     });
-  //   }
-  // }
-
-  // void _onLanguageChanged(String? newLanguage) {
-  //   if (newLanguage != null && newLanguage != selectedLanguage) {
-  //     setState(() {
-  //       selectedLanguage = newLanguage;
-  //     });
-  //     _loadPdfData(); // Reload PDF with new language
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -135,41 +105,9 @@ class _ImportPdfViewerPageState extends State<ImportPdfViewerPage> {
           'Diagnosis Report',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        // backgroundColor: const Color(0XFF0857C0),
-        // foregroundColor: Colors.white,
+      
         elevation: 0,
-        // actions: [
-        //   // Language Dropdown in AppBar
-        //   Container(
-        //     margin: const EdgeInsets.only(right: 16),
-        //     padding: const EdgeInsets.symmetric(horizontal: 12),
-        //     decoration: BoxDecoration(
-        //       color: Colors.white.withOpacity(0.2),
-        //       borderRadius: BorderRadius.circular(8),
-        //     ),
-        //     child: DropdownButtonHideUnderline(
-        //       child: DropdownButton<String>(
-        //         value: selectedLanguage,
-        //         icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-        //         style: const TextStyle(color: Colors.white, fontSize: 14),
-        //         // dropdownColor: const Color(0XFF0857C0),
-        //         onChanged: _onLanguageChanged,
-        //         items: languages.entries.map<DropdownMenuItem<String>>(
-        //           (MapEntry<String, String> entry) {
-        //             return DropdownMenuItem<String>(
-        //               value: entry.key,
-        //               child: Text(
-        //                 entry.value,
-        //                 style: const TextStyle(color: Colors.black, fontSize: 14,
-        //                 fontWeight: FontWeight.bold,),
-        //               ),
-        //             );
-        //           },
-        //         ).toList(),
-        //       ),
-        //     ),
-        //   ),
-        // ],
+       
       ),
       body: Column(
         children: [
@@ -188,81 +126,7 @@ class _ImportPdfViewerPageState extends State<ImportPdfViewerPage> {
             ),
           ),
           
-          // Bottom Action Bar
-          // Container(
-          //   padding: const EdgeInsets.all(16),
-          //   decoration: BoxDecoration(
-          //     color: Colors.white,
-          //     boxShadow: [
-          //       BoxShadow(
-          //         color: Colors.grey.withOpacity(0.1),
-          //         blurRadius: 10,
-          //         offset: const Offset(0, -2),
-          //       ),
-          //     ],
-          //   ),
-          //   child: Row(
-          //     children: [
-          //       // Language Info
-          //       Expanded(
-          //         child: Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           mainAxisSize: MainAxisSize.min,
-          //           children: [
-          //             const Text(
-          //               'Current Language:',
-          //               style: TextStyle(
-          //                 fontSize: 12,
-          //                 color: Colors.grey,
-          //               ),
-          //             ),
-          //             Text(
-          //               languages[selectedLanguage] ?? 'English',
-          //               style: const TextStyle(
-          //                 fontSize: 16,
-          //                 fontWeight: FontWeight.bold,
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-                
-          //       const SizedBox(width: 16),
-                
-          //       // Download/Print Button
-          //       ElevatedButton.icon(
-          //         style: ElevatedButton.styleFrom(
-          //           backgroundColor: const Color(0XFF0857C0),
-          //           foregroundColor: Colors.white,
-          //           padding: const EdgeInsets.symmetric(
-          //             vertical: 12,
-          //             horizontal: 20,
-          //           ),
-          //           shape: RoundedRectangleBorder(
-          //             borderRadius: BorderRadius.circular(10),
-          //           ),
-          //         ),
-          //         onPressed: (pdfBytes != null && !isDownloading) 
-          //             ? _downloadAndPrintPdf 
-          //             : null,
-          //         icon: isDownloading
-          //             ? const SizedBox(
-          //                 width: 16,
-          //                 height: 16,
-          //                 child: CircularProgressIndicator(
-          //                   strokeWidth: 2,
-          //                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          //                 ),
-          //               )
-          //             : const Icon(Icons.download),
-          //         label: Text(
-          //           isDownloading ? 'Processing...' : 'Download/Print',
-          //           style: const TextStyle(fontWeight: FontWeight.bold),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+        
         ],
       ),
     );
@@ -306,7 +170,11 @@ class _ImportPdfViewerPageState extends State<ImportPdfViewerPage> {
         allowSharing: false,  // We handle sharing separately
         canChangePageFormat: false,
         canDebug: false,
+        previewPageMargin: EdgeInsets.all(0),
         initialPageFormat: PdfPageFormat.a4,
+
+ maxPageWidth: MediaQuery.of(context).size.width,
+
         pdfFileName: "${widget.patientId}_Diagnosis_Report.pdf",
       );
     }

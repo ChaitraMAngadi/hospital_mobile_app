@@ -322,7 +322,7 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
                         const SizedBox(height: 20),
 
                         /// Associated Nurse
-                        const Text("Associated Nurse",
+                        const Text("Associated Staff",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 6),
                         DropdownSearch<Map<String, dynamic>>(

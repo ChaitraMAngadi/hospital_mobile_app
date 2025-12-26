@@ -351,7 +351,7 @@ class _PdfViewerPageState extends State<PdfViewerPage>
                 )
               : Stack(
                   children: [
-                    PdfPreview(
+                    PdfPreview( 
         build: (context) async {
           final response = await http.get(Uri.parse(widget.url));
           return response.bodyBytes;
