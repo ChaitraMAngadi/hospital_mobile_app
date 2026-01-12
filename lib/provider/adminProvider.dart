@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
+import 'package:hospital_mobile_app/service/deviceHeader.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -160,6 +161,8 @@ Future<void> getPatientsByPage(int page) async {
       String email, String dob, BuildContext context) async {
     try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "name": name,
@@ -177,6 +180,7 @@ Future<void> getPatientsByPage(int page) async {
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.admintoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -253,6 +257,8 @@ Future<void> getPatientsByPage(int page) async {
       String email, String phone, BuildContext context) async {
     try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       print(
           "name: $name gender: $gender DOB: $dob email: $email phone: $phone");
@@ -279,6 +285,7 @@ Future<void> getPatientsByPage(int page) async {
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.admintoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -393,6 +400,8 @@ Future<void> addoutvisit(
       BuildContext context) async {
     try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "chief_complaint": cheifcomplaint,
@@ -421,6 +430,7 @@ Future<void> addoutvisit(
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.admintoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -544,6 +554,8 @@ Future<void> getdoctorsnurses() async {
       BuildContext context) async {
     try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "chief_complaint": cheifcomplaint,
@@ -567,6 +579,7 @@ Future<void> getdoctorsnurses() async {
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.admintoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -624,6 +637,8 @@ Future<void> getdoctorsnurses() async {
       BuildContext context) async {
     try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "consultingDoctor": consultingdoctor,
@@ -646,6 +661,7 @@ Future<void> getdoctorsnurses() async {
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.admintoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );

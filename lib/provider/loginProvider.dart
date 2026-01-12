@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
+import 'package:hospital_mobile_app/service/deviceHeader.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -120,11 +121,14 @@ class Loginprovider extends ChangeNotifier {
 
   Future<bool> doctorloginphone(String userid, String password, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/loginphone";
+    final headers = await DeviceHeaders.getDeviceHeaders();
+
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(<String, dynamic>{
           'userid': userid,
@@ -174,12 +178,15 @@ class Loginprovider extends ChangeNotifier {
   }
   Future<bool> adminloginphone(String userid, String password, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/loginphone";
+    final headers = await DeviceHeaders.getDeviceHeaders();
+
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(<String, dynamic>{
           'userid': userid,
@@ -231,12 +238,16 @@ class Loginprovider extends ChangeNotifier {
   }
   Future<bool> supportingstaffloginphone(String userid, String password, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitalnurse/loginphone";
+final headers = await DeviceHeaders.getDeviceHeaders();
+
+
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
+          ...headers,
         },
        body: jsonEncode(<String, dynamic>{
           'userid': userid,

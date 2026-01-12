@@ -459,7 +459,34 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                           );
                                         },
                                       );
-                                                },
+                                                }, remarkOnTap:() async{
+                                              final remark = await doctorprovider.getdoctorinremark(
+                                              widget.id, doctorprovider.invisitId, item['id']
+                                              );
+                                               if (remark != null && remark.isNotEmpty) {
+      showDoctorRemarkDialog(
+        context: context,
+        htmlContent: remark,
+      );
+    } else {
+     showDialog(
+      context: context, builder:(context) {
+       return const Dialog(
+        insetPadding: EdgeInsets.all(16),
+
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+          child: Row(
+           mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("There is no doctor remarks to show"),
+            ],
+          ),
+        ),
+       );
+     },);
+    }
+                                          },
                                               );
                                             },
                                           ),
@@ -550,7 +577,7 @@ class DiagnosisModel extends StatelessWidget {
     required this.createdat,
     required this.patientId,
     required this.diagnosisId,
-    required this.supportingfilesontap,
+    required this.supportingfilesontap, required this.remarkOnTap,
   });
   // final VoidCallback viewonTap;
   final String complaintId;
@@ -560,6 +587,7 @@ class DiagnosisModel extends StatelessWidget {
   final String patientId;
   final String diagnosisId;
   final VoidCallback supportingfilesontap;
+  final VoidCallback remarkOnTap;
 
   @override
   Widget build(BuildContext context) {
@@ -631,6 +659,7 @@ class DiagnosisModel extends StatelessWidget {
               height: 16,
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
                     onPressed: supportingfilesontap,
@@ -638,14 +667,31 @@ class DiagnosisModel extends StatelessWidget {
                       Icons.attach_file,
                       color: Color(0xFF0857C0),
                     )),
-                SizedBox(
-                  width: 20,
-                ),
+                // SizedBox(
+                //   width: 20,
+                // ),
                 DownloadInvisitPdfButton(
                   patientId: patientId,
                   complaintId: complaintId,
                   diagnosisId: diagnosisId,
                 ),
+                ElevatedButton(
+                  onPressed: remarkOnTap,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF0857C0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                       vertical: 14, horizontal: 16),
+                  ),
+                child:  const Text(
+                  "Remarks",
+                  style: TextStyle(
+                      color: Colors.white,
+          fontWeight: FontWeight.bold,
+                  ),
+                ))
               ],
             ),
             const SizedBox(
@@ -1498,4 +1544,54 @@ String formatToIST(String dateTime) {
       ),
     );
   }
+}
+
+
+
+void showDoctorRemarkDialog({
+  required BuildContext context,
+  required String htmlContent,
+}) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return Dialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                    const Text(
+            "Doctor Remark",
+            style: TextStyle(fontWeight: FontWeight.bold,
+            fontSize: 18),
+          ),
+          IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.close),
+            ),
+                ],
+              ),
+            
+              Html(
+              data: htmlContent,
+              style: {
+                "body": Style(
+                  fontSize: FontSize(14),
+                  color: Colors.black87,
+                ),
+              },
+            ),
+            ],
+          ),
+        ),
+        
+      );
+    },
+  );
 }

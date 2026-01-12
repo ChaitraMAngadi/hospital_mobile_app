@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
+import 'package:hospital_mobile_app/service/deviceHeader.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -347,6 +348,8 @@ Future<void> getallpatientdiagnosis(String id, String invisitid) async {
     BuildContext context,
   ) async {
           Constants.nursetoken = await secureStorage.readSecureData('nursetoken') ?? '';
+          final headers = await DeviceHeaders.getDeviceHeaders();
+
 
     var url = Uri.parse(
         '${Constants.baseUrl}/api/v1/hospitalnurse/addobservation/$patientId/$complaintId');
@@ -355,6 +358,7 @@ Future<void> getallpatientdiagnosis(String id, String invisitid) async {
     var request = http.MultipartRequest('POST', url);
 
     request.headers['Authorization'] = 'Bearer ${Constants.nursetoken}';
+    request.headers.addAll(headers);
 
     // Add form-data fields
     request.fields['summary'] = summary;

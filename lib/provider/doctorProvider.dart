@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
+import 'package:hospital_mobile_app/service/deviceHeader.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -167,6 +168,8 @@ Future<void> getPatientsByPage(int page) async {
       String email, String dob, BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "name": name,
@@ -184,6 +187,7 @@ Future<void> getPatientsByPage(int page) async {
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.doctortoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -261,6 +265,8 @@ Future<void> getPatientsByPage(int page) async {
       String email, String phone, BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       print(
           "name: $name gender: $gender DOB: $dob email: $email phone: $phone");
@@ -287,6 +293,7 @@ Future<void> getPatientsByPage(int page) async {
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.doctortoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -400,6 +407,8 @@ Future<void> addoutvisit(
       BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "chief_complaint": cheifcomplaint,
@@ -427,6 +436,7 @@ Future<void> addoutvisit(
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.doctortoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -644,6 +654,8 @@ Future<void> getdoctorsnurses() async {
       BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "chief_complaint": cheifcomplaint,
@@ -666,6 +678,7 @@ Future<void> getdoctorsnurses() async {
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.doctortoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -956,6 +969,8 @@ Future<void> dischargeInPatient(
       BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
 
       final Map<String, dynamic> requestBody = {
         "discharge_summary": dischargesummary,
@@ -971,6 +986,7 @@ Future<void> dischargeInPatient(
         headers: <String, String>{
           'Authorization': 'Bearer ${Constants.doctortoken}',
           'Content-Type': 'application/json',
+          ...headers,
         },
         body: jsonEncode(requestBody),
       );
@@ -1078,12 +1094,15 @@ Future<void> dischargeInPatient(
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/deletefilesfrombunny";
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+    final headers = await DeviceHeaders.getDeviceHeaders();
+
     try {
       final response = await http.delete(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${Constants.doctortoken}',
+          ...headers,
         },
         body: jsonEncode(<String, dynamic>{
           'patientId': patientId,
@@ -1128,12 +1147,15 @@ Future<void> dischargeInPatient(
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/deletefilesfrombunnydiagnosis";
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+    final headers = await DeviceHeaders.getDeviceHeaders();
+
     try {
       final response = await http.delete(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${Constants.doctortoken}',
+          ...headers,
         },
         body: jsonEncode(<String, dynamic>{
           'patientId': patientId,
@@ -1224,6 +1246,8 @@ Future<void> dischargeInPatient(
 Future<bool> requsetaccess(String phone,String dob, BuildContext context) async {
     
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/reqpatienthistory";
+    final headers = await DeviceHeaders.getDeviceHeaders();
+
     print(url);
     print(phone);
     print(dob);
@@ -1237,6 +1261,7 @@ Future<bool> requsetaccess(String phone,String dob, BuildContext context) async 
         headers: <String, String>{
           'Content-Type': 'application/json',
            'Authorization': 'Bearer ${Constants.doctortoken}',
+           ...headers,
         },
         body: jsonEncode(<String, dynamic>{
           'phone': phone,
@@ -1281,6 +1306,8 @@ Future<bool> requsetaccess(String phone,String dob, BuildContext context) async 
   Future<bool> requsetdirectaccess(String phone,String dob, BuildContext context) async {
     
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/requestpatienthistory8217309343";
+    final headers = await DeviceHeaders.getDeviceHeaders();
+
     print(url);
     print(phone);
     print(dob);
@@ -1293,6 +1320,7 @@ Future<bool> requsetaccess(String phone,String dob, BuildContext context) async 
         headers: <String, String>{
           'Content-Type': 'application/json',
            'Authorization': 'Bearer ${Constants.doctortoken}',
+           ...headers,
         },
         body: jsonEncode(<String, dynamic>{
           'phone': phone,
@@ -1471,6 +1499,67 @@ Future<void> getimportpatientalldiagnosis(String id, String invisitId) async {
       print(e);
     }
   }
+
+  Future<String?> getdoctorinremark(String patientId, String invisitId, String diagnosisId) async {
+  
+   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getdoctorinremarks/$patientId/$invisitId/$diagnosisId";
+
+   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Constants.doctortoken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+       return responseData["doctors_remark"];
+      
+    } else {
+
+      print('Error: ${response.statusCode} - ${response.body}');
+      return "";
+    }
+  } catch (e) {
+    print("Exception in getPatientsByPageWithSearch: $e");
+  }
+}
+
+
+Future<String?> getdoctorremark(String patientId, String complaintId ) async {
+  
+   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getdoctorremarks/$patientId/$complaintId";
+
+  Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Constants.doctortoken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+       return responseData["doctors_remark"];
+      
+    } else {
+
+      print('Error: ${response.statusCode} - ${response.body}');
+      return "";
+    }
+  } catch (e) {
+    print("Exception in getPatientsByPageWithSearch: $e");
+  }
+}
+
 
 void notify() {
     notifyListeners();

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/complaintDialogBox.dart';
+import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosisPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/downloadPdfButton.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/supportingDocsDialogbox.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
@@ -278,6 +279,34 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                             ));
                                           },
                                           buttonText: item['diagnosis_summary']??'',
+                                           remarkontap:() async{
+                                              final remark = await doctorprovider.getdoctorremark(
+                                              widget.patientId,  item['id']
+                                              );
+                                               if (remark != null && remark.isNotEmpty) {
+      showDoctorRemarkDialog(
+        context: context,
+        htmlContent: remark,
+      );
+    } else {
+     showDialog(
+      context: context, builder:(context) {
+       return const Dialog(
+        insetPadding: EdgeInsets.all(16),
+
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+          child: Row(
+           mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("There is no doctor remarks to show"),
+            ],
+          ),
+        ),
+       );
+     },);
+    }
+                                          },
                                         );
                                       },
                                     ),
@@ -321,7 +350,7 @@ class VisitModel extends StatelessWidget {
     required this.buttonText,
     required this.startdiagnosisontap,
     required this.complaintId,
-    required this.patientId, required this.supportingimagesontap,
+    required this.patientId, required this.supportingimagesontap, required this.remarkontap,
   });
 
   final String cheifcomplaint;
@@ -334,6 +363,7 @@ class VisitModel extends StatelessWidget {
   final VoidCallback supportingimagesontap;
   final VoidCallback viewontap;
   final VoidCallback startdiagnosisontap;
+  final VoidCallback remarkontap;
   final String buttonText;
 
   @override
@@ -434,8 +464,30 @@ class VisitModel extends StatelessWidget {
                       )),
                 ),
               if (buttonText != "")
-                DownloadPdfButton(
-                    complaintId: complaintId, patientId: patientId)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    DownloadPdfButton(
+                        complaintId: complaintId, patientId: patientId),
+                        ElevatedButton(onPressed:remarkontap ,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF0857C0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                  ),
+                child: const Text(
+                  "Remarks",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ))
+                  ],
+                ),
+                    
             ],
           ),
         ),

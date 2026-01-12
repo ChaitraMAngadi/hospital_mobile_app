@@ -1,5 +1,5 @@
 class Constants {
-  // static const String baseUrl = "http://10.88.76.152:5000";
+  // static const String baseUrl = "http://192.168.31.60:5000";
   // static const String baseUrl = "https://ppldocbackend.vercel.app";
   static const String baseUrl =
       "https://seahorse-app-ilq2r.ondigitalocean.app";
