@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -62,12 +63,23 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
     Doctorprovider doctorprovider =
         context.read<Doctorprovider>();
     return Scaffold(
+      backgroundColor: AppColors.badgeBg,
         appBar: AppBar(
-          title: Text(
+           flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: const Icon(Icons.arrow_back,
+        color: Colors.white,)),
+          title: const Text(
             "Register Patient",
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
+              color: Colors.white
             ),
           ),
         ),
@@ -270,14 +282,21 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                     ),
                   ),
                   SizedBox(height: 32),
-                  SizedBox(
+                  Container(
                     width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      gradient:doctorprovider.addingpatient?LinearGradient(colors: [
+                        Colors.grey.shade200, Colors.grey.shade200
+                      ]): AppColors.primaryGradient,
+                    ),
                     child: ElevatedButton(
                       style:  ButtonStyle(
                         padding: const WidgetStatePropertyAll(
                             EdgeInsets.symmetric(vertical: 14)),
                         backgroundColor:doctorprovider.addingpatient? const WidgetStatePropertyAll(Colors.grey):
-                            const WidgetStatePropertyAll(Color(0XFF0857C0)),
+                            const WidgetStatePropertyAll(Colors.transparent),
+                            shadowColor: WidgetStatePropertyAll(Colors.transparent),
                         shape: const WidgetStatePropertyAll(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(14)),

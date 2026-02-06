@@ -5,6 +5,7 @@ import 'package:hospital_mobile_app/doctorController/importPatientPage.dart';
 import 'package:hospital_mobile_app/doctorController/todaysOutVisitsPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientsPage.dart';
 import 'package:hospital_mobile_app/doctorController/profilePage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 
 
 @RoutePage()
@@ -39,12 +40,12 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor:const Color(0xFF0857C0) ,
+        backgroundColor:Colors.white ,
         centerTitle: true,
         title: const Text("Doctor Dashboard",
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: AppColors.primary,
         ),)),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -67,14 +68,14 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                   label: 'Profile',
                 ),
               ],
-              backgroundColor: const Color(0xFF0857C0),
+              backgroundColor: Colors.white,
               currentIndex: _selectedIndex,
               iconSize: 30,
               selectedLabelStyle: const TextStyle(fontSize: 16),
               unselectedLabelStyle: const TextStyle(fontSize: 16),
               showUnselectedLabels: true,
-              selectedItemColor: Colors.white,
-              unselectedItemColor: Colors.white54,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: Colors.grey.shade600,
               // unselectedItemColor: const Color(0xFF545454),
               // selectedItemColor: const Color(0xFF0857C0),
               onTap: (index) => setState(() => _selectedIndex = index),

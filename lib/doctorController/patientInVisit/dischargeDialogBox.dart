@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -128,8 +129,12 @@ class _DischargeDialogBoxState extends State<DischargeDialogBox> {
                 ),
               ),
                 SizedBox(height: 20,),
-                SizedBox(
+                Container(
                   width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
                   child: ElevatedButton(
                     onPressed: () async {
                       if (formkey.currentState!.validate()) {
@@ -143,7 +148,8 @@ class _DischargeDialogBoxState extends State<DischargeDialogBox> {
                       // context.router.pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF0857C0),
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

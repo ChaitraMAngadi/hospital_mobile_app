@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -331,7 +332,10 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTileModel(patientname: item['name'], patientId: item['patientId'], 
+            child: ListTileModel(
+              email: item["email"]??"",
+              phone: item["phone"].toString()??"",
+              patientname: item['name'], patientId: item['patientId'], 
             viewonTap: (){
               showDialog(
                 context: context,
@@ -370,110 +374,457 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
 }
 
 
+// class ListTileModel extends StatelessWidget {
+//   const ListTileModel({
+//     super.key,
+  
+//     required this.patientname,
+//     required this.patientId, required this.viewonTap, required this.invisitonTap,
+    
+//   });
+//   final String patientname;
+//   final VoidCallback viewonTap;
+//   // final VoidCallback editonTap;
+//   // final VoidCallback outvisitonTap;
+//   final VoidCallback invisitonTap;
+//   final String patientId;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.only(bottom: 16),
+//       child: ListTile(
+//         shape: const RoundedRectangleBorder(
+//             borderRadius: BorderRadius.all(Radius.circular(8))),
+//         tileColor: Colors.grey.shade50,
+//         title: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Row(
+//                   children: [
+//                     Text(
+//                       "PatientId: ",
+//                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+//                     ),
+//                     Text(
+//                       patientId,
+//                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+//                     ),
+//                   ],
+//                 ),
+//                 IconButton(onPressed: viewonTap, icon: const Icon(Icons.remove_red_eye_outlined,
+//                 color:Color(0xFF0857C0) ,)),
+//               ],
+//             ),
+
+//             Row(
+
+//               children: [
+//                 Text(
+//                   "Name: ",
+//                   style: const TextStyle(
+//                     fontSize: 15,
+//                     fontWeight: FontWeight.bold,
+//                     // overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ),
+//                  Text(
+//                   patientname,
+//                   style: const TextStyle(
+//                     fontSize: 15,
+//                     fontWeight: FontWeight.bold,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ),
+//               ],
+//             ),
+            
+//             SizedBox(height: 16,),
+            
+//           ],
+//         ),
+        
+//         subtitle:
+//             Row(
+//               children: [
+//                 ElevatedButton(
+//                    style: ElevatedButton.styleFrom(
+//                       backgroundColor:Colors.blue.shade100,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(20),
+//                       ),
+//                       padding:
+//                           EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+//                     ),
+//                   onPressed: invisitonTap, child: const Row(children: [
+//                   Text("Inpatients",
+//                   style: TextStyle(
+//                     fontWeight: FontWeight.bold,
+//                     color: Color(0xFF0857C0),
+//                   ),),
+//                   SizedBox(width: 4,),
+//                   Icon(Icons.open_in_new,
+//                   color: Color(0xFF0857C0),),
+//                 ],),
+//                 ),
+//                 Text(''),
+//               ],
+//             ),
+//       ),
+//     );
+//   }
+// }
+
 class ListTileModel extends StatelessWidget {
   const ListTileModel({
     super.key,
-  
     required this.patientname,
-    required this.patientId, required this.viewonTap, required this.invisitonTap,
-    
+    required this.patientId,
+    required this.viewonTap,
+    required this.invisitonTap, required this.email, required this.phone,
   });
+
   final String patientname;
-  final VoidCallback viewonTap;
-  // final VoidCallback editonTap;
-  // final VoidCallback outvisitonTap;
-  final VoidCallback invisitonTap;
   final String patientId;
+  final VoidCallback viewonTap;
+  final VoidCallback invisitonTap;
+  final String email;
+  final String phone;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: ListTile(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8))),
-        tileColor: Colors.grey.shade50,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "PatientId: ",
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      patientId,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                IconButton(onPressed: viewonTap, icon: const Icon(Icons.remove_red_eye_outlined,
-                color:Color(0xFF0857C0) ,)),
-              ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      // padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12),bottom: Radius.circular(22)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 4,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
             ),
-
-            Row(
-
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// PATIENT ID
                 Text(
-                  "Name: ",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    // overflow: TextOverflow.ellipsis,
+                  "PATIENT ID",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
                   ),
                 ),
-                 Text(
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                   gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    patientId,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+            
+                const SizedBox(height: 16),
+            
+                /// NAME
+                Text(
+                  "NAME",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
                   patientname,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  "CONTACT",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ],
-            ),
-            
-            SizedBox(height: 16,),
-            
-          ],
-        ),
-        
-        subtitle:
-            Row(
-              children: [
-                ElevatedButton(
-                   style: ElevatedButton.styleFrom(
-                      backgroundColor:Colors.blue.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    ),
-                  onPressed: invisitonTap, child: const Row(children: [
-                  Text("Inpatients",
-                  style: TextStyle(
+                const SizedBox(height: 4),
+                Text(
+                  phone,
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0857C0),
-                  ),),
-                  SizedBox(width: 4,),
-                  Icon(Icons.open_in_new,
-                  color: Color(0xFF0857C0),),
-                ],),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                Text(''),
+                Text(
+                  email,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+            
+               
+            
+                const SizedBox(height: 20),
+            
+                /// BUTTONS
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: viewonTap,
+                        icon: const Icon(
+                          Icons.remove_red_eye,
+                          color: AppColors.primary,
+                        ),
+                        label: const Text(
+                          "View",
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppColors.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        decoration:BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(12)
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: invisitonTap,
+                          icon: const Icon(Icons.open_in_new),
+                          label: const Text(
+                            "IPD",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
+          ),
+        ],
       ),
     );
   }
 }
+
+
+// class ViewModel extends StatelessWidget {
+//   const ViewModel({
+//     super.key,
+//     required this.name,
+//     required this.patientid,
+//     required this.email,
+//     required this.phonenumber,
+//     required this.dob,
+//     required this.age,
+//     required this.gender,
+   
+//   });
+
+//   final String name;
+//   final String patientid;
+//   final String email;
+//   final int phonenumber;
+//   final String dob;
+//   final String age;
+//   final String gender;
+  
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//       insetPadding: EdgeInsets.symmetric(horizontal: 16),
+//       child: Padding(
+//         padding: const EdgeInsets.all(16),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 const Text(
+//                   "Patient Details",
+//                   style: TextStyle(
+//                     fontSize: 20,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 IconButton(
+//                     onPressed: () {
+//                       context.router.pop();
+//                     },
+//                     icon: Icon(Icons.close))
+//               ],
+//             ),
+//             SizedBox(
+//               height: 10,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Name: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text(
+//                   "${name}",
+//                   style: TextStyle(
+//                     fontSize: 14,
+//                   ),
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//               ],
+//             ),
+//             if(email.isNotEmpty)
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             if(email.isNotEmpty)
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Email: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text(
+//                   "${email}",
+//                   style: TextStyle(fontSize: 14),
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Phone Number: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text("${phonenumber}", style: TextStyle(fontSize: 14)),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "DOB: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text("${dob}", style: TextStyle(fontSize: 14)),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "PatientId: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text("${patientid}", style: TextStyle(fontSize: 14)),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Age: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text("${age}", style: TextStyle(fontSize: 14)),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Gender: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text("${gender}", style: TextStyle(fontSize: 14)),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+         
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 
 class ViewModel extends StatelessWidget {
   const ViewModel({
@@ -485,7 +836,6 @@ class ViewModel extends StatelessWidget {
     required this.dob,
     required this.age,
     required this.gender,
-   
   });
 
   final String name;
@@ -495,136 +845,180 @@ class ViewModel extends StatelessWidget {
   final String dob;
   final String age;
   final String gender;
-  
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
       insetPadding: EdgeInsets.symmetric(horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header Section
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+            
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Column(
               children: [
-                const Text(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        context.router.pop();
+                      },
+                      icon: Icon(Icons.close, color: AppColors.primary),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primary)
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    size: 32,
+                    color: AppColors.primary,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
                   "Patient Details",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
                   ),
                 ),
-                IconButton(
-                    onPressed: () {
-                      context.router.pop();
-                    },
-                    icon: Icon(Icons.close))
               ],
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
+          ),
+          // Content Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
               children: [
-                const Text(
-                  "Name: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                _buildDetailCard(
+                  icon: Icons.badge,
+                  label: "PATIENT ID",
+                  value: patientid,
                 ),
-                Text(
-                  "${name}",
-                  style: TextStyle(
-                    fontSize: 14,
+                SizedBox(height: 12),
+                _buildDetailCard(
+                  icon: Icons.person,
+                  label: "FULL NAME",
+                  value: name,
+                ),
+                if (email.isNotEmpty) SizedBox(height: 12),
+                if (email.isNotEmpty)
+                  _buildDetailCard(
+                    icon: Icons.email,
+                    label: "EMAIL",
+                    value: email,
                   ),
-                  overflow: TextOverflow.ellipsis,
+                SizedBox(height: 12),
+                _buildDetailCard(
+                  icon: Icons.phone,
+                  label: "PHONE",
+                  value: phonenumber.toString(),
+                ),
+                SizedBox(height: 12),
+                _buildDetailCard(
+                  icon: Icons.wc,
+                  label: "GENDER",
+                  value: gender,
+                ),
+                SizedBox(height: 12),
+                _buildDetailCard(
+                  icon: Icons.cake,
+                  label: "DATE OF BIRTH",
+                  value: dob,
+                ),
+                SizedBox(height: 12),
+                _buildDetailCard(
+                  icon: Icons.calendar_today,
+                  label: "AGE",
+                  value: age,
                 ),
               ],
             ),
-            if(email.isNotEmpty)
-            const SizedBox(
-              height: 8,
-            ),
-            if(email.isNotEmpty)
-            Row(
-              children: [
-                const Text(
-                  "Email: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "${email}",
-                  style: TextStyle(fontSize: 14),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Phone Number: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${phonenumber}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "DOB: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${dob}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "PatientId: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${patientid}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Age: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${age}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Gender: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${gender}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-         
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailCard({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.mutedBg,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppColors.accent.withOpacity(0.2),
+          width: 1,
         ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[600],
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

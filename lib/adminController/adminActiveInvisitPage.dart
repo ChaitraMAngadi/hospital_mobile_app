@@ -6,6 +6,7 @@ import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -397,16 +398,217 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
   }
 }
 
+// class ActiveInvisitModel extends StatelessWidget {
+//   const ActiveInvisitModel({
+//     super.key,
+//     required this.patientname,
+//     required this.patientId,
+//     required this.viewonTap,
+//     required this.viewallvisitsonTap,
+//     required this.chiefcomplaint,
+//     required this.diagnosissummary, required this.editonTap,
+//   });
+//   final String patientname;
+//   final VoidCallback viewonTap;
+//   final VoidCallback editonTap;
+//   final VoidCallback viewallvisitsonTap;
+//   final String patientId;
+//   final String chiefcomplaint;
+//   final String diagnosissummary;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.only(
+//         bottom: 16,
+//         left: 16,
+//         right: 16,
+//       ),
+//       child: ListTile(
+//         shape: const RoundedRectangleBorder(
+//             borderRadius: BorderRadius.all(Radius.circular(8))),
+//         tileColor: Colors.grey.shade50,
+//         title: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Row(
+//                   children: [
+//                     const Text(
+//                       'PatientId: ',
+//                       style: TextStyle(
+//                         fontSize: 15,
+//                         fontWeight: FontWeight.bold,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ),
+//                     Text(
+//                       patientId,
+//                       style: const TextStyle(
+//                         fontSize: 15,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+                
+//               ],
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   'Name: ',
+//                   style: TextStyle(
+//                     fontSize: 15,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 Text(
+//                   patientname,
+//                   style: const TextStyle(
+//                     fontSize: 15,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 6,
+//             ),
+//             const Text(
+//               'chiefcomplaint:',
+//               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+//             ),
+//             Text(
+//               chiefcomplaint,
+//               style: const TextStyle(
+//                   fontSize: 15, overflow: TextOverflow.ellipsis),
+//             ),
+//             const SizedBox(
+//               height: 16,
+//             ),
+//             Row(
+//               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     Expanded(
+//                       child: ElevatedButton(
+//                          style: ElevatedButton.styleFrom(
+//                         backgroundColor:Colors.green.shade100,
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(20),
+//                         ),
+//                         padding:
+//                             EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+//                       ),
+//                           onPressed: viewonTap,
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Text('View',
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.bold,
+//                                 fontSize: 15,
+//                                 color: Colors.green.shade800,
+//                               ),),
+//                               SizedBox(width: 4,),
+//                                Icon(
+//                                 Icons.remove_red_eye_outlined,
+//                                  color: Colors.green.shade800,
+//                               ),
+//                             ],
+//                           )),
+//                     ),
+//                     SizedBox(
+//                       width: 8,
+//                     ),
+//                     Expanded(
+//                       child: ElevatedButton(
+//                          style: ElevatedButton.styleFrom(
+//                         backgroundColor:Colors.deepOrange.shade100,
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(20),
+//                         ),
+//                         padding:
+//                             EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+//                       ),
+//                           onPressed: editonTap,
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Text('Edit',
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.bold,
+//                                 fontSize: 15,
+//                                 color: Colors.deepOrange.shade800,
+//                               ),),
+//                               SizedBox(width: 4,),
+//                                Icon(
+//                                 Icons.edit,
+//                                 color: Colors.deepOrange.shade800,
+//                               ),
+//                             ],
+//                           )),
+//                     ),
+//                         SizedBox(
+//                       width: 8,
+//                     ),
+//                     Expanded(
+//                       flex: 2,
+//                       child: ElevatedButton(
+//                          style: ElevatedButton.styleFrom(
+//                         backgroundColor:Colors.blue.shade100,
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(20),
+//                         ),
+//                         padding:
+//                             EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+//                       ),
+//                           onPressed: viewallvisitsonTap,
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Text('All invisits',
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.bold,
+//                                 fontSize: 15,
+//                                 color: Colors.blue.shade800,
+//                               ),),
+//                               SizedBox(width: 4,),
+//                                Icon(
+//                                 Icons.open_in_new,
+//                                 color: Colors.blue.shade800,
+//                               ),
+//                             ],
+//                           )),
+//                     ),
+                    
+                   
+//                   ],
+//                 ),
+
+            
+           
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class ActiveInvisitModel extends StatelessWidget {
   const ActiveInvisitModel({
     super.key,
     required this.patientname,
     required this.patientId,
     required this.viewonTap,
+    required this.editonTap,
     required this.viewallvisitsonTap,
     required this.chiefcomplaint,
-    required this.diagnosissummary, required this.editonTap,
+    required this.diagnosissummary,
   });
+
   final String patientname;
   final VoidCallback viewonTap;
   final VoidCallback editonTap;
@@ -417,184 +619,415 @@ class ActiveInvisitModel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 16,
-        left: 16,
-        right: 16,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+     
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12),bottom: Radius.circular(22)),
+        
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          )
+        ],
       ),
-      child: ListTile(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8))),
-        tileColor: Colors.grey.shade50,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        children: [
+          Container(
+            height: 4,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// PATIENT ID
+                const Text(
+                  "PATIENT ID",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                   gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    patientId,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 14),
+                
+                /// PATIENT NAME
+                const Text(
+                  "PATIENT NAME",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  patientname,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                
+                const SizedBox(height: 14),
+                
+                /// CHIEF COMPLAINT
+                const Text(
+                  "CHIEF COMPLAINT",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  chiefcomplaint,
+                  style:  TextStyle(fontSize: 15,
+                  fontWeight: FontWeight.bold),
+                ),
+                
+                const SizedBox(height: 20),
+                
+                /// ACTION BUTTONS
                 Row(
                   children: [
-                    const Text(
-                      'PatientId: ',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      child: _outlineButton(
+                        text: "View",
+                        icon: Icons.remove_red_eye,
+                        onTap: viewonTap,
                       ),
                     ),
-                    Text(
-                      patientId,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        overflow: TextOverflow.ellipsis,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _outlineButton(
+                        text: "Edit",
+                        icon: Icons.edit,
+                        onTap: editonTap,
                       ),
                     ),
                   ],
                 ),
                 
-              ],
-            ),
-            Row(
-              children: [
-                const Text(
-                  'Name: ',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 12),
+                
+                /// ALL IPD VISITS
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade400,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    onPressed: viewallvisitsonTap,
+                    icon: const Icon(Icons.open_in_new, color: Colors.white),
+                    label: const Text(
+                      "All IPD Visits",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-                Text(
-                  patientname,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
               ],
             ),
-            const SizedBox(
-              height: 6,
-            ),
-            const Text(
-              'chiefcomplaint:',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              chiefcomplaint,
-              style: const TextStyle(
-                  fontSize: 15, overflow: TextOverflow.ellipsis),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                         style: ElevatedButton.styleFrom(
-                        backgroundColor:Colors.green.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      ),
-                          onPressed: viewonTap,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('View',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                                color: Colors.green.shade800,
-                              ),),
-                              SizedBox(width: 4,),
-                               Icon(
-                                Icons.remove_red_eye_outlined,
-                                 color: Colors.green.shade800,
-                              ),
-                            ],
-                          )),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                         style: ElevatedButton.styleFrom(
-                        backgroundColor:Colors.deepOrange.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      ),
-                          onPressed: editonTap,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Edit',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                                color: Colors.deepOrange.shade800,
-                              ),),
-                              SizedBox(width: 4,),
-                               Icon(
-                                Icons.edit,
-                                color: Colors.deepOrange.shade800,
-                              ),
-                            ],
-                          )),
-                    ),
-                        SizedBox(
-                      width: 8,
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: ElevatedButton(
-                         style: ElevatedButton.styleFrom(
-                        backgroundColor:Colors.blue.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      ),
-                          onPressed: viewallvisitsonTap,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('All invisits',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                                color: Colors.blue.shade800,
-                              ),),
-                              SizedBox(width: 4,),
-                               Icon(
-                                Icons.open_in_new,
-                                color: Colors.blue.shade800,
-                              ),
-                            ],
-                          )),
-                    ),
-                    
-                   
-                  ],
-                ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            
-           
-          ],
+  /// Reusable outlined button
+  Widget _outlineButton({
+    required String text,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        side: const BorderSide(color: Colors.red),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+      onPressed: onTap,
+      icon: Icon(icon, color: Colors.red),
+      label: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 }
+
+
+// class ActiveInVisitViewModel extends StatelessWidget {
+//   const ActiveInVisitViewModel({
+//     super.key,
+//     required this.cheifcomplaint,
+//     required this.visitdate,
+//     required this.consultingdoctor,
+//     required this.dutydoctor,
+//     required this.visitingdoctor,
+//     required this.associatedstaff,
+//     required this.name,
+//     required this.id,
+//     required this.age,
+//     required this.gender,
+//     required this.dob,
+//     required this.email,
+//     required this.phone,
+//     required this.consultingdocid,
+//     required this.dutydocid,
+//     required this.visitingdocid,
+//     required this.supportingstaffid,
+//     required this.createdbydoctor,
+//     required this.createdbydoctorid,
+//     required this.createdbyadmin,
+//     required this.createdbyadminid,
+//   });
+
+//   final String name;
+//   final String id;
+//   final String age;
+//   final String gender;
+//   final String dob;
+//   final String email;
+//   final String phone;
+//   final String createdbydoctor;
+//   final String createdbydoctorid;
+//   final String createdbyadmin;
+//   final String createdbyadminid;
+//   final String consultingdocid;
+//   final String dutydocid;
+//   final String visitingdocid;
+//   final String supportingstaffid;
+//   final String cheifcomplaint;
+//   final String consultingdoctor;
+//   final String dutydoctor;
+//   final String visitingdoctor;
+//   final String associatedstaff;
+//   final String visitdate;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//   insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+//   child: Padding(
+//     padding: const EdgeInsets.all(16),
+//     child: Column(
+//       mainAxisSize: MainAxisSize.min,
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         // Top bar
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             const Text(
+//               "Patient Details",
+//               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//             ),
+//             IconButton(
+//               onPressed: () => context.router.pop(),
+//               icon: const Icon(Icons.close),
+//             ),
+//           ],
+//         ),
+
+//         const SizedBox(height: 10),
+
+//         // Now stack all detail rows vertically
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Patient Name: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(name)),
+//           ],
+//         ),
+//         SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Patient Id: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Text(id),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Age: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(age)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Gender: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(gender)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Phone: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(phone)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Date of Birth: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(dob)),
+//           ],
+//         ),
+//         if(email.isNotEmpty)
+//          SizedBox(height: 4,),
+//          if(email.isNotEmpty)
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Email: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(email)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//          if(createdbydoctor != '')
+//          Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Created By Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$createdbydoctor - $createdbydoctorid")),
+//           ],
+//         ),
+//         if(createdbydoctor == '')
+//          Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Created By Admin: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$createdbyadmin - $createdbyadminid")),
+//           ],
+//         ),
+
+//         const Divider(
+//           thickness: 2,
+//           color: Colors.black,
+//         ),
+//         const Divider(
+//           height: 0.5,
+//           thickness: 2,
+//           color: Colors.black,
+//         ),
+//         SizedBox(height: 10,),
+      
+//         const Text(
+//           "Complaint Details",
+//           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: 8),
+
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Chief Complaint: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(cheifcomplaint)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Consulting Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$consultingdoctor - $consultingdocid")),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Visiting Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$visitingdoctor - $visitingdocid")),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Duty Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$dutydoctor - $dutydocid")),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Associated Staff: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$associatedstaff - $supportingstaffid")),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Visit Date: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Text(visitdate),
+//           ],
+//         ),
+//       ],
+//     ),
+//   ),
+// );
+
+    
+//   }
+// }
+
 
 class ActiveInVisitViewModel extends StatelessWidget {
   const ActiveInVisitViewModel({
@@ -647,184 +1080,168 @@ class ActiveInVisitViewModel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-  insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-  child: Padding(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Top bar
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Patient Details",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      backgroundColor: Colors.white,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// HEADER
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Icon(Icons.assignment, color: Colors.red),
+                      SizedBox(height: 6),
+                      Text(
+                        "Active In-Visit Details",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    onPressed: () => context.router.pop(),
+                    icon: const Icon(Icons.close,
+                    color: AppColors.primary,),
+                  )
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              /// PATIENT DETAILS
+              _sectionTitle("Patient Details"),
+
+              _infoTile(Icons.person, "Patient Name", name),
+              _infoTile(Icons.badge, "Patient ID", id),
+              _infoTile(Icons.cake, "Age", age),
+              _infoTile(Icons.male, "Gender", gender),
+              _infoTile(Icons.phone, "Phone", phone),
+              _infoTile(Icons.calendar_month, "Date of Birth", dob),
+
+              if (email.isNotEmpty)
+                _infoTile(Icons.email, "Email", email),
+
+              if (createdbydoctor.isNotEmpty)
+                _infoTile(
+                  Icons.medical_services,
+                  "Created By Doctor",
+                  "$createdbydoctor ($createdbydoctorid)",
+                )
+              else
+                _infoTile(
+                  Icons.admin_panel_settings,
+                  "Created By Admin",
+                  "$createdbyadmin ($createdbyadminid)",
+                ),
+
+              const SizedBox(height: 16),
+
+              /// COMPLAINT DETAILS
+              _sectionTitle("Complaint Details"),
+
+              _infoTile(Icons.report_problem, "Chief Complaint", cheifcomplaint),
+              _infoTile(
+                Icons.person_outline,
+                "Consulting Doctor",
+                "$consultingdoctor ($consultingdocid)",
+              ),
+              if(visitingdoctor.isNotEmpty)
+              _infoTile(
+                Icons.local_hospital,
+                "Visiting Doctor",
+                "$visitingdoctor ($visitingdocid)",
+              ),
+              if(dutydoctor.isNotEmpty)
+              _infoTile(
+                Icons.medical_information,
+                "Duty Doctor",
+                "$dutydoctor ($dutydocid)",
+              ),
+              if(associatedstaff.isNotEmpty)
+              _infoTile(
+                Icons.group,
+                "Associated Staff",
+                "$associatedstaff ($supportingstaffid)",
+              ),
+              _infoTile(Icons.event, "Visit Date", visitdate),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// SECTION TITLE
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: AppColors.primary,
+        ),
+      ),
+    );
+  }
+
+  /// INFO CARD TILE
+  Widget _infoTile(IconData icon, String label, String value) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.shade100),
+        color: Colors.white,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(8),
             ),
-            IconButton(
-              onPressed: () => context.router.pop(),
-              icon: const Icon(Icons.close),
+            child: Icon(icon, color: Colors.white, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style:  TextStyle(fontSize: 14,
+                  fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-          ],
-        ),
-
-        const SizedBox(height: 10),
-
-        // Now stack all detail rows vertically
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Patient Name: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(name)),
-          ],
-        ),
-        SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Patient Id: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(id),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Age: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(age)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Gender: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(gender)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Phone: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(phone)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Date of Birth: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(dob)),
-          ],
-        ),
-        if(email.isNotEmpty)
-         SizedBox(height: 4,),
-         if(email.isNotEmpty)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Email: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(email)),
-          ],
-        ),
-         SizedBox(height: 4,),
-         if(createdbydoctor != '')
-         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Created By Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$createdbydoctor - $createdbydoctorid")),
-          ],
-        ),
-        if(createdbydoctor == '')
-         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Created By Admin: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$createdbyadmin - $createdbyadminid")),
-          ],
-        ),
-
-        const Divider(
-          thickness: 2,
-          color: Colors.black,
-        ),
-        const Divider(
-          height: 0.5,
-          thickness: 2,
-          color: Colors.black,
-        ),
-        SizedBox(height: 10,),
-      
-        const Text(
-          "Complaint Details",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Chief Complaint: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(cheifcomplaint)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Consulting Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$consultingdoctor - $consultingdocid")),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Visiting Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$visitingdoctor - $visitingdocid")),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Duty Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$dutydoctor - $dutydocid")),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Associated Staff: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$associatedstaff - $supportingstaffid")),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Visit Date: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(visitdate),
-          ],
-        ),
-      ],
-    ),
-  ),
-);
-
-    
+          ),
+        ],
+      ),
+    );
   }
 }

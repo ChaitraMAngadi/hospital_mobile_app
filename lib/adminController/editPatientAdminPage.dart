@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -170,11 +171,22 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.badgeBg,
         appBar: AppBar(
+          leading: IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back,
+          color: Colors.white,)),
+           flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
           title: const Text(
             "Edit Patient",
             style: TextStyle(
               fontSize: 20,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -400,14 +412,21 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
                             //   ),
                             // ),
                             const SizedBox(height: 32),
-                            SizedBox(
+                            Container(
                               width: double.infinity,
+                              decoration: BoxDecoration(
+                                gradient:adminprovider.editingpatient? LinearGradient(colors: [
+                                  Colors.grey, Colors.grey
+                                ]): AppColors.primaryGradient,
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                              ),
                               child: ElevatedButton(
                                 style:  ButtonStyle(
                                   padding: const WidgetStatePropertyAll(
                                       EdgeInsets.symmetric(vertical: 14)),
-                                  backgroundColor: adminprovider.editingpatient ? const WidgetStatePropertyAll(Colors.grey):
-                                      const WidgetStatePropertyAll(Color(0XFF0857C0)),
+                                  backgroundColor: adminprovider.editingpatient ? const WidgetStatePropertyAll(Colors.transparent):
+                                      const WidgetStatePropertyAll(Colors.transparent),
+                                      shadowColor: WidgetStatePropertyAll(Colors.transparent),
                                   shape: const WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                       borderRadius:

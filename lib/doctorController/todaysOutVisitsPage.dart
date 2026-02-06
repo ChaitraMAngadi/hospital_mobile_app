@@ -7,6 +7,7 @@ import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -440,6 +441,144 @@ void initState() {
   }
 }
 
+// class TodaysVisitModel extends StatelessWidget {
+//   const TodaysVisitModel({
+//     super.key,
+//     required this.patientname,
+//     required this.patientId,
+//     required this.viewonTap,
+//     required this.startdiagnosisonTap,
+//     required this.supportingimagesonTap,
+//     required this.chiefcomplaint,
+//     required this.diagnosissummary,
+//     required this.complaintId,
+//   });
+//   final String patientname;
+//   final VoidCallback viewonTap;
+//   final VoidCallback startdiagnosisonTap;
+//   final VoidCallback supportingimagesonTap;
+//   final String patientId;
+//   final String complaintId;
+//   final String chiefcomplaint;
+//   final String diagnosissummary;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16,),
+//       child: ListTile(
+//         shape: const RoundedRectangleBorder(
+//             borderRadius: BorderRadius.all(Radius.circular(8))),
+//         tileColor: Colors.grey.shade50,
+//         title: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Row(
+//                   children: [
+//                     Text(
+//                       'PatientId: ',
+//                       style: const TextStyle(
+//                         fontSize: 15,
+//                         fontWeight: FontWeight.bold,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ),
+//                     Text(
+//                       patientId,
+//                       style: const TextStyle(
+//                         fontSize: 15,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 Row(
+//                   children: [
+//                     IconButton(
+//                     onPressed: viewonTap,
+//                     icon: const Icon(
+//                       Icons.remove_red_eye_outlined,
+//                       color: Color(0xFF0857C0),
+//                     )),
+//                     SizedBox(width: 6,),
+//                 IconButton(
+//                     onPressed: supportingimagesonTap,
+//                     icon: const Icon(
+//                       Icons.attach_file,
+//                       color: Color(0xFF0857C0),
+//                     ))
+//                   ],
+//                 )
+//               ],
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   'Name: ',
+//                   style: TextStyle(
+//                     fontSize: 15,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 Text(
+//                   patientname,
+//                   style: const TextStyle(
+//                     fontSize: 15,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 6,
+//             ),
+//              const Text(
+//                   'chiefcomplaint: ',
+//                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text(
+//                   chiefcomplaint,
+//                   style: const TextStyle(fontSize: 15,
+//                   overflow: TextOverflow.ellipsis,),
+                  
+//                 ),
+//             const SizedBox(
+//               height: 16,
+//             ),
+//             if (diagnosissummary == "")
+//               ElevatedButton(
+//                 onPressed: startdiagnosisonTap,
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: Colors.green,
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(12),
+//                   ),
+//                   padding:
+//                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+//                 ),
+//                 child: const Text("Start Diagnosis",
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       color: Colors.white,
+//                     )),
+//               ),
+//             if (diagnosissummary != "")
+//               DownloadPdfButton(complaintId: complaintId, patientId: patientId),
+
+//                const SizedBox(
+//               height: 16,
+//             ),
+//           ],
+//         ),
+        
+//       ),
+//     );
+//   }
+// }
+
 class TodaysVisitModel extends StatelessWidget {
   const TodaysVisitModel({
     super.key,
@@ -452,6 +591,7 @@ class TodaysVisitModel extends StatelessWidget {
     required this.diagnosissummary,
     required this.complaintId,
   });
+
   final String patientname;
   final VoidCallback viewonTap;
   final VoidCallback startdiagnosisonTap;
@@ -463,117 +603,161 @@ class TodaysVisitModel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16,),
-      child: ListTile(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8))),
-        tileColor: Colors.grey.shade50,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'PatientId: ',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      patientId,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                    onPressed: viewonTap,
-                    icon: const Icon(
-                      Icons.remove_red_eye_outlined,
-                      color: Color(0xFF0857C0),
-                    )),
-                    SizedBox(width: 6,),
-                IconButton(
-                    onPressed: supportingimagesonTap,
-                    icon: const Icon(
-                      Icons.attach_file,
-                      color: Color(0xFF0857C0),
-                    ))
-                  ],
-                )
-              ],
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12),bottom: Radius.circular(22)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 4,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
             ),
-            Row(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Name: ',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                /// PATIENT ID
+                _label("PATIENT ID"),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    patientId,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                
+                const SizedBox(height: 14),
+                
+                /// PATIENT NAME
+                _label("PATIENT NAME"),
                 Text(
                   patientname,
                   style: const TextStyle(
                     fontSize: 15,
-                    overflow: TextOverflow.ellipsis,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(
-              height: 6,
-            ),
-             const Text(
-                  'chiefcomplaint: ',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
+                
+                const SizedBox(height: 14),
+                
+                /// CHIEF COMPLAINT
+                _label("CHIEF COMPLAINT"),
                 Text(
                   chiefcomplaint,
-                  style: const TextStyle(fontSize: 15,
-                  overflow: TextOverflow.ellipsis,),
-                  
+                  style: const TextStyle(fontSize: 14),
                 ),
-            const SizedBox(
-              height: 16,
-            ),
-            if (diagnosissummary == "")
-              ElevatedButton(
-                onPressed: startdiagnosisonTap,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                
+                const SizedBox(height: 20),
+                
+                /// View Details (outline)
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 6,
+                      child: SizedBox(
+                        
+                        height: 46,
+                        child: OutlinedButton.icon(
+                          onPressed: viewonTap,
+                          icon: const Icon(Icons.remove_red_eye_outlined,
+                              color: AppColors.primary),
+                          label: const Text(
+                            "View Details",
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColors.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: IconButton(onPressed:supportingimagesonTap, icon: const Icon(Icons.attach_file_outlined,
+                      color: AppColors.primary,)),
+                    )
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                
+                /// Main action button (unchanged logic)
+                if (diagnosissummary == "")
+                  SizedBox(
+                    width: double.infinity,
+                    height: 46,
+                    child: ElevatedButton(
+                      onPressed: startdiagnosisonTap,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4A8CF6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Start Diagnosis",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                ),
-                child: const Text("Start Diagnosis",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    )),
-              ),
-            if (diagnosissummary != "")
-              DownloadPdfButton(complaintId: complaintId, patientId: patientId),
-
-               const SizedBox(
-              height: 16,
+                
+                if (diagnosissummary != "")
+                  SizedBox(
+                    width: double.infinity,
+                    child: DownloadPdfButton(
+                      complaintId: complaintId,
+                      patientId: patientId,
+                    ),
+                  ),
+              ],
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _label(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade600,
         ),
-        
       ),
     );
   }
 }
+

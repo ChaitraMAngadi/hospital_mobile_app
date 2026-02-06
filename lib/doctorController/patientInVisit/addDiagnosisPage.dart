@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -135,10 +136,20 @@ class _AddDiagnosisPageState extends State<AddDiagnosisPage> {
     
     return Scaffold(
       appBar: AppBar(
+         flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back,
+        color: Colors.white,)),
         title: const Text(
           'Patient Diagnosis',
           style: TextStyle(
             fontSize: 20,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -211,18 +222,25 @@ const SizedBox(height: 6),
 }).toList(),
 
 const SizedBox(height: 6),
-ElevatedButton(
-  onPressed: addVital,
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color(0xFF0857C0),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+Container(
+  decoration: BoxDecoration(
+    gradient: AppColors.primaryGradient,
+    borderRadius: BorderRadius.all(Radius.circular(12)),
   ),
-  child: const Text(
-    "Add Vital",
-    style: TextStyle(fontSize: 16, color: Colors.white),
+  child: ElevatedButton(
+    onPressed: addVital,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    ),
+    child: const Text(
+      "Add Vital",
+      style: TextStyle(fontSize: 16, color: Colors.white),
+    ),
   ),
 ),
 
@@ -238,20 +256,27 @@ const SizedBox(height: 12),
                   .toList(),
 
               const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: addMedication,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0857C0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              Container(
+                 decoration: BoxDecoration(
+    gradient: AppColors.primaryGradient,
+    borderRadius: BorderRadius.all(Radius.circular(12)),
+  ),
+                child: ElevatedButton(
+                  onPressed: addMedication,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:  Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: const Text("Add Medication",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      )),
                 ),
-                child: const Text("Add Medication",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    )),
               ),
               
               // ... rest of your form fields remain the same
@@ -293,20 +318,27 @@ const SizedBox(height: 12),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
-              ElevatedButton(
-                onPressed: pickFiles,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0857C0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              Container(
+                 decoration: BoxDecoration(
+    gradient: AppColors.primaryGradient,
+    borderRadius: BorderRadius.all(Radius.circular(12)),
+  ),
+                child: ElevatedButton(
+                  onPressed: pickFiles,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                ),
-                child: const Text(
-                  'Pick Files',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
+                  child: const Text(
+                    'Pick Files',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -442,8 +474,14 @@ const SizedBox(height: 12),
               ),
               const SizedBox(height: 24),
               
-              SizedBox(
+              Container(
                 width: double.infinity,
+                 decoration: BoxDecoration(
+    gradient:doctorprovider.isSavingIndiagnosis?LinearGradient(colors: [
+      Colors.grey, Colors.grey
+    ]): AppColors.primaryGradient,
+    borderRadius: BorderRadius.all(Radius.circular(12)),
+  ),
                 child: ElevatedButton(
                   onPressed:doctorprovider.isSavingIndiagnosis ? null : () async {
 
@@ -511,11 +549,12 @@ print(vitalsList);
                     doctorprovider.notify();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: doctorprovider.isSavingIndiagnosis ? Colors.grey :Color(0xFF0857C0),
+                    backgroundColor: doctorprovider.isSavingIndiagnosis ? Colors.transparent :Colors.transparent,
+                    shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
                   child:
                   doctorprovider.isSavingIndiagnosis ? const CircularProgressIndicator():

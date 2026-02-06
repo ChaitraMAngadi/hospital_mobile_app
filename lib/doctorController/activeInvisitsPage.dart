@@ -4,6 +4,7 @@ import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -354,6 +355,152 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
   }
 }
 
+// class ActiveInvisitModel extends StatelessWidget {
+//   const ActiveInvisitModel({
+//     super.key,
+//     required this.patientname,
+//     required this.patientId,
+//     required this.viewonTap,
+//     required this.startdiagnosisonTap,
+//     required this.chiefcomplaint,
+//     required this.diagnosissummary,
+//   });
+//   final String patientname;
+//   final VoidCallback viewonTap;
+//   final VoidCallback startdiagnosisonTap;
+//   final String patientId;
+//   final String chiefcomplaint;
+//   final String diagnosissummary;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.only(
+//         bottom: 16,
+//         left: 16,
+//         right: 16,
+//       ),
+//       child: ListTile(
+//         shape: const RoundedRectangleBorder(
+//             borderRadius: BorderRadius.all(Radius.circular(8))),
+//         tileColor: Colors.grey.shade50,
+//         title: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Row(
+//                   children: [
+//                     const Text(
+//                       'PatientId: ',
+//                       style: TextStyle(
+//                         fontSize: 15,
+//                         fontWeight: FontWeight.bold,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ),
+//                     Text(
+//                       patientId,
+//                       style: const TextStyle(
+//                         fontSize: 15,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 Row(
+//                   children: [
+//                     IconButton(
+//                         onPressed: viewonTap,
+//                         icon: const Icon(
+//                           Icons.remove_red_eye_outlined,
+//                           color: Color(0xFF0857C0),
+//                         )),
+//                     SizedBox(
+//                       width: 6,
+//                     ),
+//                     Text(''),
+//                   ],
+//                 )
+//               ],
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   'Name: ',
+//                   style: TextStyle(
+//                     fontSize: 15,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 Text(
+//                   patientname,
+//                   style: const TextStyle(
+//                     fontSize: 15,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 6,
+//             ),
+//             const Text(
+//               'chiefcomplaint:',
+//               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+//             ),
+//             Text(
+//               chiefcomplaint,
+//               style: const TextStyle(
+//                   fontSize: 15, overflow: TextOverflow.ellipsis),
+//             ),
+//             const SizedBox(
+//               height: 16,
+//             ),
+
+//             ElevatedButton(
+//               onPressed: startdiagnosisonTap,
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: Colors.deepPurple.shade100,
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(12),
+//                 ),
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+//               ),
+//               child: Row(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   Icon(
+//                     Icons.open_in_new,
+//                     color: Colors.deepPurple.shade700,
+//                   ),
+//                   const SizedBox(
+//                     width: 6,
+//                   ),
+//                   Text("Diagnosis",
+//                       style: TextStyle(
+//                           fontSize: 16,
+//                           fontWeight: FontWeight.bold,
+//                           color: Colors.deepPurple.shade700)),
+//                 ],
+//               ),
+//             ),
+//             // if (diagnosissummary != "")
+//             // // Text("Download pdf button"),
+//             //   DownloadPdfButton(complaintId: complaintId, patientId: patientId),
+
+//             //    const SizedBox(
+//             //   height: 16,
+//             // ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class ActiveInvisitModel extends StatelessWidget {
   const ActiveInvisitModel({
     super.key,
@@ -364,6 +511,7 @@ class ActiveInvisitModel extends StatelessWidget {
     required this.chiefcomplaint,
     required this.diagnosissummary,
   });
+
   final String patientname;
   final VoidCallback viewonTap;
   final VoidCallback startdiagnosisonTap;
@@ -373,128 +521,152 @@ class ActiveInvisitModel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 16,
-        left: 16,
-        right: 16,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12),bottom: Radius.circular(22)),
+        
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: ListTile(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8))),
-        tileColor: Colors.grey.shade50,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'PatientId: ',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      patientId,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                        onPressed: viewonTap,
-                        icon: const Icon(
-                          Icons.remove_red_eye_outlined,
-                          color: Color(0xFF0857C0),
-                        )),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Text(''),
-                  ],
-                )
-              ],
+      child: Column(
+        children: [
+          Container(
+            height: 4,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
             ),
-            Row(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                
+                /// PATIENT ID
                 const Text(
-                  'Name: ',
+                  "PATIENT ID",
                   style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    patientId,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 14),
+                
+                /// PATIENT NAME
+                const Text(
+                  "PATIENT NAME",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
                 Text(
                   patientname,
                   style: const TextStyle(
-                    fontSize: 15,
-                    overflow: TextOverflow.ellipsis,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
+                
+                const SizedBox(height: 14),
+                
+                /// CHIEF COMPLAINT
+                const Text(
+                  "CHIEF COMPLAINT",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  chiefcomplaint,
+                  style: const TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+                
+                const SizedBox(height: 20),
+                
+                /// BUTTONS
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: viewonTap,
+                        icon: const Icon(
+                          Icons.remove_red_eye,
+                          color: AppColors.primary,
+                        ),
+                        label: const Text(
+                          "View",
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppColors.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: startdiagnosisonTap,
+                        icon: const Icon(Icons.open_in_new),
+                        label: const Text(
+                          "Diagnosis",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4C8BF5),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(
-              height: 6,
-            ),
-            const Text(
-              'chiefcomplaint:',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              chiefcomplaint,
-              style: const TextStyle(
-                  fontSize: 15, overflow: TextOverflow.ellipsis),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-
-            ElevatedButton(
-              onPressed: startdiagnosisonTap,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple.shade100,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.open_in_new,
-                    color: Colors.deepPurple.shade700,
-                  ),
-                  const SizedBox(
-                    width: 6,
-                  ),
-                  Text("Diagnosis",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple.shade700)),
-                ],
-              ),
-            ),
-            // if (diagnosissummary != "")
-            // // Text("Download pdf button"),
-            //   DownloadPdfButton(complaintId: complaintId, patientId: patientId),
-
-            //    const SizedBox(
-            //   height: 16,
-            // ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -548,191 +720,336 @@ class ActiveInVisitViewModel extends StatelessWidget {
   final String associatedstaff;
   final String visitdate;
 
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-  insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-  child: Padding(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Top bar
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Patient Details",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            IconButton(
-              onPressed: () => context.router.pop(),
-              icon: const Icon(Icons.close),
-            ),
-          ],
-        ),
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//   insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+//   child: Padding(
+//     padding: const EdgeInsets.all(16),
+//     child: Column(
+//       mainAxisSize: MainAxisSize.min,
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         // Top bar
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             const Text(
+//               "Patient Details",
+//               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//             ),
+//             IconButton(
+//               onPressed: () => context.router.pop(),
+//               icon: const Icon(Icons.close),
+//             ),
+//           ],
+//         ),
 
-        const SizedBox(height: 10),
+//         const SizedBox(height: 10),
 
-        // Now stack all detail rows vertically
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Patient Name: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(name)),
-          ],
-        ),
-        SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Patient Id: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(id),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Age: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(age)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Gender: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(gender)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Phone: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(phone)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Date of Birth: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(dob)),
-          ],
-        ),
-         SizedBox(height: 4,),
-         if(email.isNotEmpty)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Email: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(email)),
-          ],
-        ),
-        if(email.isNotEmpty)
-         SizedBox(height: 4,),
-         if(createdbydoctor != '')
-         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Created By Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$createdbydoctor - $createdbydoctorid")),
-          ],
-        ),
-        if(createdbydoctor == '')
-         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Created By Admin: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$createdbyadmin - $createdbyadminid")),
-          ],
-        ),
+//         // Now stack all detail rows vertically
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Patient Name: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(name)),
+//           ],
+//         ),
+//         SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Patient Id: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Text(id),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Age: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(age)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Gender: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(gender)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Phone: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(phone)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Date of Birth: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(dob)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//          if(email.isNotEmpty)
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Email: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(email)),
+//           ],
+//         ),
+//         if(email.isNotEmpty)
+//          SizedBox(height: 4,),
+//          if(createdbydoctor != '')
+//          Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Created By Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$createdbydoctor - $createdbydoctorid")),
+//           ],
+//         ),
+//         if(createdbydoctor == '')
+//          Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Created By Admin: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$createdbyadmin - $createdbyadminid")),
+//           ],
+//         ),
 
-        const Divider(
-          thickness: 2,
-          color: Colors.black,
-        ),
-        const Divider(
-          height: 0.5,
-          thickness: 2,
-          color: Colors.black,
-        ),
-        SizedBox(height: 10,),
+//         const Divider(
+//           thickness: 2,
+//           color: Colors.black,
+//         ),
+//         const Divider(
+//           height: 0.5,
+//           thickness: 2,
+//           color: Colors.black,
+//         ),
+//         SizedBox(height: 10,),
       
-        const Text(
-          "Complaint Details",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
+//         const Text(
+//           "Complaint Details",
+//           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: 8),
 
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Chief Complaint: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text(cheifcomplaint)),
-          ],
-        ),
-         SizedBox(height: 4,),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Consulting Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$consultingdoctor - $consultingdocid")),
-          ],
-        ),
-         SizedBox(height: 4,),
-         if(visitingdoctor.isNotEmpty)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Visiting Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$visitingdoctor - $visitingdocid")),
-          ],
-        ),
-        if(visitingdoctor.isNotEmpty)
-         SizedBox(height: 4,),
-         if(dutydoctor.isNotEmpty)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Duty Doctor: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$dutydoctor - $dutydocid")),
-          ],
-        ),
-        if(dutydoctor.isNotEmpty)
-         SizedBox(height: 4,),
-         if(associatedstaff.isNotEmpty)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Associated Staff: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Flexible(child: Text("$associatedstaff - $supportingstaffid")),
-          ],
-        ),
-        if(associatedstaff.isNotEmpty)
-         SizedBox(height: 4,),
-        Row(
-          children: [
-            const Text("Visit Date: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(visitdate),
-          ],
-        ),
-      ],
-    ),
-  ),
-);
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Chief Complaint: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text(cheifcomplaint)),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Consulting Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$consultingdoctor - $consultingdocid")),
+//           ],
+//         ),
+//          SizedBox(height: 4,),
+//          if(visitingdoctor.isNotEmpty)
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Visiting Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$visitingdoctor - $visitingdocid")),
+//           ],
+//         ),
+//         if(visitingdoctor.isNotEmpty)
+//          SizedBox(height: 4,),
+//          if(dutydoctor.isNotEmpty)
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Duty Doctor: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$dutydoctor - $dutydocid")),
+//           ],
+//         ),
+//         if(dutydoctor.isNotEmpty)
+//          SizedBox(height: 4,),
+//          if(associatedstaff.isNotEmpty)
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text("Associated Staff: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Flexible(child: Text("$associatedstaff - $supportingstaffid")),
+//           ],
+//         ),
+//         if(associatedstaff.isNotEmpty)
+//          SizedBox(height: 4,),
+//         Row(
+//           children: [
+//             const Text("Visit Date: ",
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             Text(visitdate),
+//           ],
+//         ),
+//       ],
+//     ),
+//   ),
+// );
+//   }
+
+@override
+Widget build(BuildContext context) {
+  Widget infoTile({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.shade100),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
+
+  return Dialog(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF5F5),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// HEADER
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: const [
+                    CircleAvatar(
+                      backgroundColor: AppColors.primary,
+                      child: Icon(Icons.abc, color: Colors.white),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      "In-Visit Details",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => context.router.pop(),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            infoTile(
+              icon: Icons.badge,
+              label: "Patient ID",
+              value: id,
+            ),
+            infoTile(
+              icon: Icons.person,
+              label: "Full Name",
+              value: name,
+            ),
+            infoTile(
+              icon: Icons.phone,
+              label: "Phone",
+              value: phone,
+            ),
+            infoTile(
+              icon: Icons.female,
+              label: "Gender",
+              value: gender,
+            ),
+            infoTile(
+              icon: Icons.cake,
+              label: "DOB",
+              value: dob,
+            ),
+            if (email.isNotEmpty)
+              infoTile(
+                icon: Icons.email,
+                label: "Email",
+                value: email,
+              ),
+            infoTile(
+              icon: Icons.report_problem,
+              label: "Chief Complaint",
+              value: cheifcomplaint,
+            ),
+            infoTile(
+              icon: Icons.medical_services,
+              label: "Consulting Doctor",
+              value: "$consultingdoctor , $consultingdocid",
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 }

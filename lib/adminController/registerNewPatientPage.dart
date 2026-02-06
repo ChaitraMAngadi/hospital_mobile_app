@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -62,14 +63,25 @@ class _RegisterNewPatientPageState extends State<RegisterNewPatientPage> {
     Adminprovider adminprovider =
         context.read<Adminprovider>();
     return Scaffold(
+      backgroundColor: AppColors.badgeBg,
         appBar: AppBar(
-          title: Text(
+           flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
+          title: const Text(
             "Register Patient",
             style: TextStyle(
               fontSize: 20,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
+          leading: IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back,
+          color: Colors.white,)),
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(16),
@@ -272,14 +284,24 @@ class _RegisterNewPatientPageState extends State<RegisterNewPatientPage> {
                     ),
                   ),
                   SizedBox(height: 32),
-                  SizedBox(
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient:adminprovider.addingpatient?
+                      LinearGradient(colors: [
+                        Colors.grey, Colors.grey
+                      ])
+                      : AppColors.primaryGradient,
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                     width: double.infinity,
                     child: ElevatedButton(
                       style:  ButtonStyle(
                         padding: const WidgetStatePropertyAll(
                             EdgeInsets.symmetric(vertical: 14)),
-                        backgroundColor: adminprovider.addingpatient? const WidgetStatePropertyAll( Colors.grey):
-                            const WidgetStatePropertyAll(Color(0XFF0857C0)),
+                        backgroundColor: adminprovider.addingpatient? const WidgetStatePropertyAll( Colors.transparent):
+                            const WidgetStatePropertyAll(Colors.transparent),
+                            shadowColor: WidgetStatePropertyAll(Colors.transparent),
+
                         shape: const WidgetStatePropertyAll(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(14)),

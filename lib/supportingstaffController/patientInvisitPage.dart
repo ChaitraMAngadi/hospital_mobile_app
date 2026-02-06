@@ -7,6 +7,7 @@ import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -126,11 +127,21 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
         builder: (context, supportingstaffprovider, chilsd) {
           return Scaffold(
             appBar: AppBar(
+               flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back,
+        color: Colors.white,)),
               title: Text(
                 widget.name,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
               centerTitle: true,
@@ -223,6 +234,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
                                               .patientinvisits[index];
 
                                           return InVisitModel(
+                                            visitnumber: index+1,
                                               cheifcomplaint:
                                                   item['chief_complaint'],
                                               visitdate: formatDate(
@@ -296,6 +308,164 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
   }
 }
 
+// class InVisitModel extends StatelessWidget {
+//   const InVisitModel({
+//     super.key,
+//     required this.cheifcomplaint,
+//     required this.visitdate,
+//     required this.viewontap,
+//     // required this.diagnosisontap,
+//     required this.observationontap,
+//     // required this.dischargedate,
+//   });
+
+//   final String cheifcomplaint;
+//   final String visitdate;
+//   final VoidCallback viewontap;
+//   // final VoidCallback diagnosisontap;
+//   final VoidCallback observationontap;
+//   // final String dischargedate;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(
+//         horizontal: 16,
+//       ),
+//       child: Card(
+//         child: Padding(
+//           padding:
+//               const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 12),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     visitdate,
+//                     style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                   // Container(
+//                   //   padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+//                   //   decoration: BoxDecoration(
+//                   //       borderRadius: BorderRadius.all(Radius.circular(30)),
+//                   //       color: dischargedate == ""
+//                   //           ? Colors.green.shade400
+//                   //           : Colors.red.shade400),
+//                   //   child: Text(
+//                   //     dischargedate == "" ? "Active" : "Discharged",
+//                   //     style: const TextStyle(
+//                   //         fontWeight: FontWeight.bold, color: Colors.white),
+//                   //   ),
+//                   // ),
+//                 ],
+//               ),
+//               const SizedBox(
+//                 height: 4,
+//               ),
+//               const Text(
+//                 "Cheif-Complaint :",
+//                 style: TextStyle(
+//                   fontSize: 15,
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.black,
+//                 ),
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//               const SizedBox(
+//                 height: 4,
+//               ),
+//               Text(
+//                 cheifcomplaint,
+//                 style: const TextStyle(
+//                   fontSize: 15,
+//                   color: Colors.black,
+//                 ),
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//               const SizedBox(
+//                 height: 16,
+//               ),
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   IconButton(
+//                       onPressed: viewontap,
+//                       icon: const Icon(
+//                         Icons.remove_red_eye,
+//                         color: Color(0Xff2556B9),
+//                       )),
+//                   // ElevatedButton(
+//                   //     style: ElevatedButton.styleFrom(
+//                   //       backgroundColor: Colors.deepPurple.shade100,
+//                   //       shape: RoundedRectangleBorder(
+//                   //         borderRadius: BorderRadius.circular(20),
+//                   //       ),
+//                   //       padding:
+//                   //           EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//                   //     ),
+//                   //     onPressed: diagnosisontap,
+//                   //     child: Row(
+//                   //       children: [
+//                   //         Text(
+//                   //           "Diagnosis",
+//                   //           style: TextStyle(
+//                   //             fontSize: 15,
+//                   //             fontWeight: FontWeight.bold,
+//                   //             color: Colors.deepPurple.shade700,
+//                   //           ),
+//                   //         ),
+//                   //         SizedBox(
+//                   //           width: 4,
+//                   //         ),
+//                   //         Icon(
+//                   //           Icons.open_in_new,
+//                   //           color: Colors.deepPurple.shade700,
+//                   //         ),
+//                   //       ],
+//                   //     )),
+//                   ElevatedButton(
+//                       style: ElevatedButton.styleFrom(
+//                         backgroundColor: Colors.deepPurple.shade100,
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(20),
+//                         ),
+//                         padding:
+//                             EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+//                       ),
+//                       onPressed: observationontap,
+//                       child: Row(
+//                         children: [
+//                           Text(
+//                             "Observations",
+//                             style: TextStyle(
+//                               fontWeight: FontWeight.bold,
+//                               color: Colors.deepPurple.shade700,
+//                             ),
+//                           ),
+//                           SizedBox(
+//                             width: 4,
+//                           ),
+//                           Icon(
+//                             Icons.open_in_new,
+//                             color: Colors.deepPurple.shade700,
+//                           ),
+//                         ],
+//                       )),
+//                 ],
+//               )
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 class InVisitModel extends StatelessWidget {
   const InVisitModel({
     super.key,
@@ -305,6 +475,7 @@ class InVisitModel extends StatelessWidget {
     // required this.diagnosisontap,
     required this.observationontap,
     // required this.dischargedate,
+    required this.visitnumber, // Add this parameter
   });
 
   final String cheifcomplaint;
@@ -313,141 +484,182 @@ class InVisitModel extends StatelessWidget {
   // final VoidCallback diagnosisontap;
   final VoidCallback observationontap;
   // final String dischargedate;
+  final int visitnumber; // Add this field
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-      ),
-      child: Card(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    visitdate,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  //   decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.all(Radius.circular(30)),
-                  //       color: dischargedate == ""
-                  //           ? Colors.green.shade400
-                  //           : Colors.red.shade400),
-                  //   child: Text(
-                  //     dischargedate == "" ? "Active" : "Discharged",
-                  //     style: const TextStyle(
-                  //         fontWeight: FontWeight.bold, color: Colors.white),
-                  //   ),
-                  // ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+     decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(12),
+      bottom: Radius.circular(22)),
+        boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
                 ],
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              const Text(
-                "Cheif-Complaint :",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+     ),
+      child: Column(
+        children: [
+          Container(
+            height: 4,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Visit Number Section
+                Text(
+                  "VISIT NUMBER",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                    letterSpacing: 0.5,
+                  ),
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Text(
-                cheifcomplaint,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black,
+                SizedBox(height: 6),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    "Visit #${visitnumber.toString()}",
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                      onPressed: viewontap,
-                      icon: const Icon(
-                        Icons.remove_red_eye,
-                        color: Color(0Xff2556B9),
-                      )),
-                  // ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Colors.deepPurple.shade100,
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(20),
-                  //       ),
-                  //       padding:
-                  //           EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  //     ),
-                  //     onPressed: diagnosisontap,
-                  //     child: Row(
-                  //       children: [
-                  //         Text(
-                  //           "Diagnosis",
-                  //           style: TextStyle(
-                  //             fontSize: 15,
-                  //             fontWeight: FontWeight.bold,
-                  //             color: Colors.deepPurple.shade700,
-                  //           ),
-                  //         ),
-                  //         SizedBox(
-                  //           width: 4,
-                  //         ),
-                  //         Icon(
-                  //           Icons.open_in_new,
-                  //           color: Colors.deepPurple.shade700,
-                  //         ),
-                  //       ],
-                  //     )),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                SizedBox(height: 16),
+                
+                // Visit Date Section
+                Text(
+                  "VISIT DATE",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  visitdate,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 16),
+                
+                // Chief Complaint Section
+                Text(
+                  "CHIEF COMPLAINT",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  cheifcomplaint,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 16),
+                
+                // Action Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: viewontap,
+                        icon: Icon(
+                          Icons.visibility_outlined,
+                          color: AppColors.primary,
+                          size: 20,
                         ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        label: Text(
+                          "View",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          side: BorderSide(
+                            color: AppColors.primary,
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                       ),
-                      onPressed: observationontap,
-                      child: Row(
-                        children: [
-                          Text(
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: AppColors.primaryGradient,
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: observationontap,
+                          icon: const Icon(
+                            Icons.open_in_new,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
                             "Observations",
                             style: TextStyle(
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple.shade700,
+                              color: Colors.white,
                             ),
                           ),
-                          SizedBox(
-                            width: 4,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                          Icon(
-                            Icons.open_in_new,
-                            color: Colors.deepPurple.shade700,
-                          ),
-                        ],
-                      )),
-                ],
-              )
-            ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -642,6 +854,183 @@ class TodaysVisitViewModel extends StatelessWidget {
   }
 }
 
+// class InVisitViewModel extends StatelessWidget {
+//   const InVisitViewModel({
+//     super.key,
+//     required this.cheifcomplaint,
+//     required this.visitdate,
+//     required this.consultingdoctor,
+//     required this.dutydoctor,
+//     required this.visitingdoctor,
+//     required this.associatedstaff,
+//   });
+
+//   final String cheifcomplaint;
+//   final String consultingdoctor;
+//   final String dutydoctor;
+//   final String visitingdoctor;
+//   final String associatedstaff;
+//   final String visitdate;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+//       child: Padding(
+//         padding: const EdgeInsets.all(16),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 const Text(
+//                   "Complaint Details",
+//                   style: TextStyle(
+//                     fontSize: 20,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 IconButton(
+//                     onPressed: () {
+//                       context.router.pop();
+//                     },
+//                     icon: const Icon(Icons.close))
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 10,
+//             ),
+//             Row(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 const Text(
+//                   "Chief Complaint: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                   child: Text(
+//                     "$cheifcomplaint",
+//                     style: const TextStyle(fontSize: 14),
+//                     softWrap: true,
+//                   ),
+//                 ),
+//                 // Text(
+//                 //   "${cheifcomplaint}",
+//                 //   style: TextStyle(fontSize: 14),
+
+//                 // ),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Consulting Doctor: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   consultingdoctor,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             if(visitingdoctor.isNotEmpty)
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Visiting Doctor: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   visitingdoctor,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             if(visitingdoctor.isNotEmpty)
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             if(dutydoctor.isNotEmpty)
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Duty Doctor: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   dutydoctor,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             if(dutydoctor.isNotEmpty)
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             if(associatedstaff.isNotEmpty)
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Associated Staff: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   associatedstaff,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             if(associatedstaff.isNotEmpty)
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Visit Date: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text("${visitdate}", style: TextStyle(fontSize: 14)),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             // Row(
+//             //   children: [
+//             //     const Text(
+//             //       "Creation Time: ",
+//             //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//             //     ),
+//             //     Text("${createdat}", style: TextStyle(fontSize: 14)),
+//             //   ],
+//             // ),
+//             // const SizedBox(
+//             //   height: 8,
+//             // ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 class InVisitViewModel extends StatelessWidget {
   const InVisitViewModel({
     super.key,
@@ -663,156 +1052,137 @@ class InVisitViewModel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: Colors.white,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Complaint Details",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => context.router.pop(),
+                    icon: const Icon(Icons.close,
+                    color: AppColors.primary,),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              _infoTile(
+                icon: Icons.report_problem_outlined,
+                title: "Chief Complaint",
+                value: cheifcomplaint,
+              ),
+
+              _infoTile(
+                icon: Icons.medical_services_outlined,
+                title: "Consulting Doctor",
+                value: consultingdoctor,
+              ),
+
+              if (visitingdoctor.isNotEmpty)
+                _infoTile(
+                  icon: Icons.local_hospital_outlined,
+                  title: "Visiting Doctor",
+                  value: visitingdoctor,
+                ),
+
+              if (dutydoctor.isNotEmpty)
+                _infoTile(
+                  icon: Icons.health_and_safety_outlined,
+                  title: "Duty Doctor",
+                  value: dutydoctor,
+                ),
+
+              if (associatedstaff.isNotEmpty)
+                _infoTile(
+                  icon: Icons.group_outlined,
+                  title: "Associated Staff",
+                  value: associatedstaff,
+                ),
+
+              _infoTile(
+                icon: Icons.calendar_today_outlined,
+                title: "Visit Date",
+                value: visitdate,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Reusable card-style row (matches image UI)
+  Widget _infoTile({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.badgeBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.accent),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Complaint Details",
-                  style: TextStyle(
-                    fontSize: 20,
+                Text(
+                  title.toUpperCase(),
+                  style:  TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                    onPressed: () {
-                      context.router.pop();
-                    },
-                    icon: const Icon(Icons.close))
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Chief Complaint: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                  child: Text(
-                    "$cheifcomplaint",
-                    style: const TextStyle(fontSize: 14),
-                    softWrap: true,
-                  ),
-                ),
-                // Text(
-                //   "${cheifcomplaint}",
-                //   style: TextStyle(fontSize: 14),
-
-                // ),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Consulting Doctor: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  consultingdoctor,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            if(visitingdoctor.isNotEmpty)
-            Row(
-              children: [
-                const Text(
-                  "Visiting Doctor: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  visitingdoctor,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
-            ),
-            if(visitingdoctor.isNotEmpty)
-            const SizedBox(
-              height: 8,
-            ),
-            if(dutydoctor.isNotEmpty)
-            Row(
-              children: [
-                const Text(
-                  "Duty Doctor: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  dutydoctor,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
-            ),
-            if(dutydoctor.isNotEmpty)
-            const SizedBox(
-              height: 8,
-            ),
-            if(associatedstaff.isNotEmpty)
-            Row(
-              children: [
-                const Text(
-                  "Associated Staff: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  associatedstaff,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
-            ),
-            if(associatedstaff.isNotEmpty)
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Visit Date: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${visitdate}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            // Row(
-            //   children: [
-            //     const Text(
-            //       "Creation Time: ",
-            //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            //     ),
-            //     Text("${createdat}", style: TextStyle(fontSize: 14)),
-            //   ],
-            // ),
-            // const SizedBox(
-            //   height: 8,
-            // ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

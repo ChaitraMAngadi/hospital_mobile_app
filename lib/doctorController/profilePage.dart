@@ -5,6 +5,7 @@ import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -63,570 +64,705 @@ class _ProfilePageState extends State<ProfilePage> {
                               item['associatedHospitalBranch'];
                           final hospital = hospitalbranch['associatedHospital'];
 
-                          return
+                          return Padding(
+  padding: const EdgeInsets.all(16),
+  child: Column(
+    children: [
+
+      /// ---------------- PERSONAL DETAILS ----------------
+      Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          children: [
+            sectionHeader(
+              title: "Personal Details",
+              icon: Icons.person,
+              color: Colors.redAccent,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  infoRow("Doctor ID", item['userid']),
+                  infoRow("Full Name", item['name']),
+                  infoRow("Email Address", item['email']),
+                  infoRow("Phone Number", item['phone'].toString()),
+                  infoRow("Gender", item['gender']),
+                  infoRow(
+                    "Registration Number",
+                    item['doctorRegistrationNumber'],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      const SizedBox(height: 16),
+
+      /// ---------------- PROFESSIONAL DETAILS ----------------
+      Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          children: [
+            sectionHeader(
+              title: "Professional Details",
+              icon: Icons.badge,
+              color: Colors.pinkAccent,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  infoRow(
+                    "Board of Registration",
+                    item['board_of_registration'],
+                  ),
+                  infoRow(
+                    "Year of Registration",
+                    item['year_of_registration'].toString(),
+                  ),
+                  infoRow("Qualification", item['qualification']),
+                  infoRow("Specialization", item['specialization']),
+                  infoRow("Address", item['address']),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      const SizedBox(height: 16),
+
+      /// ---------------- HOSPITAL BRANCH ----------------
+      Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          children: [
+            sectionHeader(
+              title: "Hospital Branch",
+              icon: Icons.local_hospital,
+              color: Colors.red.shade300,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  infoRow("Branch ID", hospitalbranch['userid']),
+                  infoRow("Branch Name", hospitalbranch['name']),
+                  infoRow("Address", hospitalbranch['address']),
+                  infoRow("Email", hospitalbranch['email']),
+                  infoRow(
+                    "Phone",
+                    hospitalbranch['phone'].toString(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      const SizedBox(height: 16),
+
+      /// ---------------- ASSOCIATED HOSPITAL ----------------
+      Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          children: [
+            sectionHeader(
+              title: "Associated Hospital",
+              icon: Icons.apartment,
+              color: Colors.red.shade700,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  infoRow("Hospital ID", hospital['userid']),
+                  infoRow("Hospital Name", hospital['name']),
+                  infoRow("Email", hospital['email']),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+);
+
                               // Text('profile');
-                              Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                //                       Row(
-                                //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //                         children: [
-                                //                           const SizedBox(),
-                                //                           ElevatedButton(
-                                //                             style:  ButtonStyle(
-                                //   padding: const WidgetStatePropertyAll(
-                                //       EdgeInsets.symmetric(vertical: 14, horizontal: 20)),
-                                //   backgroundColor: WidgetStatePropertyAll(Colors.green.shade400,),
-                                //   shape: const WidgetStatePropertyAll(
-                                //     RoundedRectangleBorder(
-                                //       borderRadius: BorderRadius.all(Radius.circular(14)),
-                                //     ),
-                                //   ),
-                                // ),
-                                //                             onPressed: (){
+    //                           Padding(
+    //                         padding: const EdgeInsets.all(16),
+    //                         child: Column(
+    //                           children: [
+    //                             //                       Row(
+    //                             //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                             //                         children: [
+    //                             //                           const SizedBox(),
+    //                             //                           ElevatedButton(
+    //                             //                             style:  ButtonStyle(
+    //                             //   padding: const WidgetStatePropertyAll(
+    //                             //       EdgeInsets.symmetric(vertical: 14, horizontal: 20)),
+    //                             //   backgroundColor: WidgetStatePropertyAll(Colors.green.shade400,),
+    //                             //   shape: const WidgetStatePropertyAll(
+    //                             //     RoundedRectangleBorder(
+    //                             //       borderRadius: BorderRadius.all(Radius.circular(14)),
+    //                             //     ),
+    //                             //   ),
+    //                             // ),
+    //                             //                             onPressed: (){
 
-                                //                               showDialog(
-                                //                                 context: context,
-                                //                                 builder: (context) {
-                                //                                   return ResetPasswordModel();
-                                //                                 },
-                                //                               );
-                                //                             },
-                                //                             child: const Text("Reset Password",
-                                //                           style: TextStyle(
-                                //                             fontWeight: FontWeight.bold,
-                                //                             fontSize: 16,
-                                //                             color: Colors.white,
-                                //                           ),))
-                                //                         ],
-                                //                       ),
-                                //  const SizedBox(height: 16,),
+    //                             //                               showDialog(
+    //                             //                                 context: context,
+    //                             //                                 builder: (context) {
+    //                             //                                   return ResetPasswordModel();
+    //                             //                                 },
+    //                             //                               );
+    //                             //                             },
+    //                             //                             child: const Text("Reset Password",
+    //                             //                           style: TextStyle(
+    //                             //                             fontWeight: FontWeight.bold,
+    //                             //                             fontSize: 16,
+    //                             //                             color: Colors.white,
+    //                             //                           ),))
+    //                             //                         ],
+    //                             //                       ),
+    //                             //  const SizedBox(height: 16,),
 
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceBetween,
-                                //   children: [
-                                //     const Text("Doctor Profile",
-                                //         style: TextStyle(
-                                //           fontSize: 22,
-                                //           fontWeight: FontWeight.bold,
-                                //         )),
-                                //     Text(
-                                //       "Valid Date: ${formatDate(item['validity'])}",
-                                //       style: const TextStyle(
-                                //         fontSize: 16,
-                                //       ),
-                                //     )
-                                //   ],
-                                // ),
-                                Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                          Text(
-                                          "My Details",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.indigo.shade700),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-     crossAxisAlignment: CrossAxisAlignment.start,
+    //                             // Row(
+    //                             //   mainAxisAlignment:
+    //                             //       MainAxisAlignment.spaceBetween,
+    //                             //   children: [
+    //                             //     const Text("Doctor Profile",
+    //                             //         style: TextStyle(
+    //                             //           fontSize: 22,
+    //                             //           fontWeight: FontWeight.bold,
+    //                             //         )),
+    //                             //     Text(
+    //                             //       "Valid Date: ${formatDate(item['validity'])}",
+    //                             //       style: const TextStyle(
+    //                             //         fontSize: 16,
+    //                             //       ),
+    //                             //     )
+    //                             //   ],
+    //                             // ),
+    //                             Card(
+    //                               child: Padding(
+    //                                 padding: const EdgeInsets.all(16.0),
+    //                                 child: Column(
+    //                                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                                   children: [
+    //                                       Text(
+    //                                       "My Details",
+    //                                       style: TextStyle(
+    //                                           fontSize: 20,
+    //                                           fontWeight: FontWeight.bold,
+    //                                           color: Colors.indigo.shade700),
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 20,
+    //                                     ),
+    //                                     Row(
+    //  crossAxisAlignment: CrossAxisAlignment.start,
 
-                                          children: [
-                                            const Text(
-                                              "Name: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                item['name'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Name: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             item['name'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
                                                   
-                                                  // overflow: TextOverflow.ellipsis,
-                                                ),
-                                                softWrap: true,
-                                                overflow: TextOverflow.visible,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "ID: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              item['userid'],
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Email: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                item['email'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
+    //                                               // overflow: TextOverflow.ellipsis,
+    //                                             ),
+    //                                             softWrap: true,
+    //                                             overflow: TextOverflow.visible,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     const SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "ID: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           item['userid'],
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Email: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             item['email'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
                                                   
-                                                ),
-                                                softWrap: true,
-                                                overflow: TextOverflow.visible,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "Phone: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              item['phone'].toString(),
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "Gender: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              item['gender'],
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "Registration Number: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              item['doctorRegistrationNumber'],
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "Board of Registration: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              item['board_of_registration'],
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Qualification: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                item['qualification'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
+    //                                             ),
+    //                                             softWrap: true,
+    //                                             overflow: TextOverflow.visible,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Phone: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           item['phone'].toString(),
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Gender: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           item['gender'],
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Registration Number: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           item['doctorRegistrationNumber'],
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                             overflow: TextOverflow.ellipsis,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Board of Registration: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           item['board_of_registration'],
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                             overflow: TextOverflow.ellipsis,
+    //                                           ),
+    //                                           overflow: TextOverflow.ellipsis,
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Qualification: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             item['qualification'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
                                                   
-                                                ),
-                                                softWrap: true,
-                                                overflow: TextOverflow.visible,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Specialization: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                item['specialization'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Address: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                item['address'],
-                                                style: const TextStyle(
-                                                    fontSize: 16),
-                                                softWrap: true,
-                                                textAlign: TextAlign.start,
-                                                overflow: TextOverflow.visible,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                         const Text(
-                                          "Associated Hospital Branch",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color.fromARGB(255, 26, 136, 83),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "ID: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              hospitalbranch['userid'],
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Name: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                hospitalbranch['name'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Address: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                hospitalbranch['address'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
-                                                // maxLines: 2,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Email: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                item['email'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
-                                                // maxLines: 1,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "Phone: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              item['phone'].toString(),
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                         Text(
-                                          "Associated Hospital",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.deepPurple.shade700
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "ID: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              hospital['userid'],
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Name: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                item['name'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
-                                                // maxLines: 1,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Email: ",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                hospital['email'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
-                                                // maxLines: 1,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+    //                                             ),
+    //                                             softWrap: true,
+    //                                             overflow: TextOverflow.visible,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Specialization: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             item['specialization'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
+    //                                             ),
+    //                                             overflow: TextOverflow.visible,
+    //                                             softWrap: true,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Address: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             item['address'],
+    //                                             style: const TextStyle(
+    //                                                 fontSize: 16),
+    //                                             softWrap: true,
+    //                                             textAlign: TextAlign.start,
+    //                                             overflow: TextOverflow.visible,
+    //                                           ),
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                   ],
+    //                                 ),
+    //                               ),
+    //                             ),
+    //                             SizedBox(
+    //                               height: 16,
+    //                             ),
+    //                             Card(
+    //                               child: Padding(
+    //                                 padding: const EdgeInsets.all(16.0),
+    //                                 child: Column(
+    //                                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                                   children: [
+    //                                      const Text(
+    //                                       "Associated Hospital Branch",
+    //                                       style: TextStyle(
+    //                                         fontSize: 20,
+    //                                         fontWeight: FontWeight.bold,
+    //                                         color: Color.fromARGB(255, 26, 136, 83),
+    //                                       ),
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 20,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "ID: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           hospitalbranch['userid'],
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     const SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Name: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             hospitalbranch['name'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
+    //                                             ),
+    //                                             overflow: TextOverflow.visible,
+    //                                             softWrap: true,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Address: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             hospitalbranch['address'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
+    //                                             ),
+    //                                             overflow: TextOverflow.visible,
+    //                                             softWrap: true,
+    //                                             // maxLines: 2,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Email: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             item['email'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
+    //                                             ),
+    //                                             overflow: TextOverflow.visible,
+    //                                             softWrap: true,
+    //                                             // maxLines: 1,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Phone: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           item['phone'].toString(),
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                             overflow: TextOverflow.ellipsis,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                   ],
+    //                                 ),
+    //                               ),
+    //                             ),
+    //                             SizedBox(
+    //                               height: 16,
+    //                             ),
+    //                             Card(
+    //                               child: Padding(
+    //                                 padding: const EdgeInsets.all(16.0),
+    //                                 child: Column(
+    //                                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                                   children: [
+    //                                      Text(
+    //                                       "Associated Hospital",
+    //                                       style: TextStyle(
+    //                                         fontSize: 20,
+    //                                         fontWeight: FontWeight.bold,
+    //                                         color: Colors.deepPurple.shade700
+    //                                       ),
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 20,
+    //                                     ),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Text(
+    //                                           "ID: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Text(
+    //                                           hospital['userid'],
+    //                                           style: const TextStyle(
+    //                                             fontSize: 16,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Name: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             item['name'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
+    //                                             ),
+    //                                             overflow: TextOverflow.visible,
+    //                                             softWrap: true,
+    //                                             // maxLines: 1,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                     SizedBox(
+    //                                       height: 6,
+    //                                     ),
+    //                                     Row(
+    //                                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                                       children: [
+    //                                         const Text(
+    //                                           "Email: ",
+    //                                           style: TextStyle(
+    //                                               fontSize: 16,
+    //                                               fontWeight: FontWeight.bold),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Text(
+    //                                             hospital['email'],
+    //                                             style: const TextStyle(
+    //                                               fontSize: 16,
+    //                                             ),
+    //                                             overflow: TextOverflow.visible,
+    //                                             softWrap: true,
+    //                                             // maxLines: 1,
+    //                                           ),
+    //                                         )
+    //                                       ],
+    //                                     ),
+    //                                   ],
+    //                                 ),
+    //                               ),
+    //                             ),
                                 
-                              ],
-                            ),
-                          );
+    //                           ],
+    //                         ),
+    //                       );
                         },
                       );
                     }
                   }),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF0857C0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  gradient: AppColors.primaryGradient,
+                ),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  ),
-                  onPressed: () async {
-                    secureStorage.deleteSecureData('token');
-                    secureStorage.deleteSecureData('doctortoken');
-                    secureStorage.deleteSecureData('admintoken');
-                    secureStorage.deleteSecureData('nursetoken');
-
-                    setState(() {});
-                    Constants.token =
-                        await secureStorage.readSecureData('token') ?? '';
-                    Constants.doctortoken =
-                        await secureStorage.readSecureData('doctortoken') ?? '';
-                    Constants.admintoken =
-                        await secureStorage.readSecureData('admintoken') ?? '';
-                    Constants.nursetoken =
-                        await secureStorage.readSecureData('nursetoken') ?? '';
-                    context.router.replaceAll([const LoginRoute()]);
-                    // homePageProvider.selectedIndex = 0;
-                    // homePageProvider.notify();
-                  },
-                  child: const Text(
-                    "Log Out",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )),
+                    onPressed: () async {
+                      secureStorage.deleteSecureData('token');
+                      secureStorage.deleteSecureData('doctortoken');
+                      secureStorage.deleteSecureData('admintoken');
+                      secureStorage.deleteSecureData('nursetoken');
+                
+                      setState(() {});
+                      Constants.token =
+                          await secureStorage.readSecureData('token') ?? '';
+                      Constants.doctortoken =
+                          await secureStorage.readSecureData('doctortoken') ?? '';
+                      Constants.admintoken =
+                          await secureStorage.readSecureData('admintoken') ?? '';
+                      Constants.nursetoken =
+                          await secureStorage.readSecureData('nursetoken') ?? '';
+                      context.router.replaceAll([const LoginRoute()]);
+                      // homePageProvider.selectedIndex = 0;
+                      // homePageProvider.notify();
+                    },
+                    child: const Text(
+                      "Log Out",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+              ),
 
                   const SizedBox(height: 16,),
             ],
@@ -726,6 +862,63 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 }
+
+Widget sectionHeader({
+  required String title,
+  required IconData icon,
+  required Color color,
+}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, color: Colors.white),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget infoRow(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 140,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 15),
+            softWrap: true,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
 // class ResetPasswordModel extends StatelessWidget {
 //   const ResetPasswordModel({super.key});

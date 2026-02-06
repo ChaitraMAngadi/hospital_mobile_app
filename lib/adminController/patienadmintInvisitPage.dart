@@ -7,6 +7,7 @@ import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -129,11 +130,21 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
         builder: (context, adminprovider, child) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(
+               flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: const Icon(Icons.arrow_back,
+        color: Colors.white,)),
+              title: const Text(
                 "Patient InVisit",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white
                 ),
               ),
               centerTitle: true,
@@ -145,43 +156,50 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 16, top: 8),
-                      child: ElevatedButton(
-                        style: const ButtonStyle(
-                          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(
-                              vertical: 14, horizontal: 24)),
-                          backgroundColor:
-                              WidgetStatePropertyAll(Color(0XFF0857C0)),
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(14)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          gradient: AppColors.primaryGradient,
+                        ),
+                        child: ElevatedButton(
+                          style: const ButtonStyle(
+                            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 24)),
+                            backgroundColor:
+                                WidgetStatePropertyAll(Colors.transparent),
+                                shadowColor: WidgetStatePropertyAll(Colors.transparent),
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(14)),
+                              ),
                             ),
                           ),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => ComplaintDialogBox(
-                              alldoctors: adminprovider.alldoctors,
-                              allnurses: adminprovider.allnurses,
-                              patientId: widget.patientId,
-                            ),
-                          );
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.person_add_alt_1_outlined,
-                                color: Colors.white),
-                            SizedBox(width: 6),
-                            Text(
-                              'Add InVisit',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => ComplaintDialogBox(
+                                alldoctors: adminprovider.alldoctors,
+                                allnurses: adminprovider.allnurses,
+                                patientId: widget.patientId,
+                              ),
+                            );
+                          },
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.person_add_alt_1_outlined,
+                                  color: Colors.white),
+                              SizedBox(width: 6),
+                              Text(
+                                'Add New IPD visit',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -228,6 +246,7 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                                               .patientinvisits[index];
 
                                           return InVisitModel(
+                                            visitnum: index+1,
                                               cheifcomplaint:
                                                   item['chief_complaint'],
                                               visitdate: formatDate(
@@ -314,6 +333,139 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
   }
 }
 
+// class InVisitModel extends StatelessWidget {
+//   const InVisitModel({
+//     super.key,
+//     required this.cheifcomplaint,
+//     required this.visitdate,
+//     required this.viewontap,
+//     required this.dischargedate,
+//     required this.editontap,
+//   });
+
+//   final String cheifcomplaint;
+//   final String visitdate;
+//   final VoidCallback viewontap;
+//   final VoidCallback editontap;
+//   final String dischargedate;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(
+//         horizontal: 16,
+//       ),
+//       child: Card(
+//         child: Padding(
+//           padding:
+//               const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 12),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     visitdate,
+//                     style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                   Container(
+//                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+//                     decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.all(Radius.circular(30)),
+//                         color: dischargedate == ""
+//                             ? Colors.green.shade400
+//                             : Colors.red.shade400),
+//                     child: Text(
+//                       dischargedate == "" ? "Active" : "Discharged",
+//                       style: const TextStyle(
+//                           fontWeight: FontWeight.bold, color: Colors.white),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               const SizedBox(
+//                 height: 4,
+//               ),
+//               const Text(
+//                 "Cheif-Complaint :",
+//                 style: TextStyle(
+//                   fontSize: 15,
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.black,
+//                 ),
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//               const SizedBox(
+//                 height: 4,
+//               ),
+//               Text(
+//                 cheifcomplaint,
+//                 style: const TextStyle(
+//                   fontSize: 15,
+//                   color: Colors.black,
+//                 ),
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//               const SizedBox(
+//                 height: 16,
+//               ),
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   IconButton(
+//                       onPressed: viewontap,
+//                       icon: const Icon(
+//                         Icons.remove_red_eye,
+//                         color: Color(0Xff2556B9),
+//                       )),
+//                   ElevatedButton(
+//                       style: ElevatedButton.styleFrom(
+//                         backgroundColor: dischargedate == ''
+//                             ? Colors.deepPurple.shade100
+//                             : Colors.grey.shade100,
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(20),
+//                         ),
+//                         padding:
+//                             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//                       ),
+//                       onPressed: dischargedate == '' ? editontap : null,
+//                       child: Row(
+//                         children: [
+//                           Text(
+//                             "Edit",
+//                             style: TextStyle(
+//                               fontSize: 15,
+//                               fontWeight: FontWeight.bold,
+//                               color: dischargedate == ''
+//                                   ? Colors.deepPurple.shade700
+//                                   : Colors.grey.shade700,
+//                             ),
+//                           ),
+//                           SizedBox(
+//                             width: 4,
+//                           ),
+//                           Icon(
+//                             Icons.edit_square,
+//                             color: dischargedate == ''
+//                                 ? Colors.deepPurple.shade700
+//                                 : Colors.grey.shade700,
+//                           ),
+//                         ],
+//                       )),
+//                 ],
+//               )
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class InVisitModel extends StatelessWidget {
   const InVisitModel({
     super.key,
@@ -321,7 +473,7 @@ class InVisitModel extends StatelessWidget {
     required this.visitdate,
     required this.viewontap,
     required this.dischargedate,
-    required this.editontap,
+    required this.editontap, required this.visitnum,
   });
 
   final String cheifcomplaint;
@@ -329,123 +481,189 @@ class InVisitModel extends StatelessWidget {
   final VoidCallback viewontap;
   final VoidCallback editontap;
   final String dischargedate;
+  final int visitnum;
+
+  bool get isActive => dischargedate.isEmpty;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-      ),
-      child: Card(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12), bottom: Radius.circular(22)),
+         
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    visitdate,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                        color: dischargedate == ""
-                            ? Colors.green.shade400
-                            : Colors.red.shade400),
-                    child: Text(
-                      dischargedate == "" ? "Active" : "Discharged",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              const Text(
-                "Cheif-Complaint :",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Text(
-                cheifcomplaint,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                      onPressed: viewontap,
-                      icon: const Icon(
-                        Icons.remove_red_eye,
-                        color: Color(0Xff2556B9),
-                      )),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: dischargedate == ''
-                            ? Colors.deepPurple.shade100
-                            : Colors.grey.shade100,
-                        shape: RoundedRectangleBorder(
+                  /// Top Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                         gradient: AppColors.primaryGradient,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child:  Text(
+                          "Visit #${visitnum.toString()}",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      onPressed: dischargedate == '' ? editontap : null,
-                      child: Row(
-                        children: [
-                          Text(
-                            "Edit",
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isActive
+                              ? Colors.green.shade500
+                              : Colors.red.shade700,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          isActive ? "Active" : "Discharged",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+            
+                  const SizedBox(height: 14),
+            
+                  /// Visit Date
+                  const Text(
+                    "VISIT DATE",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    visitdate,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+            
+                  const SizedBox(height: 14),
+            
+                  /// Chief Complaint
+                  const Text(
+                    "CHIEF COMPLAINT",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    cheifcomplaint,
+                    style: const TextStyle(fontSize: 14,
+                    fontWeight: FontWeight.bold,),
+                  ),
+            
+                  const SizedBox(height: 18),
+            
+                  /// Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: viewontap,
+                          icon: const Icon(Icons.remove_red_eye, color: AppColors.primary),
+                          label: const Text(
+                            "View",
                             style: TextStyle(
-                              fontSize: 15,
+                              color: AppColors.primary,
                               fontWeight: FontWeight.bold,
-                              color: dischargedate == ''
-                                  ? Colors.deepPurple.shade700
-                                  : Colors.grey.shade700,
                             ),
                           ),
-                          SizedBox(
-                            width: 4,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            side: const BorderSide(color: AppColors.primary, width: 1.5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
-                          Icon(
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: isActive ? editontap : null,
+                          icon: Icon(
                             Icons.edit_square,
-                            color: dischargedate == ''
-                                ? Colors.deepPurple.shade700
-                                : Colors.grey.shade700,
+                            color: isActive
+                                ? AppColors.primary
+                                : AppColors.primary.withOpacity(0.4),
                           ),
-                        ],
-                      )),
+                          label: Text(
+                            "Edit",
+                            style: TextStyle(
+                              color: isActive
+                                  ? AppColors.primary
+                                  : AppColors.primary.withOpacity(0.4),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            side: BorderSide(
+                              color: isActive
+                                  ? AppColors.primary
+                                  : AppColors.primary.withOpacity(0.4),
+                              width: 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
-              )
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
 
 class TodaysVisitViewModel extends StatelessWidget {
   const TodaysVisitViewModel({
@@ -636,6 +854,182 @@ class TodaysVisitViewModel extends StatelessWidget {
   }
 }
 
+// class InVisitViewModel extends StatelessWidget {
+//   const InVisitViewModel({
+//     super.key,
+//     required this.cheifcomplaint,
+//     required this.visitdate,
+//     required this.consultingdoctor,
+//     required this.dutydoctor,
+//     required this.visitingdoctor,
+//     required this.associatedstaff,
+//   });
+
+//   final String cheifcomplaint;
+//   final String consultingdoctor;
+//   final String dutydoctor;
+//   final String visitingdoctor;
+//   final String associatedstaff;
+//   final String visitdate;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+//       child: Padding(
+//         padding: const EdgeInsets.all(16),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 const Text(
+//                   "Complaint Details",
+//                   style: TextStyle(
+//                     fontSize: 20,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 IconButton(
+//                     onPressed: () {
+//                       context.router.pop();
+//                     },
+//                     icon: const Icon(Icons.close))
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 10,
+//             ),
+//             Row(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 const Text(
+//                   "Chief Complaint: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                   child: Text(
+//                     "$cheifcomplaint",
+//                     style: const TextStyle(fontSize: 14),
+//                     softWrap: true,
+//                   ),
+//                 ),
+//                 // Text(
+//                 //   "${cheifcomplaint}",
+//                 //   style: TextStyle(fontSize: 14),
+
+//                 // ),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Consulting Doctor: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   consultingdoctor,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             if(visitingdoctor.isNotEmpty)
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Visiting Doctor: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   visitingdoctor,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             if(visitingdoctor.isNotEmpty)
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             if(dutydoctor.isNotEmpty)
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Duty Doctor: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   dutydoctor,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             if(dutydoctor.isNotEmpty)
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             if(associatedstaff.isNotEmpty)
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Associated Staff: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Flexible(
+//                     child: Text(
+//                   associatedstaff,
+//                   style: TextStyle(fontSize: 14),
+//                   softWrap: true,
+//                 )),
+//               ],
+//             ),
+//             if(associatedstaff.isNotEmpty)
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             Row(
+//               children: [
+//                 const Text(
+//                   "Visit Date: ",
+//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text("${visitdate}", style: TextStyle(fontSize: 14)),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 8,
+//             ),
+//             // Row(
+//             //   children: [
+//             //     const Text(
+//             //       "Creation Time: ",
+//             //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+//             //     ),
+//             //     Text("${createdat}", style: TextStyle(fontSize: 14)),
+//             //   ],
+//             // ),
+//             // const SizedBox(
+//             //   height: 8,
+//             // ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class InVisitViewModel extends StatelessWidget {
   const InVisitViewModel({
     super.key,
@@ -658,155 +1052,190 @@ class InVisitViewModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF6F6),
+          borderRadius: BorderRadius.circular(24),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Complaint Details",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                    onPressed: () {
-                      context.router.pop();
-                    },
-                    icon: const Icon(Icons.close))
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
+            /// Top icon
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Chief Complaint: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                Text(""),
+                Column(
+                  children: [
+                    Container(
+                      height: 56,
+                      width: 56,
+                      decoration: BoxDecoration(
+                        color:AppColors.primary,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Icon(
+                        Icons.assignment,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 12),
+                    
+                    /// Title
+                    const Text(
+                      "In-Visit Details",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
                 ),
-                Flexible(
-                  child: Text(
-                    "$cheifcomplaint",
-                    style: const TextStyle(fontSize: 14),
-                    softWrap: true,
-                  ),
-                ),
-                // Text(
-                //   "${cheifcomplaint}",
-                //   style: TextStyle(fontSize: 14),
+                
 
-                // ),
+           
+            IconButton(onPressed: (){
+              Navigator.pop(context);
+            }, icon: Icon(Icons.close,
+            color: AppColors.primary,))
               ],
             ),
-            const SizedBox(
-              height: 8,
+
+            const SizedBox(height: 20),
+
+            _infoCard(
+              icon: Icons.medical_services,
+              title: "CHIEF COMPLAINT",
+              value: cheifcomplaint,
             ),
-            Row(
-              children: [
-                const Text(
-                  "Consulting Doctor: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  consultingdoctor,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
+
+            const SizedBox(height: 14),
+
+            _infoCard(
+              icon: Icons.person,
+              title: "CONSULTING DOCTOR",
+              value: consultingdoctor,
             ),
-            const SizedBox(
-              height: 8,
+
+            if (visitingdoctor.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              _infoCard(
+                icon: Icons.person_outline,
+                title: "VISITING DOCTOR",
+                value: visitingdoctor,
+              ),
+            ],
+
+            if (dutydoctor.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              _infoCard(
+                icon: Icons.local_hospital,
+                title: "DUTY DOCTOR",
+                value: dutydoctor,
+              ),
+            ],
+
+            if (associatedstaff.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              _infoCard(
+                icon: Icons.groups,
+                title: "ASSOCIATED STAFF",
+                value: associatedstaff,
+              ),
+            ],
+
+            const SizedBox(height: 14),
+
+            _infoCard(
+              icon: Icons.calendar_month,
+              title: "VISIT DATE",
+              value: visitdate,
             ),
-            if(visitingdoctor.isNotEmpty)
-            Row(
-              children: [
-                const Text(
-                  "Visiting Doctor: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  visitingdoctor,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
-            ),
-            if(visitingdoctor.isNotEmpty)
-            const SizedBox(
-              height: 8,
-            ),
-            if(dutydoctor.isNotEmpty)
-            Row(
-              children: [
-                const Text(
-                  "Duty Doctor: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  dutydoctor,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
-            ),
-            if(dutydoctor.isNotEmpty)
-            const SizedBox(
-              height: 8,
-            ),
-            if(associatedstaff.isNotEmpty)
-            Row(
-              children: [
-                const Text(
-                  "Associated Staff: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                    child: Text(
-                  associatedstaff,
-                  style: TextStyle(fontSize: 14),
-                  softWrap: true,
-                )),
-              ],
-            ),
-            if(associatedstaff.isNotEmpty)
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Visit Date: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${visitdate}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            // Row(
-            //   children: [
-            //     const Text(
-            //       "Creation Time: ",
-            //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+
+            const SizedBox(height: 18),
+
+            /// Close button
+            // Align(
+            //   alignment: Alignment.centerRight,
+            //   child: InkWell(
+            //     onTap: () => context.router.pop(),
+            //     child: Container(
+            //       padding: const EdgeInsets.all(10),
+            //       decoration: BoxDecoration(
+            //         color: Colors.white,
+            //         shape: BoxShape.circle,
+            //         boxShadow: [
+            //           BoxShadow(
+            //             color: Colors.black.withOpacity(0.1),
+            //             blurRadius: 6,
+            //           ),
+            //         ],
+            //       ),
+            //       child: const Icon(Icons.close, color: Colors.red),
             //     ),
-            //     Text("${createdat}", style: TextStyle(fontSize: 14)),
-            //   ],
-            // ),
-            // const SizedBox(
-            //   height: 8,
+            //   ),
             // ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Reusable info card widget
+  Widget _infoCard({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 42,
+            width: 42,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: Colors.white, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

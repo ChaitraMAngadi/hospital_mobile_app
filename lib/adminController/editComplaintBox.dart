@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -348,7 +349,13 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
                         const SizedBox(height: 20),
 
                         /// Update Button
-                        SizedBox(
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient:adminprovider.updatinginvisit?LinearGradient(colors: [
+                              Colors.grey, Colors.grey
+                            ]) : AppColors.primaryGradient,
+                            borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          ),
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: adminprovider.updatinginvisit
@@ -377,8 +384,9 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: adminprovider.updatinginvisit
-                                  ? Colors.grey.shade300
-                                  : const Color(0xFF0857C0),
+                                  ? Colors.transparent
+                                  :  Colors.transparent,
+                                  shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),

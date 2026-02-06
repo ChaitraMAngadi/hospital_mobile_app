@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -283,7 +284,13 @@ showSelectedItems: false,
                 SizedBox(
                   height: 20,
                 ),
-                SizedBox(
+                Container(
+                  decoration: BoxDecoration(
+                    gradient:doctorprovider.addinginvisit?LinearGradient(colors: [
+                      Colors.grey, Colors.grey
+                    ]): AppColors.primaryGradient,
+                    borderRadius: BorderRadius.all(Radius.circular(12))
+                  ),
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed:doctorprovider.addinginvisit? null: () async {
@@ -312,7 +319,8 @@ showSelectedItems: false,
                       // context.router.pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:doctorprovider.addinginvisit? Colors.grey: Color(0xFF0857C0),
+                      backgroundColor:doctorprovider.addinginvisit? Colors.transparent: Colors.transparent,
+                      shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

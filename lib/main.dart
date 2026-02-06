@@ -4,6 +4,7 @@ import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/provider/loginProvider.dart';
 import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
+        primaryColor: AppColors.primary,
       ),
       title: 'Hospital Management',
       debugShowCheckedModeBanner: false,

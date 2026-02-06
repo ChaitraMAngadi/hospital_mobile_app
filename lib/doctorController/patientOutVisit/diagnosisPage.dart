@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_route/auto_route.dart';
 
@@ -120,11 +121,22 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
     
     return Scaffold(
+      backgroundColor: AppColors.badgeBg,
       appBar: AppBar(
+           flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back,
+        color: Colors.white,)),
         title: const Text(
           'Patient Diagnosis',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 22,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -169,20 +181,27 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                   .toList(),
 
               const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: addMedication,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0857C0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  gradient: AppColors.primaryGradient,
                 ),
-                child: const Text("Add Medication",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    )),
+                child: ElevatedButton(
+                  onPressed: addMedication,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  ),
+                  child: const Text("Add Medication",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      )),
+                ),
               ),
               
               // ... rest of your form fields remain the same
@@ -224,20 +243,27 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
-              ElevatedButton(
-                onPressed: pickFiles,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0857C0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              Container(
+                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  gradient: AppColors.primaryGradient,
                 ),
-                child: const Text(
-                  'Pick Files',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
+                child: ElevatedButton(
+                  onPressed: pickFiles,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  ),
+                  child: const Text(
+                    'Pick Files',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -373,7 +399,11 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
               ),
               const SizedBox(height: 24),
               
-              SizedBox(
+              Container(
+                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  gradient:doctorprovider.isSavingOutdisagnosis?LinearGradient(colors: [Colors.grey,Colors.grey]): AppColors.primaryGradient,
+                ),
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed:doctorprovider.isSavingOutdisagnosis ? null : () async {
@@ -426,7 +456,8 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                     doctorprovider.notify();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:doctorprovider.isSavingOutdisagnosis ? Colors.grey : Color(0xFF0857C0),
+                    backgroundColor:doctorprovider.isSavingOutdisagnosis ? Colors.transparent : Colors.transparent,
+                    shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

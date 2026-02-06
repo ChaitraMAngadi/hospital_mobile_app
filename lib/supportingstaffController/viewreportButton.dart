@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/supportingstaffController/viewReportPdfViewerPage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 
 class ViewreportInvisitPdfButton extends StatelessWidget {
   final String patientId;
@@ -19,38 +20,54 @@ class ViewreportInvisitPdfButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: const ButtonStyle(
-        padding: WidgetStatePropertyAll(
-          EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-        ),
-        backgroundColor: WidgetStatePropertyAll(Color(0XFF0857C0)),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(14)),
-          ),
-        ),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(12)
       ),
-      // onPressed: () {
-        
-      // },
-      onPressed: () =>
-       Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ViewreportPdfViewerPage(
-              complaintId: complaintId,
-              patientId: patientId, 
-              diagnosisId: diagnosisId,
+      child: ElevatedButton(
+        style: const ButtonStyle(
+          padding: WidgetStatePropertyAll(
+            EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          ),
+          backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+          shadowColor: WidgetStatePropertyAll(Colors.transparent),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14)),
             ),
           ),
         ),
-          // _downloadAndPrintPdf(context), // Directly show printing layout
-      child: const Text(
-        "View Report",
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+        // onPressed: () {
+          
+        // },
+        onPressed: () =>
+         Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ViewreportPdfViewerPage(
+                complaintId: complaintId,
+                patientId: patientId, 
+                diagnosisId: diagnosisId,
+              ),
+            ),
+          ),
+            // _downloadAndPrintPdf(context), // Directly show printing layout
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.file_copy,
+            color: Colors.white,),
+            SizedBox(width: 6,),
+            const Text(
+              "View Report",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

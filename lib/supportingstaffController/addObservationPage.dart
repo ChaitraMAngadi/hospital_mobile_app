@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -73,13 +74,23 @@ class _AddObservationPageState extends State<AddObservationPage> {
     
     return Scaffold(
       appBar: AppBar(
+           flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
         title: const Text(
           'Patient Observation',
           style: TextStyle(
             fontSize: 20,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back,
+        color: Colors.white,)),
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
@@ -128,18 +139,25 @@ const SizedBox(height: 6),
 }).toList(),
 
 const SizedBox(height: 6),
-ElevatedButton(
-  onPressed: addVital,
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color(0xFF0857C0),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+Container(
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12),
+    gradient: AppColors.primaryGradient,
   ),
-  child: const Text(
-    "Add Vital",
-    style: TextStyle(fontSize: 16, color: Colors.white),
+  child: ElevatedButton(
+    onPressed: addVital,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    ),
+    child: const Text(
+      "Add Vital",
+      style: TextStyle(fontSize: 16, color: Colors.white),
+    ),
   ),
 ),
 
@@ -165,8 +183,12 @@ const SizedBox(height: 24),
 
               
               
-              SizedBox(
+              Container(
                 width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient:supportingstaffprovider.addingobservation?LinearGradient(colors: [Colors.grey,Colors.grey]): AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: ElevatedButton(
                   onPressed:supportingstaffprovider.addingobservation ? null : () async {
 
@@ -212,7 +234,8 @@ print(vitalsList);
                     supportingstaffprovider.notify();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: supportingstaffprovider.addingobservation ? Colors.grey :Color(0xFF0857C0),
+                    backgroundColor: supportingstaffprovider.addingobservation ? Colors.transparent :Colors.transparent,
+                    shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

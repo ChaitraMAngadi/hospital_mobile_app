@@ -43,6 +43,8 @@ class Doctorprovider extends ChangeNotifier {
        bool addingpatient = false;
        bool editingpatient = false;
 
+       String patienthistorydata = "";
+String inpatienthistorydata = "";
 
 
   final SecureStorage secureStorage = SecureStorage();
@@ -1560,6 +1562,83 @@ Future<String?> getdoctorremark(String patientId, String complaintId ) async {
   }
 }
 
+Future<void> getpatienthistoryairesponse(String patientid) async {
+ Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+  String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getcomplaintsai/$patientid";
+
+  final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+  print(url);
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Constants.doctortoken}',
+        ...headers,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      
+      if (data is Map<String, dynamic> && data.containsKey('ai_response')) {
+        patienthistorydata = data['ai_response'].toString();
+      } else {
+        patienthistorydata = "Unexpected response format.";
+      }
+
+      notifyListeners(); // Notify if using a provider
+    } else {
+      print('Error: ${response.statusCode}, ${response.body}');
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
+}
+
+
+Future<void> getinpatienthistoryairesponse(String patientid, String id) async {
+ Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+  String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getcomplaintsinai/$patientid/$id";
+
+  final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+  print("url: $url");
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Constants.doctortoken}',
+        ...headers,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print(data);
+
+      
+      if (data is Map<String, dynamic> && data.containsKey('ai_response')) {
+        inpatienthistorydata = data['ai_response'].toString();
+      } else {
+        inpatienthistorydata = "Unexpected response format.";
+      }
+
+      notifyListeners(); // Notify if using a provider
+    } else {
+      print('Error: ${response.statusCode}, ${response.body}');
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
+}
 
 void notify() {
     notifyListeners();
