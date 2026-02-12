@@ -1772,7 +1772,7 @@ class _ObservationPageState extends State<ObservationPage> {
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              0.8,
+                                              0.78,
                                           child: const Center(
                                             child: Text(
                                               "No Observation to show",
@@ -1785,7 +1785,7 @@ class _ObservationPageState extends State<ObservationPage> {
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              0.8,
+                                              0.73,
                                           child: ListView.builder(
                                             itemCount: supportingstaffprovider
                                                 .patientobservations.length,

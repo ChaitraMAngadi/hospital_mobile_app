@@ -5,7 +5,40 @@ import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/deviceHeader.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
+class SlotModel {
+  final String startTime;
+  final String endTime;
+  final String? patientname;
+  final String? patientMobile;
+
+  bool get isBooked => patientname != null;
+
+  SlotModel({
+    required this.startTime,
+    required this.endTime,
+    this.patientname,
+    this.patientMobile,
+  });
+
+
+  factory SlotModel.fromJson(Map<String, dynamic> json) {
+    return SlotModel(
+      startTime: json["startTime"],
+      endTime: json["endTime"],
+      patientname: json["patientname"],
+      patientMobile: json["patientMobile"]?.toString(),
+    );
+  }
+}
+
+
+ String formatDate(String date) {
+    final parsedDate = DateTime.tryParse(date);
+    if (parsedDate == null) return '';
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
 
 class Adminprovider extends ChangeNotifier {
     List<Map<String, dynamic>> admindetailedprofile = [];
@@ -27,6 +60,11 @@ class Adminprovider extends ChangeNotifier {
     List<dynamic> outvisitsupportingfiles = [];
     List<dynamic> invisitsupportingfiles = [];
     List<Map<String, dynamic>> complaintdetails = [];
+
+      List<Map<String, dynamic>> alldoctorsdetails = [];
+      List<Map<String, dynamic>> todaysappointments = [];
+  List<Map<String, dynamic>> filteredtodaysappointments = [];
+
 
     String invisitId = '';
        bool isDeleting = false;
@@ -809,6 +847,521 @@ Future<void> getdoctorsnurses() async {
   // }
 
 
+Future<void> getalldoctorsdetails() async {
+    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getalldoctors";
+    // '${Constants.baseUrl}/app/log-in/phone-otp'
+    // Constants.token = await secureStorage.readSecureData('token') ?? '';
+    
+    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+    
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.admintoken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+        alldoctorsdetails =
+            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+            print('alldoctorsdetails $alldoctorsdetails');
+
+        notifyListeners();
+      } else if (response.statusCode == 404) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  String loginTime = '9:00';
+  String logoutTime = "17:00";
+  int duration = 30;
+  String doctorname = '';
+
+  bool isLoading = true;
+
+  List<SlotModel> bookedSlots = [];
+  List<SlotModel> finalSlots = [];
+
+  /// ✅ 1. First load → fetch timing + booked today
+  Future<void> loadInitialData(String userid, DateTime date) async {
+    isLoading = true;
+
+        // Constants.token = await secureStorage.readSecureData('token') ?? '';
+Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+
+    final res = await http.get(Uri.parse(
+        "${Constants.baseUrl}/api/v1/hospitaladmin/gettdayschedule/$userid?$date"),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.admintoken}',
+        },
+        
+        );
+
+    final data = jsonDecode(res.body);
+    print(data);
+    doctorname = data["doctorName"];
+
+    if(data["doctorTime"] == null){
+      loginTime = '9:00';
+      logoutTime = '17:00';
+      duration = 30;
+    //    loginTime = data["doctorTime"]["loginTime"];
+    // logoutTime = data["doctorTime"]["leaveTime"];
+    // duration = data["doctorTime"]["duration"];
+    }
+    else{
+      // loginTime = '9:00';
+      // logoutTime = '17:00';
+      // duration = 30;
+       loginTime = data["doctorTime"]["loginTime"];
+    logoutTime = data["doctorTime"]["leaveTime"];
+    duration = data["doctorTime"]["duration"];
+    }
+
+    bookedSlots = (data["slots"] as List)
+        .map((e) => SlotModel.fromJson(e))
+        .toList();
+
+    generateSlots();
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  /// ✅ 2. Date change → only slots API
+  Future<void> loadByDate(DateTime date, String userid) async {
+    isLoading = true;
+    // notifyListeners();
+
+    String d = DateFormat("dd-MM-yyyy").format(date);
+
+    // Constants.token = await secureStorage.readSecureData('token') ?? '';
+Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+
+    final res = await http.get(Uri.parse(
+        "${Constants.baseUrl}/api/v1/hospitaladmin/getschedulebydate/$userid?date=$d"),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.admintoken}',
+        },
+        );
+
+    final data = jsonDecode(res.body);
+    print(data);
+    
+     if(data["doctorTime"] != null){
+       loginTime = data["doctorTime"]["loginTime"];
+    logoutTime = data["doctorTime"]["leaveTime"];
+    duration = data["doctorTime"]["duration"];
+    }
+    else{
+      loginTime = '9:00';
+      logoutTime = "17:00";
+      duration = 30;
+    }
+
+    bookedSlots = (data["slots"] as List)
+        .map((e) => SlotModel.fromJson(e))
+        .toList();
+
+
+    generateSlots();
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  // /// ✅ Generate all slots from timings + merge booked
+  // void generateSlots() {
+  //   finalSlots.clear();
+
+  //   DateTime start = DateTime.parse("2024-01-01 $loginTime:00");
+  //   DateTime end = DateTime.parse("2024-01-01 $logoutTime:00");
+
+  //   while (start.isBefore(end)) {
+  //     final s = DateFormat("HH:mm").format(start);
+  //     final e = DateFormat("HH:mm").format(start.add(Duration(minutes: duration)));
+
+  //     SlotModel slot = bookedSlots.firstWhere(
+  //       (b) => b.startTime == s,
+  //       orElse: () => SlotModel(startTime: s, endTime: e),
+  //     );
+
+  //     finalSlots.add(slot);
+  //     start = start.add(Duration(minutes: duration));
+  //   }
+  // }
+
+bool isSlotBooked(DateTime slotStart, DateTime slotEnd, List<SlotModel> bookedSlots) {
+  for (final booked in bookedSlots) {
+    final bookedStart = DateFormat("HH:mm").parse(booked.startTime);
+    final bookedEnd = DateFormat("HH:mm").parse(booked.endTime);
+
+    // OVERLAP CONDITION
+    if (slotStart.isBefore(bookedEnd) && slotEnd.isAfter(bookedStart)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+
+//   void generateSlots() {
+//   final List<SlotModel> all = [];
+
+//   // Parse login + logout times
+//   final start = DateFormat("HH:mm").parse(loginTime);
+//   final end = DateFormat("HH:mm").parse(logoutTime);
+
+//   DateTime current = start;
+
+//   while (current.isBefore(end)) {
+//     final next = current.add(Duration(minutes: duration));
+
+//     if (!next.isAfter(end)) {
+//       bool booked = isSlotBooked(current, next, bookedSlots);
+
+
+//       all.add(
+//         SlotModel(
+//           startTime: DateFormat("HH:mm").format(current),
+//           endTime: DateFormat("HH:mm").format(next),
+//           patientname: booked ? "BOOKED" : null,
+//         ),
+//       );
+//     }
+
+//     current = next;
+//   }
+
+//   finalSlots = all;
+// }
+
+
+void generateSlots() {
+  List<SlotModel> all = [];
+
+  final start = DateFormat("HH:mm").parse(loginTime);
+  final end = DateFormat("HH:mm").parse(logoutTime);
+
+  DateTime current = start;
+
+  while (current.isBefore(end)) {
+    final next = current.add(Duration(minutes: duration));
+    if (!next.isAfter(end)) {
+
+      // Check if this slot is already booked from backend
+      SlotModel? matched;
+
+      for (var b in bookedSlots) {
+        final bStart = DateFormat("HH:mm").parse(b.startTime);
+        final bEnd = DateFormat("HH:mm").parse(b.endTime);
+
+        // Overlap check
+        if (current.isBefore(bEnd) && next.isAfter(bStart)) {
+          matched = b; // this booked slot matches the current slot
+          break;
+        }
+      }
+
+      // If matched = booked slot from backend → carry real mobile number
+      all.add(
+        matched ??
+            SlotModel(
+              startTime: DateFormat("HH:mm").format(current),
+              endTime: DateFormat("HH:mm").format(next),
+              patientname: null,
+              patientMobile: "", // free slot → keep empty string
+            ),
+      );
+    }
+
+    current = next;
+  }
+
+  finalSlots = all;
+}
+
+
+  /// ✅ Book Slot API
+  Future<void> bookSlot(String userid,
+      SlotModel slot, DateTime date, String name, String mobile, BuildContext context) async {
+
+    // Constants.token = await secureStorage.readSecureData('token') ?? '';
+    
+    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+    
+    final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+try{
+
+    
+final Map<String, dynamic> requestBody = {
+         "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+      "startTime": slot.startTime,
+      // "endTime": slot.endTime,
+      "patientname": name,
+      "patientMobile": mobile,
+      };
+
+      print(requestBody);
+
+    final response = await http.post(
+        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/slotbook/$userid"),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Content-Type': 'application/json',
+          ...headers
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+        notifyListeners();
+
+        final sucessSnackbar = SnackBar(
+            backgroundColor: Colors.green[400],
+            content: Text(
+              'Slot Booked successfully',
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+
+        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+      //  loadInitialData(userid);
+ 
+  notifyListeners();
+
+        // Navigator.pop(context);
+      } else {
+        print(response.body);  
+        final responseData = jsonDecode(response.body);
+        final snackbar = SnackBar(
+            backgroundColor: Colors.red[400],
+            content: Text(
+              responseData["msg"],
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        // Navigator.pop(context);
+        addingoutvisit = false;
+      }
+    
+   } catch(e){
+    print(e);
+    final error = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(error);
+   }
+
+
+    // await http.post(
+    //     Uri.parse("${Constants.baseUrl}/api/v1/admin/slotbook/$userid"),
+    //     headers: <String, String>{
+    //       'Content-Type': 'application/json',
+    //       'Authorization': 'Bearer ${Constants.token}',s
+    //     },
+    //     body: body);
+  }
+
+  /// ✅ Delete API
+  Future<void> 
+  deleteSlot(String userid,SlotModel slot, DateTime date, BuildContext context ) async {
+        // Constants.token = await secureStorage.readSecureData('token') ?? '';
+
+        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+        final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+    // final body = {
+    //   "doctorId": userid,
+    //   "date": DateFormat("dd-MM-yyyy").format(date),
+    //   "startTime": slot.startTime,
+    //   "endTime": slot.endTime,
+    // };
+
+    try{
+
+    
+final Map<String, dynamic> requestBody = {
+         "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+      "startTime": slot.startTime,
+      "endTime": slot.endTime,
+      };
+
+    final response = await http.delete(
+        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/deleteslot/$userid"),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Content-Type': 'application/json',
+          ...headers
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+        notifyListeners();
+
+        final sucessSnackbar = SnackBar(
+            backgroundColor: Colors.green[400],
+            content: Text(
+              responseData["msg"],
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+
+        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+      //  loadInitialData(userid);
+ 
+  notifyListeners();
+
+        // Navigator.pop(context);
+      } else {
+        print(response.body);  
+        final responseData = jsonDecode(response.body);
+        final snackbar = SnackBar(
+            backgroundColor: Colors.red[400],
+            content: Text(
+              responseData["msg"],
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        // Navigator.pop(context);
+       
+      }
+    
+   } catch(e){
+    final error = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(error);
+   }
+   
+  }
+ 
+
+ Future<void> updateDoctorTiming(String doctorId, String login, String logout, int duration, DateTime date, BuildContext context) async {
+  // Constants.token = await secureStorage.readSecureData('token') ?? '';
+Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+final headers = await DeviceHeaders.getDeviceHeaders();
+
+print(date);
+   try{
+
+
+    
+final Map<String, dynamic> requestBody = {
+        "loginTime": login,
+    "leaveTime": logout,
+    "duration": duration,
+    "date": formatDate(date.toString()),
+      };
+
+      print(requestBody);
+
+    final response = await http.put(
+        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/updatedoctortime/$doctorId"),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        addingoutvisit = false;
+        // Successful POST request, handle the response here
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+        notifyListeners();
+
+        final sucessSnackbar = SnackBar(
+            backgroundColor: Colors.green[400],
+            content: Text(
+              'Timing Updated successfully',
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+
+        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+        // loadInitialData(doctorId, date);
+        loadByDate(date, doctorId);
+       
+ 
+  notifyListeners();
+
+        // Navigator.pop(context);
+      } else {
+        print(response.body);  
+        final responseData = jsonDecode(response.body);
+        final snackbar = SnackBar(
+            backgroundColor: Colors.red[400],
+            content: Text(
+              responseData["msg"],
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        // Navigator.pop(context);
+        addingoutvisit = false;
+      }
+    
+   } catch(e){
+    final error = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(error);
+   }
+
+  
+}
+
+  Future<void> gettodaysappointments() async {
+    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/gettodaysappointments";
+
+    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.admintoken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+       
+        todaysappointments =
+            json.decode(response.body)['appointments'].cast<Map<String, dynamic>>();
+        print('todays appointments : $todaysappointments');
+
+        notifyListeners();
+      } else if (response.statusCode == 404) {
+        print('No visits found');
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
 void notify() {
     notifyListeners();

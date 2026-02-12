@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/adminController/adminActiveInvisitPage.dart';
 import 'package:hospital_mobile_app/adminController/adminProfilePage.dart';
 import 'package:hospital_mobile_app/adminController/allPatientsPage.dart';
+import 'package:hospital_mobile_app/adminController/doctorDetailsPage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
 
 
@@ -19,6 +20,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   final List<Widget> _pages = const [
      AllPatientsPage(),
+     DoctorDetailsPage(),
     ActiveAdminInvisitsPage(),
     AdminProfilePage(),
   ];
@@ -45,7 +47,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   icon: Icon(Icons.group),
                   label: 'Patients',
                 ),
-
+                 BottomNavigationBarItem(
+              icon: Icon(Icons.person_pin_rounded),
+              label: 'Doctors',
+            ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_pin_rounded),
                   label: 'Active InPatients',

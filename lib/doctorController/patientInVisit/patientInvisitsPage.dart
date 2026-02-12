@@ -190,7 +190,7 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                   color: Colors.white),
                               SizedBox(width: 6),
                               Text(
-                                'Add InVisit',
+                                'Add IPD visit',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,

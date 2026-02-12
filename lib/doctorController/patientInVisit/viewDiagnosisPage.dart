@@ -210,11 +210,18 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                     ),
                                   );
                 }, 
-                child: Text("Patient AI History",
-                style: TextStyle(
-                  color:doctorprovider.patientdiagnosis.isEmpty?Colors.grey: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),)),
+                child: Row(
+                  children: [
+                     const Icon(Icons.file_copy_outlined,
+                                      color: Colors.white),
+                                  SizedBox(width: 6),
+                    Text("Patient AI History",
+                    style: TextStyle(
+                      color:doctorprovider.patientdiagnosis.isEmpty?Colors.grey: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),),
+                  ],
+                )),
             )
           ],
         ),
@@ -1388,6 +1395,12 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
   //   );
   // }
 
+
+String formatDate(String date) {
+    final parsedDate = DateTime.parse(date);
+    final formattedDate = DateFormat('dd/MM/yyyy').format(parsedDate);
+    return formattedDate;
+  }
   @override
 Widget build(BuildContext context) {
   return Dialog(
@@ -1476,7 +1489,7 @@ Widget build(BuildContext context) {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _pill("Diagnosis #${index + 1}", Colors.blue),
-                              Text(d["createdAt"] ?? "",
+                              Text(formatDate(d["createdAt"]) ?? "",
                                   style: const TextStyle(
                                       fontSize: 12, color: Colors.grey)),
                             ],

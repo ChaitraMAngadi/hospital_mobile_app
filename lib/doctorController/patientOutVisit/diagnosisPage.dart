@@ -86,33 +86,33 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
     super.dispose();
   }
 
-  // Future<List<Map<String, dynamic>>> fetchMedicineSuggestions(String query) async {
-  //   if (query.isEmpty) return [];
+  Future<List<Map<String, dynamic>>> fetchMedicineSuggestions(String query) async {
+    if (query.isEmpty) return [];
     
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse('${Constants.baseUrl}/api/v1/doctor/suggestion-medicine?search=$query',
+    try {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
         
-  //       ),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer ${Constants.token}',
-  //       },
-  //     );
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.token}',
+        },
+      );
       
-  //     if (response.statusCode == 200) {
-  //       final data = json.decode(response.body);
-  //       print(data);
-  //       if (data['success'] == true && data['medicines'] != null) {
-  //         return List<Map<String, dynamic>>.from(data['medicines']);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching medicine suggestions: $e');
-  //   }
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
     
-  //   return [];
-  // }
+    return [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +176,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
               ...medicationControllersList
                   .map((controllers) => MedicationFieldSet(
                         controllers: controllers,
-                        // fetchMedicineSuggestions: fetchMedicineSuggestions,
+                        fetchMedicineSuggestions: fetchMedicineSuggestions,
                       ))
                   .toList(),
 
@@ -502,11 +502,11 @@ class MedicationControllers {
 
 class MedicationFieldSet extends StatefulWidget {
   final MedicationControllers controllers;
-  // final Future<List<Map<String, dynamic>>> Function(String) fetchMedicineSuggestions;
+  final Future<List<Map<String, dynamic>>> Function(String) fetchMedicineSuggestions;
 
   const MedicationFieldSet({
     required this.controllers,
-    // required this.fetchMedicineSuggestions,
+    required this.fetchMedicineSuggestions,
   });
 
   @override
@@ -556,24 +556,24 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
       isMedicationNameAdded = query.isNotEmpty;
     });
 
-    // if (query.length >= 1) {
-    //   final fetchedSuggestions = await widget.fetchMedicineSuggestions(query);
-    //   setState(() {
-    //     suggestions = fetchedSuggestions;
+    if (query.length >= 1) {
+      final fetchedSuggestions = await widget.fetchMedicineSuggestions(query);
+      setState(() {
+        suggestions = fetchedSuggestions;
         
-    //   });
+      });
       
-    //   if (fetchedSuggestions.isNotEmpty && _focusNode.hasFocus) {
-    //     _showOverlay();
-    //   } else {
-    //     _removeOverlay();
-    //   }
-    // } else {
-    //   setState(() {
-    //     suggestions = [];
-    //   });
-    //   _removeOverlay();
-    // }
+      if (fetchedSuggestions.isNotEmpty && _focusNode.hasFocus) {
+        _showOverlay();
+      } else {
+        _removeOverlay();
+      }
+    } else {
+      setState(() {
+        suggestions = [];
+      });
+      _removeOverlay();
+    }
   }
 
   void _showOverlay() {
@@ -693,13 +693,13 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
                     hintText: 'Medicine',
                     border: OutlineInputBorder(),
                   ),
-                  // onTap: () {
-                  //   print('_isSelecting ${_isSelecting}');
-                  //   // Only show overlay if not selecting and has suggestions
-                  //   if (suggestions.isNotEmpty && !_isSelecting) {
-                  //     _showOverlay();
-                  //   }
-                  // },
+                  onTap: () {
+                    print('_isSelecting ${_isSelecting}');
+                    // Only show overlay if not selecting and has suggestions
+                    if (suggestions.isNotEmpty && !_isSelecting) {
+                      _showOverlay();
+                    }
+                  },
                 ),
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosi
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/downloadPdfButton.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/patientHistoryAi.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/supportingDocsDialogbox.dart';
+import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
@@ -218,7 +219,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                               child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.person_add_alt_1_outlined,
+                                  Icon(Icons.file_copy_outlined,
                                       color: Colors.white),
                                   SizedBox(width: 6),
                                   Text("AI Patient History",
@@ -263,7 +264,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                   Icon(Icons.person_add_alt_1_outlined,
                                       color: Colors.white),
                                   SizedBox(width: 6),
-                                  Text("Add OutVisit",
+                                  Text("Add OPD Visit",
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.white,
@@ -295,7 +296,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                         0.81,
                                     child: const Center(
                                       child: Text(
-                                        "No Outvisits for this pateint \nPlaese add Outvisit",
+                                        "No OPD Visits for this pateint \nPlaese add OPD Visit",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -333,6 +334,23 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                               },
                                             );
                                           },
+                                          editontap:() {
+                                          showDialog(
+                          context: context,
+                          builder: (context) {
+                            return EditVisitModel(
+                              patientId: widget.patientId, 
+                              complaintId:item["id"] ,
+                              chief_complaint:item["chief_complaint"],
+                                                height: item["height"] ?? "",
+                                                weight: item["weight"] ?? "",
+                                                bp: item["bp"] ?? "",
+                                                temperature: item["temperature"] ?? "",
+                                                heartrate: item["heart_rate"] ?? "",
+                                                 );
+                          },
+                        );
+                                        },
                                           viewontap: () {
                                             showDialog(
                                               context: context,
@@ -353,6 +371,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                               },
                                             );
                                           },
+                                          
                                           startdiagnosisontap: () {
                                             context.router.push(DiagnosisRoute(
                                               patientId: widget.patientId,
@@ -599,7 +618,8 @@ class VisitModel extends StatelessWidget {
     required this.patientId,
     required this.supportingimagesontap,
     required this.remarkontap,
-    required this.visitnumber,
+    required this.visitnumber, required this.editontap,
+    
   });
 
   final String cheifcomplaint;
@@ -612,6 +632,8 @@ class VisitModel extends StatelessWidget {
   final VoidCallback remarkontap;
   final String buttonText;
   final int visitnumber;
+    final VoidCallback editontap;
+
 
   @override
   Widget build(BuildContext context) {
@@ -749,6 +771,13 @@ class VisitModel extends StatelessWidget {
                             color: AppColors.primary),
                       ),
                     ),
+
+                    IconButton(
+                                onPressed:buttonText != ""? null: editontap,
+                                icon:  Icon(
+                                  Icons.edit,
+                                  color:buttonText != ''?Colors.grey: AppColors.primary,
+                                ))
                   ],
                 ),
 
@@ -1521,6 +1550,261 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
           ),
         ),
       ),
+    );
+  }
+}
+
+
+class EditVisitModel extends StatefulWidget {
+  const EditVisitModel({
+    super.key,
+    required this.patientId,
+    required this.chief_complaint,
+    this.height,
+    this.weight,
+    this.bp,
+    this.temperature,
+    this.heartrate, required this.complaintId,
+  });
+
+  final String patientId;
+  final String complaintId;
+  final String chief_complaint;
+  final String? height;
+  final String? weight;
+  final String? bp;
+  final String? temperature;
+  final String? heartrate;
+
+  @override
+  State<EditVisitModel> createState() => _EditVisitModelState();
+}
+class _EditVisitModelState extends State<EditVisitModel> {
+  final TextEditingController cheifcomplaintController = TextEditingController();
+  final TextEditingController heightController = TextEditingController();
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController bpController = TextEditingController();
+  final TextEditingController heartrateController = TextEditingController();
+  final TextEditingController temperatureController = TextEditingController();
+
+  final formkey = GlobalKey<FormState>();
+  late String formattedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+    // Prefill controllers with widget data
+    cheifcomplaintController.text = widget.chief_complaint;
+    heightController.text = widget.height ?? '';
+    weightController.text = widget.weight ?? '';
+    bpController.text = widget.bp ?? '';
+    heartrateController.text = widget.heartrate ?? '';
+    temperatureController.text = widget.temperature ?? '';
+  }
+
+  @override
+  void dispose() {
+    cheifcomplaintController.dispose();
+    heightController.dispose();
+    weightController.dispose();
+    bpController.dispose();
+    heartrateController.dispose();
+    temperatureController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final patientpageprovider = context.read<Doctorprovider>();
+
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+shape: RoundedRectangleBorder(
+  borderRadius: BorderRadius.vertical(top: Radius.circular(10),bottom: Radius.circular(22)),
+),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.vertical(top:Radius.circular(22))
+              ),
+            ),
+      
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Edit Complaint Details",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryDark,
+                            
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.close,
+                          color: AppColors.primaryDark,),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Text(
+                          "Visit Date: ",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        Text(formattedDate, style: const TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Chief Complaint*",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    TextFormField(
+                      controller: cheifcomplaintController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      maxLines: 3,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter chief complaint';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter Chief Complaint',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Vitals",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildVitalField("Height", heightController, "Enter Height"),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildVitalField("Weight", weightController, "Enter Weight"),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildVitalField("BP", bpController, "Enter Blood Pressure"),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildVitalField("Temperature", temperatureController, "Enter Temperature"),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildVitalField("Heart Rate", heartrateController, "Enter Heart Rate"),
+                        ),
+                        const Expanded(child: SizedBox()), // spacing balance
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        gradient: AppColors.primaryGradient
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed:patientpageprovider.iseditingvisit ? null: () async {
+                          if (formkey.currentState!.validate()) {
+                              setState(() {
+                                      patientpageprovider.iseditingvisit = true;
+                                    });
+                            await patientpageprovider.editvisit(
+                              widget.patientId,
+                              widget.complaintId,
+                              cheifcomplaintController.text,
+                              heightController.text,
+                              weightController.text,
+                              bpController.text,
+                              temperatureController.text,
+                              heartrateController.text,
+                              context,
+                            );
+            
+                            patientpageprovider.notify();
+                           
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:patientpageprovider.iseditingvisit?Colors.grey:  Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        ),
+                        child: const Text(
+                          "Update",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVitalField(String label, TextEditingController controller, String hint) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: hint,
+          ),
+        ),
+      ],
     );
   }
 }

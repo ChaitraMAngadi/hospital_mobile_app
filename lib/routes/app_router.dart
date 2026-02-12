@@ -4,6 +4,7 @@ import 'package:hospital_mobile_app/adminController/editPatientAdminPage.dart';
 import 'package:hospital_mobile_app/adminController/patienadmintInvisitPage.dart';
 import 'package:hospital_mobile_app/adminController/patientadminOutvisitPage.dart';
 import 'package:hospital_mobile_app/adminController/registerNewPatientPage.dart';
+import 'package:hospital_mobile_app/adminController/slotPage.dart';
 import 'package:hospital_mobile_app/doctorController/editPatientPage.dart';
 import 'package:hospital_mobile_app/doctorController/importPatientPage.dart';
 import 'package:hospital_mobile_app/doctorController/importedPatientsVisitPage.dart';
@@ -98,6 +99,10 @@ class AppRouter extends _$AppRouter {
         ),
          AutoRoute(
           page: ImportedPatientsVisitRoute.page,
+        ),
+
+        AutoRoute(
+          page: SlotRoute.page,
         ),
         // AutoRoute(
         //   page: RecordsRoute.page,

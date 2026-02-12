@@ -1640,6 +1640,97 @@ Future<void> getinpatienthistoryairesponse(String patientid, String id) async {
   }
 }
 
+bool iseditingvisit = false;
+
+
+Future<void> editvisit(String patientid, String complaintid, String cheifcomplaint, String height, String weight,
+  String bp, String temperature, String heartrate, BuildContext context,) async {
+    try {
+      // Constants.token = await secureStorage.readSecureData('token') ?? '';
+ Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+      final headers = await DeviceHeaders.getDeviceHeaders();
+
+      
+
+      final Map<String, dynamic> requestBody = {
+        "chief_complaint": cheifcomplaint,
+        // "height": height,
+        // "weight": weight,
+        // "bp": bp,
+        // "temperature": temperature,
+        // "heart_rate": heartrate,
+      };
+
+      if (height.isNotEmpty) {
+        requestBody["height"] = height;
+      }
+      if (weight.isNotEmpty) {
+        requestBody["weight"] = weight;
+      }
+      if (bp.isNotEmpty) {
+        requestBody["bp"] = bp;
+      }
+      if (temperature.isNotEmpty) {
+        requestBody["temperature"] = temperature;
+      }
+      if (heartrate.isNotEmpty) {
+        requestBody["heart_rate"] = heartrate;
+      }
+
+print(requestBody);
+
+
+      String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/editoutvisit/$patientid/$complaintid";
+      final response = await http.put(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${Constants.doctortoken}',
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        iseditingvisit = false;
+        final responseData = jsonDecode(response.body);
+
+        print(responseData);
+        final msg = SnackBar(
+            backgroundColor: Colors.green[400],
+            content: Text(
+              "Patient details updated Successfully",
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(msg);
+        getpatient(patientid);
+        // getallpatients();
+        
+
+        notifyListeners();
+
+        Navigator.pop(context);
+      } else {
+        iseditingvisit = false;
+        final responseData = jsonDecode(response.body);
+        final msg = SnackBar(
+            backgroundColor: Colors.red[400],
+            content: Text(
+              responseData['msg'],
+              style: TextStyle(color: Colors.grey[50]),
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(msg);
+      }
+    } catch (e) {
+      iseditingvisit = false;
+      final error = SnackBar(
+          backgroundColor: Colors.red[400], content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(error);
+    }
+  }
+
+
 void notify() {
     notifyListeners();
   }

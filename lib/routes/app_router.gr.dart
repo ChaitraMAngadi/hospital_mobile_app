@@ -171,6 +171,17 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const RegisterPatientPage(),
       );
     },
+    SlotRoute.name: (routeData) {
+      final args = routeData.argsAs<SlotRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: SlotPage(
+          key: args.key,
+          patientId: args.patientId,
+          doctorname: args.doctorname,
+        ),
+      );
+    },
     SplashRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -763,6 +774,48 @@ class RegisterPatientRoute extends PageRouteInfo<void> {
   static const String name = 'RegisterPatientRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SlotPage]
+class SlotRoute extends PageRouteInfo<SlotRouteArgs> {
+  SlotRoute({
+    Key? key,
+    required String patientId,
+    required String doctorname,
+    List<PageRouteInfo>? children,
+  }) : super(
+          SlotRoute.name,
+          args: SlotRouteArgs(
+            key: key,
+            patientId: patientId,
+            doctorname: doctorname,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'SlotRoute';
+
+  static const PageInfo<SlotRouteArgs> page = PageInfo<SlotRouteArgs>(name);
+}
+
+class SlotRouteArgs {
+  const SlotRouteArgs({
+    this.key,
+    required this.patientId,
+    required this.doctorname,
+  });
+
+  final Key? key;
+
+  final String patientId;
+
+  final String doctorname;
+
+  @override
+  String toString() {
+    return 'SlotRouteArgs{key: $key, patientId: $patientId, doctorname: $doctorname}';
+  }
 }
 
 /// generated route for
