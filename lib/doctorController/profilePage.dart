@@ -740,6 +740,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       secureStorage.deleteSecureData('doctortoken');
                       secureStorage.deleteSecureData('admintoken');
                       secureStorage.deleteSecureData('nursetoken');
+                      doctorprovider.logout();
                 
                       setState(() {});
                       Constants.token =

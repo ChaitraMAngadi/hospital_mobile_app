@@ -509,6 +509,8 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                       secureStorage.deleteSecureData('doctortoken');
                       secureStorage.deleteSecureData('admintoken');
                       secureStorage.deleteSecureData('nursetoken');
+
+                      adminprovider.logout();
                 
                       setState(() {});
                       Constants.token =

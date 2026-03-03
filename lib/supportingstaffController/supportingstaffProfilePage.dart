@@ -511,6 +511,7 @@ class _SupportingStaffProfilePageState extends State<SupportingStaffProfilePage>
                       secureStorage.deleteSecureData('doctortoken');
                       secureStorage.deleteSecureData('admintoken');
                       secureStorage.deleteSecureData('nursetoken');
+                      supportingstaffprovider.logout();
                 
                       setState(() {});
                       Constants.token =

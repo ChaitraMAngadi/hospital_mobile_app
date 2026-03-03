@@ -144,7 +144,13 @@ class Loginprovider extends ChangeNotifier {
           Constants.doctortoken = value;
         });
 
+         await secureStorage.writeSecureData('doctorrefreshtoken', responseData['refreshToken']);
+        await secureStorage.readSecureData('doctorrefreshtoken').then((value) {
+          Constants.doctorrefreshtoken = value;
+        });
+
         print("Constants.doctortoken ${Constants.doctortoken}");
+        print("Constants.doctorrefreshtoken ${Constants.doctorrefreshtoken}");
 
         final sucessSnackbar = SnackBar(
             backgroundColor: Colors.green[400],
@@ -180,6 +186,9 @@ class Loginprovider extends ChangeNotifier {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/loginphone";
     final headers = await DeviceHeaders.getDeviceHeaders();
 
+    print(userid);
+    print(password);
+
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     try {
       final response = await http.post(
@@ -200,11 +209,16 @@ class Loginprovider extends ChangeNotifier {
         
         print(responseData['token']);
         await secureStorage.writeSecureData('admintoken', responseData['token']);
+        await secureStorage.writeSecureData('adminrefreshtoken', responseData['refreshToken']);
         await secureStorage.readSecureData('admintoken').then((value) {
           Constants.admintoken = value;
         });
 
+  await secureStorage.readSecureData('adminrefreshtoken').then((value) {
+          Constants.adminrefreshtoken = value;
+        });
         print("Constants.admintoken ${Constants.admintoken}");
+        print("Constants.adminrefreshtoken ${Constants.adminrefreshtoken}");
 
         final sucessSnackbar = SnackBar(
             backgroundColor: Colors.green[400],
@@ -264,7 +278,12 @@ final headers = await DeviceHeaders.getDeviceHeaders();
           Constants.nursetoken = value;
         });
 
+ await secureStorage.writeSecureData('nurserefreshtoken', responseData['refreshToken']);
+        await secureStorage.readSecureData('nurserefreshtoken').then((value) {
+          Constants.nurserefreshtoken = value;
+        });
         print("Constants.nursetoken ${Constants.nursetoken}");
+        print("Constants.nurserefreshtoken ${Constants.nurserefreshtoken}");
 
         final sucessSnackbar = SnackBar(
             backgroundColor: Colors.green[400],
