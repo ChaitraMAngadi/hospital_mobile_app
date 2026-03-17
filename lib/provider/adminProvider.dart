@@ -2334,7 +2334,7 @@ await secureStorage.writeSecureData('admintoken', responseData['token']);
     } catch (e) {
       final error = SnackBar(content: Text(e.toString()));
     }
-  }
+  } 
 
   Future<void> logout() async {
     try {
