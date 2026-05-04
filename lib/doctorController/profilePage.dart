@@ -25,7 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // TODO: implement initState
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchdoctorprofile = doctorprovider.getdoctordetailedprofile();
+    fetchdoctorprofile = doctorprovider.getdoctordetailedprofile(context);
   }
 
   String formatDate(String date) {
@@ -854,12 +854,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _handleRefresh() async {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-
+doctorprovider.invalidateCache(key: doctorprovider.kProfile);
     await Future.delayed(Duration(seconds: 2));
     Constants.doctortoken =
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
-      fetchdoctorprofile = doctorprovider.getdoctordetailedprofile();
+      fetchdoctorprofile = doctorprovider.getdoctordetailedprofile(context);
     });
   }
 }

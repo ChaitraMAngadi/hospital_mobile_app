@@ -25,7 +25,7 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
   void initState() {
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchactiveallinvisits = doctorprovider.getactiveinvisits().then((_) {
+    fetchactiveallinvisits = doctorprovider.getactiveinvisits(context).then((_) {
       setState(() {
         doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
       });
@@ -344,12 +344,12 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
 
   Future<void> _handleRefresh() async {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-
+doctorprovider.invalidateCache(key: doctorprovider.Invisits);
     await Future.delayed(Duration(seconds: 2));
     Constants.doctortoken =
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
-      fetchactiveallinvisits = doctorprovider.getactiveinvisits();
+      fetchactiveallinvisits = doctorprovider.getactiveinvisits(context);
       doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
     });
   }

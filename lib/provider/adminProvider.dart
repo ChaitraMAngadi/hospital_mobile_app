@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/cacheManager.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/deviceHeader.dart';
@@ -69,9 +71,12 @@ class Adminprovider extends ChangeNotifier {
 
    final CacheManager _cache = CacheManager(cacheDuration: Duration(minutes: 10));
 
-     static const String kPatients = 'patients';
-  static const String kProfile  = 'profile';
-
+   final String kPatients = 'patients';
+   final String kProfile  = 'profile';
+   final String Doctors = 'doctors';
+   final String Visits = 'visits';
+   final String PatientOutvisit = 'patientoutvisit';
+   final String PatientInvisit = 'patientinvisit';
 
 
     String invisitId = '';
@@ -87,7 +92,7 @@ class Adminprovider extends ChangeNotifier {
   final SecureStorage secureStorage = SecureStorage();
 
 
-  Future<void> getadmindetailedprofile() async {
+  Future<void> getadmindetailedprofile(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getmydetailprofile";
 
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
@@ -120,7 +125,7 @@ class Adminprovider extends ChangeNotifier {
         }
         notifyListeners();
       } else if(response.statusCode == 401){
-      await  refreshtoken();
+      await  refreshtoken(context);
 Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
       try {
       final response = await http.get(
@@ -164,7 +169,7 @@ Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
 
 
 
-Future<void> getpatientbydoctor() async {
+Future<void> getpatientbydoctor(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getpatientbydoctor";
 
     Constants.token = await secureStorage.readSecureData('doctortoken') ?? '';
@@ -185,7 +190,7 @@ Future<void> getpatientbydoctor() async {
 
         notifyListeners();
       } else if(response.statusCode == 401){
-await refreshtoken();
+await refreshtoken(context);
 Constants.token = await secureStorage.readSecureData('doctortoken') ?? '';
 try {
       final response = await http.get(
@@ -225,7 +230,7 @@ try {
   }
 
 
-Future<void> getPatientsByPageWithSearch(int page, String searchQuery) async {
+Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildContext context ) async {
   final String url = searchQuery.isNotEmpty 
       ? "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page&search=${Uri.encodeComponent(searchQuery)}"
       : "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page";
@@ -273,7 +278,7 @@ Future<void> getPatientsByPageWithSearch(int page, String searchQuery) async {
     else if(response.statusCode == 401) {
       print("response check");
 
-    await  refreshtoken();
+    await  refreshtoken(context);
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     try {
     final response = await http.get(
@@ -324,8 +329,8 @@ Future<void> getPatientsByPageWithSearch(int page, String searchQuery) async {
 
 
 
-Future<void> getPatientsByPage(int page) async {
-  await getPatientsByPageWithSearch(page, '');
+Future<void> getPatientsByPage(int page, BuildContext context ) async {
+  await getPatientsByPageWithSearch(page, '', context);
 }
 
   Future<void> addpatient(String name, String phone, String gender,      
@@ -360,6 +365,7 @@ Future<void> getPatientsByPage(int page) async {
         final responseData = jsonDecode(response.body);
         addingpatient = false;
         print(responseData);
+        invalidateCache(key: kPatients);
         notifyListeners();
 
         final sucessSnackbar = SnackBar(
@@ -370,11 +376,12 @@ Future<void> getPatientsByPage(int page) async {
             ));
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-        getPatientsByPage(1);
+        invalidateCache(key: kPatients);
+        getPatientsByPage(1, context);
         Navigator.pop(context);
       } else if(response.statusCode == 401){
 
-    await  refreshtoken();
+    await  refreshtoken(context);
 
     try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
@@ -416,7 +423,7 @@ Future<void> getPatientsByPage(int page) async {
             ));
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-        getPatientsByPage(1);
+        getPatientsByPage(1, context);
         Navigator.pop(context);
       } 
        else {
@@ -458,7 +465,7 @@ Future<void> getPatientsByPage(int page) async {
     }
   }
 
-  Future<void> getpatient(String id) async {
+  Future<void> getpatient(String id, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getpatientbyid/$id";
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     try {
@@ -484,7 +491,7 @@ Future<void> getPatientsByPage(int page) async {
         notifyListeners();
         // print(patientdetails);
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
 
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
 
@@ -558,7 +565,7 @@ Future<void> getPatientsByPage(int page) async {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         editingpatient = false;
-        await getpatient(id);
+        await getpatient(id, context);
         
         notifyListeners();
         print(responseData);
@@ -569,7 +576,7 @@ Future<void> getPatientsByPage(int page) async {
               style: TextStyle(color: Colors.grey[50]),
             ));
         ScaffoldMessenger.of(context).showSnackBar(msg);
-        getPatientsByPage(1);
+        getPatientsByPage(1, context);
         // getallpatients();
         Navigator.pop(context);
 
@@ -577,7 +584,7 @@ Future<void> getPatientsByPage(int page) async {
       }
       else if(response.statusCode == 401){
 
-        await refreshtoken();
+        await refreshtoken(context);
 
         try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
@@ -609,7 +616,7 @@ Future<void> getPatientsByPage(int page) async {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         editingpatient = false;
-        await getpatient(id);
+        await getpatient(id, context);
         
         notifyListeners();
         print(responseData);
@@ -620,7 +627,7 @@ Future<void> getPatientsByPage(int page) async {
               style: TextStyle(color: Colors.grey[50]),
             ));
         ScaffoldMessenger.of(context).showSnackBar(msg);
-        getPatientsByPage(1);
+        getPatientsByPage(1, context);
         // getallpatients();
         Navigator.pop(context);
 
@@ -664,11 +671,12 @@ Future<void> getPatientsByPage(int page) async {
   }
 
 
-Future<void> getpatientinvisits(String id) async {
+Future<void> getpatientinvisits(String id, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitsbypatientid/$id";
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     try {
+      if (_cache.isCacheValid(PatientInvisit)) return;
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -682,10 +690,10 @@ Future<void> getpatientinvisits(String id) async {
         print(responseData);
         patientinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+            _cache.markCached(PatientInvisit);
         notifyListeners();
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
         try {
       final response = await http.get(
@@ -701,7 +709,7 @@ Future<void> getpatientinvisits(String id) async {
         print(responseData);
         patientinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+            _cache.markCached(PatientInvisit);
         notifyListeners();
       } 
       else if (response.statusCode == 404) {
@@ -722,11 +730,12 @@ Future<void> getpatientinvisits(String id) async {
     }
   }
 
-  Future<void> getpatientoutvisits(String id) async {
+  Future<void> getpatientoutvisits(String id, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getoutvisitsbypatientid/$id";
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     try {
+      if (_cache.isCacheValid(PatientOutvisit)) return;
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -740,10 +749,10 @@ Future<void> getpatientinvisits(String id) async {
         print(responseData);
         patientoutvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+            _cache.markCached(PatientOutvisit);
         notifyListeners();
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
         try {
       final response = await http.get(
@@ -759,7 +768,7 @@ Future<void> getpatientinvisits(String id) async {
         print(responseData);
         patientoutvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+            _cache.markCached(PatientOutvisit);
         notifyListeners();
       } 
       else if (response.statusCode == 404) {
@@ -833,6 +842,7 @@ Future<void> addoutvisit(
         // Successful POST request, handle the response here
         final responseData = jsonDecode(response.body);
         print(responseData);
+        invalidateCache(key: PatientOutvisit);
         notifyListeners();
 
         final sucessSnackbar = SnackBar(
@@ -844,13 +854,13 @@ Future<void> addoutvisit(
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        getpatientoutvisits(patientId);
+        getpatientoutvisits(patientId, context);
 
         notifyListeners();
 
         Navigator.pop(context);
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
 
         try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
@@ -905,7 +915,7 @@ Future<void> addoutvisit(
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        getpatientoutvisits(patientId);
+        getpatientoutvisits(patientId, context);
 
         notifyListeners();
 
@@ -953,7 +963,7 @@ Future<void> addoutvisit(
   }
 
 
-Future<void> getinvisitbyid(String patientId, String complaintId) async {
+Future<void> getinvisitbyid(String patientId, String complaintId, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitbyid/$patientId/$complaintId";
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     try {
@@ -978,7 +988,7 @@ Future<void> getinvisitbyid(String patientId, String complaintId) async {
         notifyListeners();
         // print(patientdetails);
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
         try {
       final response = await http.get(
@@ -1018,7 +1028,7 @@ Future<void> getinvisitbyid(String patientId, String complaintId) async {
   }
 
 
-Future<void> getdoctorsnurses() async {
+Future<void> getdoctorsnurses(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getalldoctorsnurses";
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
@@ -1041,7 +1051,7 @@ Future<void> getdoctorsnurses() async {
             print('allnurses $allnurses');
         notifyListeners();
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
         try {
       final response = await http.get(
@@ -1127,6 +1137,7 @@ Future<void> getdoctorsnurses() async {
         // Successful POST request, handle the response here
         final responseData = jsonDecode(response.body);
         print(responseData);
+        invalidateCache(key: PatientInvisit);
         notifyListeners();
 
         final sucessSnackbar = SnackBar(
@@ -1138,13 +1149,13 @@ Future<void> getdoctorsnurses() async {
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        getpatientinvisits(patientId);
+        getpatientinvisits(patientId, context);
 
         notifyListeners();
 
         Navigator.pop(context);
       }else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
       final headers = await DeviceHeaders.getDeviceHeaders();
@@ -1193,7 +1204,7 @@ Future<void> getdoctorsnurses() async {
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        getpatientinvisits(patientId);
+        getpatientinvisits(patientId, context);
 
         notifyListeners();
 
@@ -1297,16 +1308,16 @@ Future<void> getdoctorsnurses() async {
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        getpatientinvisits(patientId);
-        getinvisitbyid(patientId,complaintId);
+        getpatientinvisits(patientId, context);
+        getinvisitbyid(patientId,complaintId, context);
         
-        getactiveinvisits();
+        getactiveinvisits(context);
 
         notifyListeners();
 
         Navigator.pop(context);
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
       final headers = await DeviceHeaders.getDeviceHeaders();
@@ -1354,10 +1365,10 @@ Future<void> getdoctorsnurses() async {
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        getpatientinvisits(patientId);
-        getinvisitbyid(patientId,complaintId);
+        getpatientinvisits(patientId, context);
+        getinvisitbyid(patientId,complaintId, context);
         
-        getactiveinvisits();
+        getactiveinvisits(context);
 
         notifyListeners();
 
@@ -1408,12 +1419,13 @@ Future<void> getdoctorsnurses() async {
     }
   }
 
-  Future<void> getactiveinvisits() async {
+  Future<void> getactiveinvisits(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getallactiveinvisits";
 
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     
     try {
+      if (_cache.isCacheValid(Visits)) return;
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -1427,10 +1439,10 @@ Future<void> getdoctorsnurses() async {
         print(responseData);
         activeinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+_cache.markCached(Visits);
         notifyListeners();
       }else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
         try {
       final response = await http.get(
@@ -1446,7 +1458,7 @@ Future<void> getdoctorsnurses() async {
         print(responseData);
         activeinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+_cache.markCached(Visits);
         notifyListeners();
       }
        else if (response.statusCode == 404) {
@@ -1533,7 +1545,7 @@ Future<void> getdoctorsnurses() async {
   // }
 
 
-Future<void> getalldoctorsdetails() async {
+Future<void> getalldoctorsdetails(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getalldoctors";
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     // Constants.token = await secureStorage.readSecureData('token') ?? '';
@@ -1542,6 +1554,7 @@ Future<void> getalldoctorsdetails() async {
     
     
     try {
+      if (_cache.isCacheValid(Doctors)) return;
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -1556,10 +1569,10 @@ Future<void> getalldoctorsdetails() async {
         alldoctorsdetails =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
             print('alldoctorsdetails $alldoctorsdetails');
-
+_cache.markCached(Doctors);
         notifyListeners();
       } else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
         try {
       final response = await http.get(
@@ -1576,7 +1589,7 @@ Future<void> getalldoctorsdetails() async {
         alldoctorsdetails =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
             print('alldoctorsdetails $alldoctorsdetails');
-
+_cache.markCached(Doctors);
         notifyListeners();
       } 
       else if (response.statusCode == 404) {
@@ -1876,7 +1889,7 @@ final Map<String, dynamic> requestBody = {
 
         // Navigator.pop(context);
       }else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
           Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     final headers = await DeviceHeaders.getDeviceHeaders();
         try{
@@ -2017,7 +2030,7 @@ final Map<String, dynamic> requestBody = {
 
         // Navigator.pop(context);
       }else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     
         final headers = await DeviceHeaders.getDeviceHeaders();
@@ -2144,7 +2157,7 @@ final Map<String, dynamic> requestBody = {
 
         // Navigator.pop(context);
       }else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     
 final headers = await DeviceHeaders.getDeviceHeaders();
@@ -2233,7 +2246,7 @@ final Map<String, dynamic> requestBody = {
   
 }
 
-  Future<void> gettodaysappointments() async {
+  Future<void> gettodaysappointments(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/gettodaysappointments";
 
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
@@ -2256,7 +2269,7 @@ final Map<String, dynamic> requestBody = {
 
         notifyListeners();
       }else if(response.statusCode == 401){
-        await refreshtoken();
+        await refreshtoken(context);
         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
         try {
       final response = await http.get(
@@ -2294,7 +2307,7 @@ final Map<String, dynamic> requestBody = {
     }
   }
 
-  Future<void> refreshtoken() async {
+  Future<void> refreshtoken(BuildContext context) async {
     try {
       Constants.adminrefreshtoken = await secureStorage.readSecureData('adminrefreshtoken') ?? '';
       // final headers = await DeviceHeaders.getDeviceHeaders();
@@ -2329,6 +2342,12 @@ await secureStorage.writeSecureData('admintoken', responseData['token']);
       } else {
         print(response.body);
         final responseData = jsonDecode(response.body);
+        
+         secureStorage.deleteSecureData('admintoken');
+        secureStorage.deleteSecureData('adminrefreshtoken');
+        print("token : ${Constants.admintoken}");
+        print("refresh token : ${Constants.adminrefreshtoken}");
+        context.router.popAndPush(SplashRoute());
        
       }
     } catch (e) {

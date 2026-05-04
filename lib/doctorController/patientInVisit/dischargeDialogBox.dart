@@ -141,7 +141,7 @@ class _DischargeDialogBoxState extends State<DischargeDialogBox> {
                       print(dischargesummaryController.text);
                       await doctorprovider.dischargeInPatient(widget.patientId, widget.complaintId, dischargesummaryController.text,formatedJoiDate, context);
 
-                      await doctorprovider.getpatientinvisits(widget.patientId);
+                      await doctorprovider.getpatientinvisits(widget.patientId, context);
                       
                       }
 

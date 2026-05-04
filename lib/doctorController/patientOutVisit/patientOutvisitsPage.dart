@@ -35,7 +35,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
   void initState() {
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId);
+    fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId, context);
   }
 
   String formatDate(String date) {
@@ -179,6 +179,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
           builder: (context, doctorprovider, child) {
             return SafeArea(
               child: SingleChildScrollView(
+                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -384,7 +385,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                             final remark = await doctorprovider
                                                 .getdoctorremark(
                                                     widget.patientId,
-                                                    item['id']);
+                                                    item['id'], context);
                                             if (remark != null &&
                                                 remark.isNotEmpty) {
                                               showDoctorRemarkDialog(
@@ -438,12 +439,12 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
 
   Future<void> _handleRefresh() async {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-
+doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
     await Future.delayed(Duration(seconds: 2));
     Constants.doctortoken =
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
-      fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId);
+      fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId, context);
     });
   }
 }
@@ -1257,6 +1258,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(
+
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Form(
@@ -1504,6 +1506,9 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                               setState(() {
                                 doctorprovider.addingoutvisit = true;
                               });
+                              
+                             
+
                               doctorprovider.addoutvisit(
                                 widget.patientId,
                                 cheifcomplaintController.text,
@@ -1515,8 +1520,10 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                                 context,
                               );
 
+                               
+
                               await doctorprovider
-                                  .getpatientoutvisits(widget.patientId);
+                                  .getpatientoutvisits(widget.patientId, context);
                             }
 
                             // context.router.pop();

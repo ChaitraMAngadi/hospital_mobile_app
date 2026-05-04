@@ -43,7 +43,7 @@ class _PatientHistoryAiState extends State<PatientHistoryAi>  with SingleTickerP
     Doctorprovider patientpageprovider = context.read<Doctorprovider>();
    
 
-    await patientpageprovider.getpatienthistoryairesponse(widget.patientId);
+    await patientpageprovider.getpatienthistoryairesponse(widget.patientId, context);
     setState(() {
       isLoading = false; 
     });

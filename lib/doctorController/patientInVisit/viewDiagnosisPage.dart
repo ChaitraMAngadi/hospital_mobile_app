@@ -57,13 +57,13 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
     fetchpatientdiagnosis =
-        doctorprovider.getpatientdiagnosis(widget.id, widget.visitingIndex);
+        doctorprovider.getpatientdiagnosis(widget.id, widget.visitingIndex, context);
     invisitId = doctorprovider.invisitId;
 
     fetchalldiagnosis = doctorprovider.getallpatientdiagnosis(
-        widget.id, doctorprovider.invisitId);
+        widget.id, doctorprovider.invisitId, context);
     fetchallobservations =
-        doctorprovider.getallobservations(widget.id, doctorprovider.invisitId);
+        doctorprovider.getallobservations(widget.id, doctorprovider.invisitId, context);
   }
 
   String formatDate(String date) {
@@ -350,7 +350,7 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                 // },
                                 onPressed: () async {
                                   await doctorprovider.getallpatientdiagnosis(
-                                      widget.id, doctorprovider.invisitId);
+                                      widget.id, doctorprovider.invisitId, context);
                                           
                                   if (doctorprovider
                                       .patientalldiagnosis.isNotEmpty) {
@@ -419,7 +419,7 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                               // },
                               onPressed: () async {
                                 await doctorprovider.getallobservations(
-                                    widget.id, doctorprovider.invisitId);
+                                    widget.id, doctorprovider.invisitId, context);
                                           
                                 if (doctorprovider
                                     .patientallobservations.isNotEmpty) {
@@ -534,7 +534,7 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                     );
                                               }, remarkOnTap:() async{
                                             final remark = await doctorprovider.getdoctorinremark(
-                                            widget.id, doctorprovider.invisitId, item['id']
+                                            widget.id, doctorprovider.invisitId, item['id'], context
                                             );
                                              if (remark != null && remark.isNotEmpty) {
                         showDoctorRemarkDialog(
@@ -633,7 +633,7 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
       fetchpatientdiagnosis =
-          doctorprovider.getpatientdiagnosis(widget.id, widget.visitingIndex);
+          doctorprovider.getpatientdiagnosis(widget.id, widget.visitingIndex, context);
     });
   }
 }

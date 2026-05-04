@@ -44,7 +44,7 @@ class _PatientInHistoryAiState extends State<PatientInHistoryAi>  with SingleTic
     Doctorprovider patientpageprovider = context.read<Doctorprovider>();
    
 
-    await patientpageprovider.getinpatienthistoryairesponse(widget.patientId, widget.id);
+    await patientpageprovider.getinpatienthistoryairesponse(widget.patientId, widget.id, context);
     setState(() {
       isLoading = false; 
     });

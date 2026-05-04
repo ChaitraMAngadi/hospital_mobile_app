@@ -42,7 +42,7 @@ class _ImportPatientsPageState extends State<ImportPatientsPage> {
   void initState() {
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchallsharedpatients = doctorprovider.getallsharedpatients().then((_) {
+    fetchallsharedpatients = doctorprovider.getallsharedpatients(context).then((_) {
       setState(() {
         doctorprovider.filteredallsharedpatients = doctorprovider.allsharedpatients;
       });
@@ -833,7 +833,7 @@ void _showOtpDialog(BuildContext context, String phone, String dob) {
     Constants.doctortoken =
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
-      fetchallsharedpatients = doctorprovider.getallsharedpatients();
+      fetchallsharedpatients = doctorprovider.getallsharedpatients(context);
       doctorprovider.filteredallsharedpatients = doctorprovider.allsharedpatients;
     });
   }

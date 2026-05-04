@@ -25,7 +25,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
     // TODO: implement initState
     super.initState();
     Adminprovider adminprovider = context.read<Adminprovider>();
-    fetchadminprofile = adminprovider.getadmindetailedprofile();
+    fetchadminprofile = adminprovider.getadmindetailedprofile(context);
   }
 
   String formatDate(String date) {
@@ -739,12 +739,12 @@ Widget _infoRow(IconData icon, String label, String value) {
 
   Future<void> _handleRefresh() async {
     Adminprovider adminprovider = context.read<Adminprovider>();
-
+adminprovider.invalidateCache(key: adminprovider.kProfile);
     await Future.delayed(Duration(seconds: 2));
     Constants.admintoken =
         await secureStorage.readSecureData('admintoken') ?? '';
     setState(() {
-      fetchadminprofile = adminprovider.getadmindetailedprofile();
+      fetchadminprofile = adminprovider.getadmindetailedprofile(context);
     });
   }
 }

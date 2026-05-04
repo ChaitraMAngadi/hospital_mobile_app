@@ -8,6 +8,7 @@ import 'package:auto_route/auto_route.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -61,22 +62,181 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
 
   List<File> selectedFiles = [];
 
-  Future<void> pickFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'pdf', 'doc', 'docx'],
+  void _showPickerOptions() {
+  if (selectedFiles.length >= 5) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Maximum 5 files allowed")),
     );
-
-    if (result != null) {
-      setState(() {
-        selectedFiles = result.paths.map((path) => File(path!)).toList();
-      });
-      print("Selected ${selectedFiles.length} files");
-    } else {
-      print("No files selected");
-    }
+    return;
   }
+
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 8),
+          Container(
+            width: 36, height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.camera_alt_rounded, color: Colors.blue),
+            ),
+            title: const Text('Camera'),
+            subtitle: const Text('Take a photo now'),
+            onTap: () {
+              Navigator.pop(context);
+              _pickFromCamera();
+            },
+          ),
+          const Divider(indent: 16, endIndent: 16, height: 1),
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.folder_rounded, color: Colors.green),
+            ),
+            title: const Text('Files'),
+            subtitle: const Text('jpg, png, pdf, doc, docx · max 5MB'),
+            onTap: () {
+              Navigator.pop(context);
+              pickFiles();
+            },
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
+}
+
+Future<void> _pickFromCamera() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? photo = await picker.pickImage(
+    source: ImageSource.camera,
+    imageQuality: 85,   // keeps file size reasonable
+  );
+
+  if (photo == null) return;
+
+  final File imageFile = File(photo.path);
+  const int maxFileSizeBytes = 5 * 1024 * 1024;
+
+  if (await imageFile.length() > maxFileSizeBytes) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Photo exceeds 5MB limit")),
+    );
+    return;
+  }
+
+  if (selectedFiles.length + 1 > 10) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("You can select maximum 10 files only")),
+    );
+    return;
+  }
+
+  setState(() {
+    selectedFiles.add(imageFile);
+  });
+}
+
+Future<void> pickFiles() async {
+
+  if (selectedFiles.length >= 5) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Maximum 5 files allowed"),
+      ),
+    );
+    return;
+  }
+
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    allowMultiple: true,
+    type: FileType.custom,
+    allowedExtensions: ['jpg', 'png', 'pdf', 'doc', 'docx'],
+  );
+
+  if (result != null) {
+
+    const int maxFileSizeBytes = 5 * 1024 * 1024; // 5MB in bytes
+
+    // Filter out files exceeding 5MB
+    List<PlatformFile> oversizedFiles = result.files
+        .where((file) => (file.size) > maxFileSizeBytes)
+        .toList();
+
+    if (oversizedFiles.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot upload files larger than 5MB: ${oversizedFiles.map((f) => f.name).join(', ')}",
+          ),
+        ),
+      );
+      return;
+    }
+
+    List<File> newFiles =
+        result.paths.map((path) => File(path!)).toList();
+
+    // Check total limit
+    if (selectedFiles.length + newFiles.length > 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You can select maximum 10 files only"),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      selectedFiles.addAll(newFiles);
+    });
+
+    print("Selected ${selectedFiles.length} files");
+  } else {
+    print("No files selected");
+  }
+}
+
+  // Future<void> pickFiles() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     allowMultiple: true,
+  //     type: FileType.custom,
+  //     allowedExtensions: ['jpg', 'png', 'pdf', 'doc', 'docx'],
+  //   );
+
+  //   if (result != null) {
+  //     setState(() {
+  //       selectedFiles = result.paths.map((path) => File(path!)).toList();
+  //     });
+  //     print("Selected ${selectedFiles.length} files");
+  //   } else {
+  //     print("No files selected");
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -249,7 +409,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                   gradient: AppColors.primaryGradient,
                 ),
                 child: ElevatedButton(
-                  onPressed: pickFiles,
+                  onPressed: _showPickerOptions,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -452,7 +612,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
                         context);
 
                     // doctorprovider todaysvisitprovider = context.read<Todayvisitprovider>();
-                    await doctorprovider.getpatientoutvisits(widget.patientId);
+                    await doctorprovider.getpatientoutvisits(widget.patientId, context);
                     doctorprovider.notify();
                   },
                   style: ElevatedButton.styleFrom(

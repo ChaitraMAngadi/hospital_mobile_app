@@ -1444,13 +1444,13 @@ class _ObservationPageState extends State<ObservationPage> {
     Supportingstaffprovider supportingstaffprovider =
         context.read<Supportingstaffprovider>();
     fetchpatientobservation = supportingstaffprovider.getpatientobservations(
-        widget.id, widget.visitingIndex);
+        widget.id, widget.visitingIndex, context);
     invisitId = supportingstaffprovider.invisitId;
 
     fetchalldiagnosis = supportingstaffprovider.getallpatientdiagnosis(
-        widget.id, supportingstaffprovider.invisitId);
+        widget.id, supportingstaffprovider.invisitId, context);
     fetchallobservations = supportingstaffprovider.getallobservations(
-        widget.id, supportingstaffprovider.invisitId);
+        widget.id, supportingstaffprovider.invisitId, context);
   }
 
   String formatDate(String date) {
@@ -1623,7 +1623,7 @@ class _ObservationPageState extends State<ObservationPage> {
                                   onPressed: () async {
                                     await supportingstaffprovider
                                         .getallpatientdiagnosis(widget.id,
-                                            supportingstaffprovider.invisitId);
+                                            supportingstaffprovider.invisitId, context);
                                 
                                     if (supportingstaffprovider
                                         .patientalldiagnosis.isNotEmpty) {
@@ -1691,7 +1691,7 @@ class _ObservationPageState extends State<ObservationPage> {
                                   onPressed: () async {
                                     await supportingstaffprovider
                                         .getallobservations(widget.id,
-                                            supportingstaffprovider.invisitId);
+                                            supportingstaffprovider.invisitId, context);
                                 
                                     if (supportingstaffprovider
                                         .patientallobservations.isNotEmpty) {
@@ -1835,7 +1835,7 @@ class _ObservationPageState extends State<ObservationPage> {
         await secureStorage.readSecureData('nursetoken') ?? '';
     setState(() {
       fetchpatientobservation = supportingstaffprovider.getpatientobservations(
-          widget.id, widget.visitingIndex);
+          widget.id, widget.visitingIndex, context);
     });
   }
 }

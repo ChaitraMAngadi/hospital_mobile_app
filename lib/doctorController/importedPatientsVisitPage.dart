@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hospital_mobile_app/doctorController/importHospitalPdfViewerPage.dart';
 import 'package:hospital_mobile_app/doctorController/importHospitalViewReportButton.dart';
-import 'package:hospital_mobile_app/doctorController/importPdfViewerPage.dart';
 import 'package:hospital_mobile_app/doctorController/importSupportingFilesDialogBox.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosisPage.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
@@ -40,7 +38,7 @@ class _ImportedPatientsVisitPageState extends State<ImportedPatientsVisitPage>
   void _loadData() {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
     setState(() {
-      fetchpatientinoutvisits = doctorprovider.getsharedpatientinoutvisits(widget.patientId);
+      fetchpatientinoutvisits = doctorprovider.getsharedpatientinoutvisits(widget.patientId, context);
     });
   }
 
@@ -859,7 +857,7 @@ String generateComplaintIdFromString(String createdAt) {
                                            // },
                                                      onPressed: () async {
                                   await doctorprovider.getimportpatientalldiagnosis(
-                                      widget.patientId, visit['id'] );
+                                      widget.patientId, visit['id'], context );
 
                                   if (doctorprovider
                                       .importpatientalldiagnosis.isNotEmpty) {
@@ -1127,7 +1125,7 @@ String generateComplaintIdFromString(String createdAt) {
     Constants.doctortoken =
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
-      fetchpatientinoutvisits = doctorprovider.getsharedpatientinoutvisits(widget.patientId);
+      fetchpatientinoutvisits = doctorprovider.getsharedpatientinoutvisits(widget.patientId, context);
       // doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
     });
   }

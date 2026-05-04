@@ -32,7 +32,7 @@ class _OutvisitSupportingFilesDialogBoxState extends State<OutvisitSupportingFil
   void initState() {
     super.initState();
      Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchSupportingFiles = doctorprovider.getoutvisitsupportingfiles(widget.patientId, widget.complaintId);
+    fetchSupportingFiles = doctorprovider.getoutvisitsupportingfiles(widget.patientId, widget.complaintId, context);
     
     // Initialize shimmer animation
     _shimmerController = AnimationController(

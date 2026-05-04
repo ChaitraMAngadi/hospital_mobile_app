@@ -26,7 +26,7 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
     super.initState();
     Adminprovider adminpageprovider = context.read<Adminprovider>();
 
-    fetchalldoctorsdetails = adminpageprovider.getalldoctorsdetails();
+    fetchalldoctorsdetails = adminpageprovider.getalldoctorsdetails(context);
   }
 
   String formatDate(String date) {
@@ -235,11 +235,11 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
 
   Future<void> _handleRefresh() async {
     Adminprovider adminpageprovider = context.read<Adminprovider>();
-
+adminpageprovider.invalidateCache(key: adminpageprovider.Doctors);
     await Future.delayed(Duration(seconds: 2));
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     setState(() {
-      fetchalldoctorsdetails = adminpageprovider.getalldoctorsdetails();
+      fetchalldoctorsdetails = adminpageprovider.getalldoctorsdetails(context);
     });
   }
 }

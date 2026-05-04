@@ -73,7 +73,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
     super.initState();
     Doctorprovider doctorprovider =
         context.read<Doctorprovider>();
-    fetchpatient = doctorprovider.getpatient(widget.patientId).then((_) {
+    fetchpatient = doctorprovider.getpatient(widget.patientId, context).then((_) {
       if (doctorprovider.patientdetails.isNotEmpty) {
         final data = doctorprovider.patientdetails.first;
         _patientData = data;
@@ -449,7 +449,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
                                       context,
                                     );
 
-                                    await doctorprovider.getPatientsByPage(1);
+                                    await doctorprovider.getPatientsByPage(1, context);
 
                                     // patientpageprovider.notify();
                                   }

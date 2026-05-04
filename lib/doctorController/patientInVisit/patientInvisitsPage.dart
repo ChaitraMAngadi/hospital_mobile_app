@@ -29,8 +29,8 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
   void initState() {
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchPatientInvisits = doctorprovider.getpatientinvisits(widget.patientId);
-    fetchalldoctorsnurses = doctorprovider.getdoctorsnurses();
+    fetchPatientInvisits = doctorprovider.getpatientinvisits(widget.patientId, context);
+    fetchalldoctorsnurses = doctorprovider.getdoctorsnurses(context);
   }
 
   String formatDate(String date) {
@@ -300,13 +300,13 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
 
   Future<void> _handleRefresh() async {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-
+doctorprovider.invalidateCache(key: doctorprovider.PatientInvisits);
     await Future.delayed(Duration(seconds: 2));
     Constants.doctortoken =
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
       fetchPatientInvisits =
-          doctorprovider.getpatientinvisits(widget.patientId);
+          doctorprovider.getpatientinvisits(widget.patientId, context);
     });
   }
 }

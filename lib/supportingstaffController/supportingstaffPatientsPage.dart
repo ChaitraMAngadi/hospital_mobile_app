@@ -29,7 +29,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
   Timer? _debounceTimer;
   String _currentSearchQuery = '';
   bool _isSearching = false; 
-
+ 
   @override
   void initState() {
     super.initState();
@@ -60,7 +60,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
   }
 
   Future<void> _fetchInitialData() async {
-    await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery);
+    await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
     // await homePageProvider.getdoctordetails();
   }
 
@@ -74,7 +74,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
       supportingstaffprovider.filteredPatients.clear();
     });
 
-    await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, query);
+    await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, query, context);
     
     setState(() {
       _hasMore = supportingstaffprovider.allpatients.isNotEmpty;
@@ -87,7 +87,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
     _currentPage += 1;
 
     final previousLength = supportingstaffprovider.allpatients.length;
-    await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery);
+    await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
     final newLength = supportingstaffprovider.allpatients.length;
 
     if (newLength == previousLength) {

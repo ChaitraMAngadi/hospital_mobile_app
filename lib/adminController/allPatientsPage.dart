@@ -60,7 +60,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
   }
 
   Future<void> _fetchInitialData() async {
-    await adminprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery);
+    await adminprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
     // await homePageProvider.getdoctordetails();
   }
 
@@ -74,7 +74,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
       adminprovider.filteredPatients.clear();
     });
 
-    await adminprovider.getPatientsByPageWithSearch(_currentPage, query);
+    await adminprovider.getPatientsByPageWithSearch(_currentPage, query, context);
     
     setState(() {
       _hasMore = adminprovider.allpatients.isNotEmpty;
@@ -87,7 +87,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
     _currentPage += 1;
 
     final previousLength = adminprovider.allpatients.length;
-    await adminprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery);
+    await adminprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
     final newLength = adminprovider.allpatients.length;
 
     if (newLength == previousLength) {

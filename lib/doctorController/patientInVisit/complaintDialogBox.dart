@@ -166,7 +166,7 @@ Widget _customDropdownBuilder(
                   ),
                   //         validator: (value) {
                   //   if (value == null) {
-                  //     return "Please select a Duty Doctor";
+                  //     return "Please select a Duty Doctor";  
                   //   }
                   //   return null;
                   // },

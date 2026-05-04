@@ -230,7 +230,7 @@ print(vitalsList);
                         context);
 
                     // doctorprovider todaysvisitprovider = context.read<Todayvisitprovider>();
-                    await supportingstaffprovider.getpatientobservations(widget.patientId,widget.visitIndex);
+                    await supportingstaffprovider.getpatientobservations(widget.patientId,widget.visitIndex, context);
                     supportingstaffprovider.notify();
                   },
                   style: ElevatedButton.styleFrom(

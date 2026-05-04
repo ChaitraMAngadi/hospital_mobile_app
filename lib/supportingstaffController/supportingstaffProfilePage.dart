@@ -27,7 +27,7 @@ class _SupportingStaffProfilePageState extends State<SupportingStaffProfilePage>
     // TODO: implement initState
     super.initState();
     Supportingstaffprovider supportingstaffprovider = context.read<Supportingstaffprovider>();
-    fetchsupportingstaffprofile = supportingstaffprovider.getadmindetailedprofile();
+    fetchsupportingstaffprofile = supportingstaffprovider.getadmindetailedprofile(context);
   }
 
   String formatDate(String date) {
@@ -739,12 +739,12 @@ Widget _infoRow(IconData icon, String label, String value) {
 
   Future<void> _handleRefresh() async {
     Supportingstaffprovider supportingstaffprovider = context.read<Supportingstaffprovider>();
-
+supportingstaffprovider.invalidateCache(key: supportingstaffprovider.kProfile);
     await Future.delayed(Duration(seconds: 2));
     Constants.nursetoken =
         await secureStorage.readSecureData('nursetoken') ?? '';
-    setState(() {
-      fetchsupportingstaffprofile = supportingstaffprovider.getadmindetailedprofile();
+    setState(() { 
+      fetchsupportingstaffprofile = supportingstaffprovider.getadmindetailedprofile(context);
     });
   }
 }

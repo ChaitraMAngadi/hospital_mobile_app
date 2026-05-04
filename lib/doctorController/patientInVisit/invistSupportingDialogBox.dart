@@ -50,7 +50,7 @@ class _InvisitSupportingFilesDialogBoxState extends State<InvisitSupportingFiles
     _shimmerController.repeat();
     
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    fetchSupportingFiles = doctorprovider.getinvisitsupportingfiles(widget.patientId, widget.complaintId, widget.diagnosisId);
+    fetchSupportingFiles = doctorprovider.getinvisitsupportingfiles(widget.patientId, widget.complaintId, widget.diagnosisId, context);
   }
 
   @override

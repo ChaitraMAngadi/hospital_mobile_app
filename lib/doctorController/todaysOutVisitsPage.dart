@@ -66,7 +66,7 @@ class _TodaysOutvisitsPageState extends State<TodaysOutvisitsPage> {
 void initState() {
   super.initState();
   Doctorprovider doctorprovider = context.read<Doctorprovider>();
-  fetchtodaysoutvisits = doctorprovider.gettodaysoutvisits().then((_) {
+  fetchtodaysoutvisits = doctorprovider.gettodaysoutvisits(context).then((_) {
     setState(() {
       doctorprovider.filteredvisits = doctorprovider.gettodaysvisits;
     });
@@ -430,12 +430,12 @@ void initState() {
 
   Future<void> _handleRefresh() async {
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
-
+doctorprovider.invalidateCache(key: doctorprovider.Outvisits);
     await Future.delayed(Duration(seconds: 2));
     Constants.doctortoken =
         await secureStorage.readSecureData('doctortoken') ?? '';
     setState(() {
-      fetchtodaysoutvisits = doctorprovider.gettodaysoutvisits();
+      fetchtodaysoutvisits = doctorprovider.gettodaysoutvisits(context);
       doctorprovider.filteredvisits = doctorprovider.gettodaysvisits;
     });
   }

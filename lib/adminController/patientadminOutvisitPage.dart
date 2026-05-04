@@ -36,8 +36,8 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
     super.initState();
     Adminprovider adminprovider =
         context.read<Adminprovider>();
-    fetchoutvisits = adminprovider.getpatientoutvisits(widget.patientId);
-    fetchalldoctorsnurses = adminprovider.getdoctorsnurses();
+    fetchoutvisits = adminprovider.getpatientoutvisits(widget.patientId, context);
+    fetchalldoctorsnurses = adminprovider.getdoctorsnurses(context);
 
   }
 
@@ -280,7 +280,7 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                                   temprature: item["temperature"] ?? "",
                                                   heartrate: item["heart_rate"] ?? "",
                                                   visitdate: formatDate(item["visit_date"]),
-                                                  associateddoctor: '${item['associatedDoctor']['name']}, ${item['associatedDoctor']['userid']}',
+                                                  associateddoctor: '${item['associatedDoctor']['name']}',
                                                 );
                                               },
                                             );
@@ -308,11 +308,11 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
   Future<void> _handleRefresh() async {
     Adminprovider adminprovider =
         context.read<Adminprovider>();
-
+adminprovider.invalidateCache(key: adminprovider.PatientOutvisit);
     await Future.delayed(Duration(seconds: 2));
     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     setState(() {
-      fetchoutvisits = adminprovider.getpatientoutvisits(widget.patientId);
+      fetchoutvisits = adminprovider.getpatientoutvisits(widget.patientId, context);
     });
   }
 }
@@ -838,7 +838,10 @@ class VisitViewModel extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  overflow: TextOverflow.ellipsis
+
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -1312,7 +1315,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                           context,
                         );
 
-                        await adminprovider.getpatientoutvisits(widget.patientId);
+                        await adminprovider.getpatientoutvisits(widget.patientId, context);
                       }
 
                       // context.router.pop();

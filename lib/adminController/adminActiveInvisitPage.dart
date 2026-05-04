@@ -29,13 +29,13 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
   void initState() {
     super.initState();
     Adminprovider adminprovider = context.read<Adminprovider>();
-    fetchactiveallinvisits = adminprovider.getactiveinvisits().then((_) {
+    fetchactiveallinvisits = adminprovider.getactiveinvisits(context).then((_) {
       setState(() {
         adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
       });
     });
 
-    fetchalldoctorsnurses = adminprovider.getdoctorsnurses();
+    fetchalldoctorsnurses = adminprovider.getdoctorsnurses(context);
 
     _searchController.addListener(() {
       final query = _searchController.text.toLowerCase();
@@ -351,7 +351,7 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                                                     complaintId: item['id'],
                                                   ),
                                                 );
-                                              await  adminprovider.getactiveinvisits();
+                                              await  adminprovider.getactiveinvisits(context);
                                                setState(() {
     adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
   });
@@ -386,15 +386,14 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
   }
 
   Future<void> _handleRefresh() async {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
-
-    await Future.delayed(Duration(seconds: 2));
-    Constants.doctortoken =
-        await secureStorage.readSecureData('doctortoken') ?? '';
-    setState(() {
-      fetchactiveallinvisits = doctorprovider.getactiveinvisits();
-      doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
+   Adminprovider adminprovider = context.read<Adminprovider>();
+   adminprovider.invalidateCache(key: adminprovider.Visits);
+    fetchactiveallinvisits = adminprovider.getactiveinvisits(context).then((_) {
+      setState(() {
+        adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
+      });
     });
+
   }
 }
 

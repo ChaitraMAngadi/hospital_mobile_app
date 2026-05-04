@@ -30,7 +30,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
   void initState() {
     super.initState();
     Supportingstaffprovider supportingstaffprovider = context.read<Supportingstaffprovider>();
-    fetchPatientInvisits = supportingstaffprovider.getpatientinvisits(widget.patientId);
+    fetchPatientInvisits = supportingstaffprovider.getpatientinvisits(widget.patientId, context);
   }
 
   String formatDate(String date) {
@@ -303,7 +303,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
         await secureStorage.readSecureData('nursetoken') ?? '';
     setState(() {
       fetchPatientInvisits =
-          supportingstaffprovider.getpatientinvisits(widget.patientId);
+          supportingstaffprovider.getpatientinvisits(widget.patientId, context);
     });
   }
 }

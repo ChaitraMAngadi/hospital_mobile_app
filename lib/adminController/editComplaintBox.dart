@@ -41,7 +41,7 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
 
     Adminprovider adminprovider = context.read<Adminprovider>();
     fetchvisit = adminprovider
-        .getinvisitbyid(widget.patientId, widget.complaintId)
+        .getinvisitbyid(widget.patientId, widget.complaintId, context)
         .then((_) {
       if (adminprovider.complaintdetails.isNotEmpty) {
         final data = adminprovider.complaintdetails.first;
