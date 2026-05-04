@@ -977,6 +977,7 @@ Future<void> addoutvisit(
         print("Success: ${response.body}");
         final responseData = jsonDecode(response.body);
         print(responseData);
+        invalidateCache(key: PatientOutvisits);
         notifyListeners();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.green[400],
@@ -1645,6 +1646,7 @@ _cache.markCached(Invisits);
         print("Success: ${response.body}");
         final responseData = jsonDecode(response.body);
         print(responseData);
+        invalidateCache();
         notifyListeners();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.green[400],
