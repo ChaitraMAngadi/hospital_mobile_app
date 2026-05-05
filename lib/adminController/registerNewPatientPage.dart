@@ -320,6 +320,8 @@ class _RegisterNewPatientPageState extends State<RegisterNewPatientPage> {
                               _emailController.text,
                               formatedJoiDate,
                               context);
+                               adminprovider.invalidateCache(key:adminprovider.kPatients);
+
 
                           await adminprovider.getPatientsByPage(1, context);
 

@@ -565,7 +565,9 @@ Future<void> getPatientsByPage(int page, BuildContext context ) async {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         editingpatient = false;
+         invalidateCache(key: kPatients);
         await getpatient(id, context);
+       
         
         notifyListeners();
         print(responseData);
@@ -1297,6 +1299,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         // Successful POST request, handle the response here
         final responseData = jsonDecode(response.body);
         print(responseData);
+        invalidateCache(key: PatientInvisit);
         notifyListeners();
 
         final sucessSnackbar = SnackBar(

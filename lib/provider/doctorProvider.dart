@@ -521,6 +521,7 @@ Future<void> getPatientsByPage(int page, BuildContext context) async {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         editingpatient = false;
+        invalidateCache(key: kPatients);
         await getpatient(id, context);
 
         notifyListeners();
@@ -3045,7 +3046,7 @@ print(requestBody);
       if (response.statusCode == 200) {
         iseditingvisit = false;
         final responseData = jsonDecode(response.body);
-
+invalidateCache(key: PatientOutvisits);
         print(responseData);
         final msg = SnackBar(
             backgroundColor: Colors.green[400],
