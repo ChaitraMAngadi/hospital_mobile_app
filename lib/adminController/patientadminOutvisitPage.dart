@@ -254,41 +254,61 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                         ),))
                                 : SizedBox(
                                     height: MediaQuery.of(context).size.height * 0.81,
-                                    child: ListView.builder(
-                                      itemCount: adminprovider.patientoutvisits.length,
-                                      itemBuilder: (context, index) {
-                                        final item = adminprovider.patientoutvisits[index];
-                                       
-                                      
-                                        return VisitModel(
-                                          indexnum: index+1,
-                                          cheifcomplaint: item['chief_complaint'],
-                                          visitdate: formatDate(item['visit_date']),
-                                          complaintId: item['id'],
-                                          patientId: widget.patientId,
-                                          // createdtime: 'formatDate(complaint["createdAt"])',
+                                    child: Builder(
+                                      builder: (context) {
+                                        final sortedVisits = List<Map<String, dynamic>>.from(
+            adminprovider.patientoutvisits)
+          ..sort((a, b) {
+            DateTime getDate(Map<String, dynamic> item) {
+              final raw = item['created_at'] ??
+                  item['createdAt'] ??
+                  item['visit_date'];
+              try {
+                return DateTime.parse(raw.toString());
+              } catch (_) {
+                return DateTime.fromMillisecondsSinceEpoch(0);
+              }
+            }
+
+            return getDate(b).compareTo(getDate(a)); // descending
+          });
+                                        return ListView.builder(
+                                          itemCount: sortedVisits.length,
+                                          itemBuilder: (context, index) {
+                                            final item = sortedVisits[index];
+                                           
                                           
-                                          viewontap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return VisitViewModel(
-                                                  cheifcomplaint: item["chief_complaint"],
-                                                  height: item["height"] ?? "",
-                                                  weight: item["weight"] ?? "",
-                                                  bp: item["bp"] ?? "",
-                                                  temprature: item["temperature"] ?? "",
-                                                  heartrate: item["heart_rate"] ?? "",
-                                                  visitdate: formatDate(item["visit_date"]),
-                                                  associateddoctor: '${item['associatedDoctor']['name']}',
+                                            return VisitModel(
+                                              indexnum: index+1,
+                                              cheifcomplaint: item['chief_complaint'],
+                                              visitdate: formatDate(item['visit_date']),
+                                              complaintId: item['id'],
+                                              patientId: widget.patientId,
+                                              // createdtime: 'formatDate(complaint["createdAt"])',
+                                              
+                                              viewontap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return VisitViewModel(
+                                                      cheifcomplaint: item["chief_complaint"],
+                                                      height: item["height"] ?? "",
+                                                      weight: item["weight"] ?? "",
+                                                      bp: item["bp"] ?? "",
+                                                      temprature: item["temperature"] ?? "",
+                                                      heartrate: item["heart_rate"] ?? "",
+                                                      visitdate: formatDate(item["visit_date"]),
+                                                      associateddoctor: '${item['associatedDoctor']['name']}',
+                                                    );
+                                                  },
                                                 );
-                                              },
+                                              }, isDiagnosed: item['isDiagnosed'],
+                                            
+                                             
                                             );
-                                          }, isDiagnosed: item['isDiagnosed'],
-                                        
-                                         
+                                          },
                                         );
-                                      },
+                                      }
                                     ),
                                   ),
                           );

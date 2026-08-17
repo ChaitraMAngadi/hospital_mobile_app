@@ -231,60 +231,119 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                           textAlign: TextAlign.center,
                                         ),
                                       )))
-                                  : SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height*0.76,
-                                      child: ListView.builder(
-                                        itemCount: doctorprovider
-                                            .patientinvisits.length,
-                                        itemBuilder: (context, index) {
-                                          final item = doctorprovider
-                                              .patientinvisits[index];
+
+                                      : SizedBox(
+    height: MediaQuery.of(context).size.height * 0.76,
+    child: Builder(
+      builder: (context) {
+        // 🔽 Recent IPD visit sabse pehle dikhane ke liye sort karo
+        final sortedInvisits = List<Map<String, dynamic>>.from(
+            doctorprovider.patientinvisits)
+          ..sort((a, b) {
+            if (a['created_at'] != null && b['created_at'] != null) {
+              return DateTime.parse(b['created_at'])
+                  .compareTo(DateTime.parse(a['created_at']));
+            }
+            return DateTime.parse(b['visit_date'])
+                .compareTo(DateTime.parse(a['visit_date']));
+          });
+
+        return ListView.builder(
+          itemCount: sortedInvisits.length,
+          itemBuilder: (context, index) {
+            final item = sortedInvisits[index];
+
+            return InVisitModel(
+              visitnumber: index + 1,
+              cheifcomplaint: item['chief_complaint'],
+              visitdate: formatDate(item['visit_date']),
+              viewontap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return InVisitViewModel(
+                      cheifcomplaint: item['chief_complaint'],
+                      visitdate: formatDate(item['visit_date']),
+                      consultingdoctor: item['consultingDoctor']['name'],
+                      dutydoctor: item['dutyDoctor']?['name'] ?? '',
+                      visitingdoctor: item['visitingDoctor']?['name'] ?? '',
+                      associatedstaff: item['associatedNurse']?['name'] ?? '',
+                    );
+                  },
+                );
+              },
+              diagnosisontap: () {
+                context.router.push(
+                  ViewDiagnosisRoute(
+                    name: widget.name,
+                    id: widget.patientId,
+                    visitingIndex: item['visit_index'],
+                    dischargeddate: item['discharged_date'] ?? '',
+                  ),
+                );
+              },
+              observationontap: () {},
+              dischargedate: item['discharged_date'] ?? '',
+            );
+          },
+        );
+      },
+    ),
+  ));
+                                  // : SizedBox(
+                                  //     height:
+                                  //         MediaQuery.of(context).size.height*0.76,
+                                  //     child: ListView.builder(
+                                  //       itemCount: doctorprovider
+                                  //           .patientinvisits.length,
+                                  //       itemBuilder: (context, index) {
+                                  //         final item = doctorprovider
+                                  //             .patientinvisits[index];
                 
-                                          return InVisitModel(visitnumber: index+1,
-                                              cheifcomplaint:
-                                                  item['chief_complaint'],
-                                              visitdate: formatDate(
-                                                  item['visit_date']),
-                                              viewontap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return InVisitViewModel(
-                                                        cheifcomplaint: item[
-                                                            'chief_complaint'],
-                                                        visitdate: formatDate(
-                                                            item['visit_date']),
-                                                        consultingdoctor: item[
-                                                                'consultingDoctor']
-                                                            ['name'],
-                                                        dutydoctor:
-                                                            item['dutyDoctor']?
-                                                                ['name']??'',
-                                                        visitingdoctor: item[
-                                                                'visitingDoctor']?
-                                                            ['name']??'',
-                                                        associatedstaff: item[
-                                                                'associatedNurse']?
-                                                            ['name']??'');
-                                                  },
-                                                );
-                                              },
-                                              diagnosisontap: () {
-                                                context.router.push(
-                                                  ViewDiagnosisRoute(name: widget.name, 
-                                                id: widget.patientId, visitingIndex: item['visit_index'], dischargeddate: item['discharged_date']??'',
-                                                )
+                                  //         return InVisitModel(visitnumber: index+1,
+                                  //             cheifcomplaint:
+                                  //                 item['chief_complaint'],
+                                  //             visitdate: formatDate(
+                                  //                 item['visit_date']),
+                                  //             viewontap: () {
+                                  //               showDialog(
+                                  //                 context: context,
+                                  //                 builder: (context) {
+                                  //                   return InVisitViewModel(
+                                  //                       cheifcomplaint: item[
+                                  //                           'chief_complaint'],
+                                  //                       visitdate: formatDate(
+                                  //                           item['visit_date']),
+                                  //                       consultingdoctor: item[
+                                  //                               'consultingDoctor']
+                                  //                           ['name'],
+                                  //                       dutydoctor:
+                                  //                           item['dutyDoctor']?
+                                  //                               ['name']??'',
+                                  //                       visitingdoctor: item[
+                                  //                               'visitingDoctor']?
+                                  //                           ['name']??'',
+                                  //                       associatedstaff: item[
+                                  //                               'associatedNurse']?
+                                  //                           ['name']??'');
+                                  //                 },
+                                  //               );
+                                  //             },
+                                  //             diagnosisontap: () {
+                                  //               context.router.push(
+                                  //                 ViewDiagnosisRoute(name: widget.name, 
+                                  //               id: widget.patientId, visitingIndex: item['visit_index'], dischargeddate: item['discharged_date']??'',
+                                  //               )
                                                 
-                                                );
-                                              },
-                                              observationontap: () {},
-                                              dischargedate:
-                                                  item['discharged_date'] ??
-                                                      '');
-                                        },
-                                      ),
-                                    ));
+                                  //               );
+                                  //             },
+                                  //             observationontap: () {},
+                                  //             dischargedate:
+                                  //                 item['discharged_date'] ??
+                                  //                     '');
+                                  //       },
+                                  //     ),
+                                  //   ));
                         }
                       },
                     ),

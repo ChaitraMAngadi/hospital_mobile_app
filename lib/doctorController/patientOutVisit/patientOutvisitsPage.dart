@@ -306,123 +306,237 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                       ),
                                     ))
                                 : SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.81,
-                                    child: ListView.builder(
-                                      itemCount: doctorprovider
-                                          .patientoutvisits.length,
-                                      itemBuilder: (context, index) {
-                                        final item = doctorprovider
-                                            .patientoutvisits[index];
+    height: MediaQuery.of(context).size.height * 0.81,
+    child: Builder(
+      builder: (context) {
+        // 🔽 Recent visit ko sabse pehle dikhane ke liye sort karo
+        final sortedVisits = List<Map<String, dynamic>>.from(
+            doctorprovider.patientoutvisits)
+          ..sort((a, b) {
+            // agar API se 'created_at' field aata hai to usse use karo (zyada accurate)
+            if (a['created_at'] != null && b['created_at'] != null) {
+              return DateTime.parse(b['created_at'])
+                  .compareTo(DateTime.parse(a['created_at']));
+            }
+            // warna visit_date se sort kar lo (descending)
+            return DateTime.parse(b['visit_date'])
+                .compareTo(DateTime.parse(a['visit_date']));
+          });
 
-                                        return VisitModel(
-                                          visitnumber: index + 1,
-                                          cheifcomplaint:
-                                              item['chief_complaint'],
-                                          visitdate:
-                                              formatDate(item['visit_date']),
-                                          complaintId: item['id'],
-                                          patientId: widget.patientId,
-                                          // createdtime: 'formatDate(complaint["createdAt"])',
-                                          supportingimagesontap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return OutvisitSupportingFilesDialogBox(
-                                                  patientId: widget.patientId,
-                                                  complaintId: item["id"],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          editontap:() {
-                                          showDialog(
-                          context: context,
-                          builder: (context) {
-                            return EditVisitModel(
-                              patientId: widget.patientId, 
-                              complaintId:item["id"] ,
-                              chief_complaint:item["chief_complaint"],
-                                                height: item["height"] ?? "",
-                                                weight: item["weight"] ?? "",
-                                                bp: item["bp"] ?? "",
-                                                temperature: item["temperature"] ?? "",
-                                                heartrate: item["heart_rate"] ?? "",
-                                                 );
-                          },
-                        );
-                                        },
-                                          viewontap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return VisitViewModel(
-                                                  cheifcomplaint:
-                                                      item["chief_complaint"],
-                                                  height: item["height"] ?? "",
-                                                  weight: item["weight"] ?? "",
-                                                  bp: item["bp"] ?? "",
-                                                  temprature:
-                                                      item["temperature"] ?? "",
-                                                  heartrate:
-                                                      item["heart_rate"] ?? "",
-                                                  visitdate: formatDate(
-                                                      item["visit_date"]),
-                                                );
-                                              },
-                                            );
-                                          },
+        return ListView.builder(
+          itemCount: sortedVisits.length,
+          itemBuilder: (context, index) {
+            final item = sortedVisits[index];
+
+            return VisitModel(
+              visitnumber: index + 1,
+              cheifcomplaint: item['chief_complaint'],
+              visitdate: formatDate(item['visit_date']),
+              complaintId: item['id'],
+              patientId: widget.patientId,
+              supportingimagesontap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return OutvisitSupportingFilesDialogBox(
+                      patientId: widget.patientId,
+                      complaintId: item["id"],
+                    );
+                  },
+                );
+              },
+              editontap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return EditVisitModel(
+                      patientId: widget.patientId,
+                      complaintId: item["id"],
+                      chief_complaint: item["chief_complaint"],
+                      height: item["height"] ?? "",
+                      weight: item["weight"] ?? "",
+                      bp: item["bp"] ?? "",
+                      temperature: item["temperature"] ?? "",
+                      heartrate: item["heart_rate"] ?? "",
+                    );
+                  },
+                );
+              },
+              viewontap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return VisitViewModel(
+                      cheifcomplaint: item["chief_complaint"],
+                      height: item["height"] ?? "",
+                      weight: item["weight"] ?? "",
+                      bp: item["bp"] ?? "",
+                      temprature: item["temperature"] ?? "",
+                      heartrate: item["heart_rate"] ?? "",
+                      visitdate: formatDate(item["visit_date"]),
+                    );
+                  },
+                );
+              },
+              startdiagnosisontap: () {
+                context.router.push(DiagnosisRoute(
+                  patientId: widget.patientId,
+                  complaintId: item['id'],
+                ));
+              },
+              buttonText: item['diagnosis_summary'] ?? '',
+              remarkontap: () async {
+                final remark = await doctorprovider.getdoctorremark(
+                    widget.patientId, item['id'], context);
+                if (remark != null && remark.isNotEmpty) {
+                  showDoctorRemarkDialog(
+                      context: context, htmlContent: remark);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const Dialog(
+                        insetPadding: EdgeInsets.all(16),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("There is no doctor remarks to show"),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            );
+          },
+        );
+      },
+    ),
+  ),
+                                
+                        //         SizedBox(
+                        //             height: MediaQuery.of(context).size.height *
+                        //                 0.81,
+                        //             child: ListView.builder(
+                        //               itemCount: doctorprovider
+                        //                   .patientoutvisits.length,
+                        //               itemBuilder: (context, index) {
+                        //                 final item = doctorprovider
+                        //                     .patientoutvisits[index];
+
+                        //                 return VisitModel(
+                        //                   visitnumber: index + 1,
+                        //                   cheifcomplaint:
+                        //                       item['chief_complaint'],
+                        //                   visitdate:
+                        //                       formatDate(item['visit_date']),
+                        //                   complaintId: item['id'],
+                        //                   patientId: widget.patientId,
+                        //                   // createdtime: 'formatDate(complaint["createdAt"])',
+                        //                   supportingimagesontap: () {
+                        //                     showDialog(
+                        //                       context: context,
+                        //                       builder: (context) {
+                        //                         return OutvisitSupportingFilesDialogBox(
+                        //                           patientId: widget.patientId,
+                        //                           complaintId: item["id"],
+                        //                         );
+                        //                       },
+                        //                     );
+                        //                   },
+                        //                   editontap:() {
+                        //                   showDialog(
+                        //   context: context,
+                        //   builder: (context) {
+                        //     return EditVisitModel(
+                        //       patientId: widget.patientId, 
+                        //       complaintId:item["id"] ,
+                        //       chief_complaint:item["chief_complaint"],
+                        //                         height: item["height"] ?? "",
+                        //                         weight: item["weight"] ?? "",
+                        //                         bp: item["bp"] ?? "",
+                        //                         temperature: item["temperature"] ?? "",
+                        //                         heartrate: item["heart_rate"] ?? "",
+                        //                          );
+                        //   },
+                        // );
+                        //                 },
+                        //                   viewontap: () {
+                        //                     showDialog(
+                        //                       context: context,
+                        //                       builder: (context) {
+                        //                         return VisitViewModel(
+                        //                           cheifcomplaint:
+                        //                               item["chief_complaint"],
+                        //                           height: item["height"] ?? "",
+                        //                           weight: item["weight"] ?? "",
+                        //                           bp: item["bp"] ?? "",
+                        //                           temprature:
+                        //                               item["temperature"] ?? "",
+                        //                           heartrate:
+                        //                               item["heart_rate"] ?? "",
+                        //                           visitdate: formatDate(
+                        //                               item["visit_date"]),
+                        //                         );
+                        //                       },
+                        //                     );
+                        //                   },
                                           
-                                          startdiagnosisontap: () {
-                                            context.router.push(DiagnosisRoute(
-                                              patientId: widget.patientId,
-                                              complaintId: item['id'],
-                                            ));
-                                          },
-                                          buttonText:
-                                              item['diagnosis_summary'] ?? '',
-                                          remarkontap: () async {
-                                            final remark = await doctorprovider
-                                                .getdoctorremark(
-                                                    widget.patientId,
-                                                    item['id'], context);
-                                            if (remark != null &&
-                                                remark.isNotEmpty) {
-                                              showDoctorRemarkDialog(
-                                                context: context,
-                                                htmlContent: remark,
-                                              );
-                                            } else {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return const Dialog(
-                                                    insetPadding:
-                                                        EdgeInsets.all(16),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16,
-                                                              vertical: 30),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Text(
-                                                              "There is no doctor remarks to show"),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
+                        //                   startdiagnosisontap: () {
+                        //                     context.router.push(DiagnosisRoute(
+                        //                       patientId: widget.patientId,
+                        //                       complaintId: item['id'],
+                        //                     ));
+                        //                   },
+                        //                   buttonText:
+                        //                       item['diagnosis_summary'] ?? '',
+                        //                   remarkontap: () async {
+                        //                     final remark = await doctorprovider
+                        //                         .getdoctorremark(
+                        //                             widget.patientId,
+                        //                             item['id'], context);
+                        //                     if (remark != null &&
+                        //                         remark.isNotEmpty) {
+                        //                       showDoctorRemarkDialog(
+                        //                         context: context,
+                        //                         htmlContent: remark,
+                        //                       );
+                        //                     } else {
+                        //                       showDialog(
+                        //                         context: context,
+                        //                         builder: (context) {
+                        //                           return const Dialog(
+                        //                             insetPadding:
+                        //                                 EdgeInsets.all(16),
+                        //                             child: Padding(
+                        //                               padding:
+                        //                                   EdgeInsets.symmetric(
+                        //                                       horizontal: 16,
+                        //                                       vertical: 30),
+                        //                               child: Row(
+                        //                                 mainAxisAlignment:
+                        //                                     MainAxisAlignment
+                        //                                         .center,
+                        //                                 children: [
+                        //                                   Text(
+                        //                                       "There is no doctor remarks to show"),
+                        //                                 ],
+                        //                               ),
+                        //                             ),
+                        //                           );
+                        //                         },
+                        //                       );
+                        //                     }
+                        //                   },
+                        //                 );
+                        //               },
+                        //             ),
+                        //           ),
                           );
                         }
                       },

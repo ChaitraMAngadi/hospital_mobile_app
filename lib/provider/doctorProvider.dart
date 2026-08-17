@@ -35,7 +35,8 @@ class Doctorprovider extends ChangeNotifier {
     List<Map<String, dynamic>> sharedpatientinvisits = [];
     List<Map<String, dynamic>> sharedpatientoutvisits = [];
 
-    final CacheManager _cache = CacheManager(cacheDuration: Duration(minutes: 10));
+  final CacheManager _cache = CacheManager();
+
 
      final String kPatients = 'patients';
   final String kProfile  = 'profile';
@@ -66,7 +67,14 @@ String inpatienthistorydata = "";
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
     
     try {
-      if (_cache.isCacheValid(kProfile)) return;
+      final cached = _cache.get<List<Map<String, dynamic>>>(kProfile);
+      // if (_cache.isCacheValid(kProfile)) return;
+       if (cached != null) {
+        doctordetailedprofile = cached;
+        notifyListeners();
+        return;
+      }
+      
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -89,7 +97,7 @@ String inpatienthistorydata = "";
           print('doctor details : $doctordetailedprofile');
           // print(doctordetailedprofile);
         }
-         _cache.markCached(kProfile);
+        _cache.set(kProfile, doctordetailedprofile);
         notifyListeners();
       } else if(response.statusCode == 401){
        await refreshtoken(context);
@@ -115,7 +123,7 @@ String inpatienthistorydata = "";
           print('doctor details : $doctordetailedprofile');
           // print(doctordetailedprofile);
         }
-        _cache.markCached(kProfile);
+        _cache.set(kProfile, doctordetailedprofile);
 
         notifyListeners();
       } 
@@ -155,6 +163,8 @@ Future<void> getpatientbydoctor(BuildContext context) async {
         patients =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
 
+            print(patients);
+
         notifyListeners();
       } else if(response.statusCode == 401){
         await refreshtoken(context);
@@ -172,7 +182,7 @@ Future<void> getpatientbydoctor(BuildContext context) async {
         final responseData = jsonDecode(response.body);
         patients =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+ print(patients);
         notifyListeners();
       } else if (response.statusCode == 404) {
         print('No patients found');
@@ -203,9 +213,9 @@ Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildCont
   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
 
   try {
-if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
-      return; // ← Serve from cache, skip API
-    }
+// if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
+//       return; // ← Serve from cache, skip API
+//     }
 
     final response = await http.get(
       Uri.parse(url),
@@ -221,7 +231,7 @@ if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
 
       // Get new patients from response
       List<Map<String, dynamic>> newPatients = json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
+print(newPatients);
       if (page == 1) {
         // First page or new search - replace existing data
         allpatients = newPatients;
@@ -232,9 +242,9 @@ if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
         filteredPatients = [...allpatients];
       }
       
-        if (page == 1 && searchQuery.isEmpty) {
-        _cache.markCached(kPatients); // ← Mark as cached after success
-      }
+      //   if (page == 1 && searchQuery.isEmpty) {
+      //   _cache.markCached(kPatients); // ← Mark as cached after success
+      // }
 
       notifyListeners();
     } else if(response.statusCode == 401){
@@ -629,7 +639,13 @@ Future<void> getpatientinvisits(String id, BuildContext context ) async {
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
     try {
-      if (_cache.isCacheValid(PatientInvisits)) return;
+      // if (_cache.isCacheValid(PatientInvisits)) return;
+      final cached = _cache.get<List<Map<String, dynamic>>>(PatientInvisits);
+      if (cached != null) {
+        patientinvisits = cached;
+        notifyListeners();
+        return;
+      }
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -643,7 +659,8 @@ Future<void> getpatientinvisits(String id, BuildContext context ) async {
         print(responseData);
         patientinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-             _cache.markCached(PatientInvisits);
+            //  _cache.markCached(PatientInvisits);
+            _cache.set(PatientInvisits, patientinvisits);
         notifyListeners();
       } else if(response.statusCode == 401){
         await refreshtoken(context);
@@ -662,8 +679,11 @@ Future<void> getpatientinvisits(String id, BuildContext context ) async {
         print(responseData);
         patientinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-_cache.markCached(PatientInvisits);
+// _cache.markCached(PatientInvisits);
+                    _cache.set(PatientInvisits, patientinvisits);
+
         notifyListeners();
+
       } else if (response.statusCode == 404) {
         final responseData = jsonDecode(response.body);
         // print(responseData);
@@ -686,7 +706,13 @@ _cache.markCached(PatientInvisits);
     // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
     try {
-      if (_cache.isCacheValid(PatientOutvisits)) return;
+      // if (_cache.isCacheValid(PatientOutvisits)) return;
+      final cached = _cache.get<List<Map<String, dynamic>>>(PatientOutvisits);
+      if (cached != null) {
+        patientoutvisits = cached;
+        notifyListeners();
+        return;
+      }
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -700,7 +726,8 @@ _cache.markCached(PatientInvisits);
         print(responseData);
         patientoutvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-             _cache.markCached(PatientOutvisits);
+            _cache.set(PatientOutvisits, patientoutvisits);
+            //  _cache.markCached(PatientOutvisits);
         notifyListeners();
       } else if(response.statusCode == 401){
         await refreshtoken(context);
@@ -719,7 +746,9 @@ _cache.markCached(PatientInvisits);
         print(responseData);
         patientoutvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-_cache.markCached(PatientOutvisits);
+// _cache.markCached(PatientOutvisits);
+                    _cache.set(PatientOutvisits, patientoutvisits);
+
         notifyListeners();
       } else if (response.statusCode == 404) {
         final responseData = jsonDecode(response.body);
@@ -978,7 +1007,7 @@ Future<void> addoutvisit(
         print("Success: ${response.body}");
         final responseData = jsonDecode(response.body);
         print(responseData);
-        invalidateCache(key: PatientOutvisits);
+        invalidateCache();
         notifyListeners();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.green[400],
@@ -1112,7 +1141,14 @@ Future<void> getdoctorsnurses(BuildContext context) async {
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
     
     try {
-      if (_cache.isCacheValid(Outvisits)) return;
+      // if (_cache.isCacheValid(Outvisits)) return;
+       final cached = _cache.get<List<Map<String, dynamic>>>(Outvisits);
+      if (cached != null) {
+        gettodaysvisits = cached;
+        notifyListeners();
+        return;
+      }
+
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -1126,7 +1162,8 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         print(responseData);
         gettodaysvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-             _cache.markCached(Outvisits);
+            //  _cache.markCached(Outvisits);
+            _cache.set(Outvisits, gettodaysvisits);
         notifyListeners();
       }else if(response.statusCode == 401){
         await refreshtoken(context);
@@ -1146,7 +1183,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         print(responseData);
         gettodaysvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            _cache.markCached(Outvisits);
+            _cache.set(Outvisits, gettodaysvisits);
         notifyListeners();
       } else if (response.statusCode == 404) {
         print('No visits found');
@@ -1222,7 +1259,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
         invalidateCache(key: PatientInvisits);
-
+        invalidateCache();
         getpatientinvisits(patientId, context);
 
         notifyListeners();
@@ -1277,12 +1314,15 @@ Future<void> getdoctorsnurses(BuildContext context) async {
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
+        invalidateCache(key: PatientInvisits);
+        invalidateCache();
         getpatientinvisits(patientId, context);
 
         notifyListeners();
 
         Navigator.pop(context);
-      } else {
+      } 
+      else {
         print(response.body);
         final responseData = jsonDecode(response.body);
         final snackbar = SnackBar(
@@ -1325,7 +1365,14 @@ Future<void> getdoctorsnurses(BuildContext context) async {
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
     
     try {
-      if (_cache.isCacheValid(Invisits)) return;
+      // if (_cache.isCacheValid(Invisits)) return;
+      final cached = _cache.get<List<Map<String, dynamic>>>(Invisits);
+      if (cached != null) {
+        activeinvisits = cached;
+        notifyListeners();
+        return;
+      }
+
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
@@ -1339,7 +1386,9 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         print(responseData);
         activeinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-_cache.markCached(Invisits);
+// _cache.markCached(Invisits);
+        _cache.set(Invisits, activeinvisits);
+
         notifyListeners();
       } else if(response.statusCode == 401){
         await refreshtoken(context);
@@ -1358,8 +1407,10 @@ _cache.markCached(Invisits);
         print(responseData);
         activeinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-_cache.markCached(Invisits);
-        notifyListeners();
+// _cache.markCached(Invisits);
+        
+                _cache.set(Invisits, activeinvisits);
+notifyListeners();
       } else if (response.statusCode == 404) {
         print('No visits found');
       } else {
@@ -3047,6 +3098,7 @@ print(requestBody);
         iseditingvisit = false;
         final responseData = jsonDecode(response.body);
 invalidateCache(key: PatientOutvisits);
+invalidateCache();
         print(responseData);
         final msg = SnackBar(
             backgroundColor: Colors.green[400],
@@ -3199,21 +3251,21 @@ await secureStorage.writeSecureData('doctortoken', responseData['token']);
 
 
         notifyListeners();
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        await secureStorage.deleteSecureData('doctortoken');
+        await secureStorage.deleteSecureData('doctorrefreshtoken');
+        Constants.doctortoken = '';
+        Constants.doctorrefreshtoken = '';
+        if (context.mounted) context.router.popAndPush(SplashRoute());
       } else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-          secureStorage.deleteSecureData('admintoken');
-        secureStorage.deleteSecureData('adminrefreshtoken');
-        print("token : ${Constants.admintoken}");
-        print("refresh token : ${Constants.adminrefreshtoken}");
-        context.router.popAndPush(SplashRoute());
-       
-       
+        print(
+            "Refresh failed with status: ${response.statusCode} — ${response.body}");
       }
     } catch (e) {
       final error = SnackBar(content: Text(e.toString()));
     }
   }
+  
 
   Future<void> logout() async {
     try {
@@ -3240,7 +3292,7 @@ await secureStorage.writeSecureData('doctortoken', responseData['token']);
     if (key != null) {
       _cache.invalidate(key);
     } else {
-      _cache.invalidateAll(); // Clears everything
+      _cache.invalidateAll(); // Clears everything app-wide now
     }
   }
 

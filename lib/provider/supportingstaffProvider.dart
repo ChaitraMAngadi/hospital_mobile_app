@@ -53,7 +53,13 @@ class Supportingstaffprovider extends ChangeNotifier {
     Constants.nursetoken = await secureStorage.readSecureData('nursetoken') ?? '';
     
     try {
- if (_cache.isCacheValid(kProfile)) return;
+//  if (_cache.isCacheValid(kProfile)) return;
+final cached = _cache.get<List<Map<String, dynamic>>>(kProfile);
+      if (cached != null) {
+        supportingstaffdetailedprofile = cached;
+        notifyListeners();
+        return;
+      }
 
       final response = await http.get(
         Uri.parse(url),
@@ -76,7 +82,8 @@ class Supportingstaffprovider extends ChangeNotifier {
           // print(doctordetailedprofile);
         }
 
-         _cache.markCached(kProfile);
+        //  _cache.markCached(kProfile);
+        _cache.set(kProfile, supportingstaffdetailedprofile);
 
         notifyListeners();
       }else if(response.statusCode == 401){
@@ -104,6 +111,8 @@ class Supportingstaffprovider extends ChangeNotifier {
           print('Supporting staff details : $supportingstaffdetailedprofile');
           // print(doctordetailedprofile);
         }
+                _cache.set(kProfile, supportingstaffdetailedprofile);
+
         notifyListeners();
       } else {
         print('${response.body}');
@@ -190,9 +199,9 @@ Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildCont
 
   try {
 
- if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
-      return; // ← Serve from cache, skip API
-    }
+//  if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
+//       return; // ← Serve from cache, skip API
+//     }
 
     final response = await http.get(
       Uri.parse(url),
@@ -219,9 +228,9 @@ Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildCont
         filteredPatients = [...allpatients];
       }
 
-       if (page == 1 && searchQuery.isEmpty) {
-        _cache.markCached(kPatients); // ← Mark as cached after success
-      }
+      //  if (page == 1 && searchQuery.isEmpty) {
+      //   _cache.markCached(kPatients); // ← Mark as cached after success
+      // }
       notifyListeners();
     } else if(response.statusCode == 401){
       await refreshtoken(context);
@@ -781,16 +790,15 @@ await secureStorage.writeSecureData('nursetoken', responseData['token']);
 
 
         notifyListeners();
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        await secureStorage.deleteSecureData('nursetoken');
+        await secureStorage.deleteSecureData('nurserefreshtoken');
+        Constants.nursetoken = '';
+        Constants.nurserefreshtoken = '';
+        if (context.mounted) context.router.popAndPush(SplashRoute());
       } else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-          secureStorage.deleteSecureData('admintoken');
-        secureStorage.deleteSecureData('adminrefreshtoken');
-        print("token : ${Constants.admintoken}");
-        print("refresh token : ${Constants.adminrefreshtoken}");
-        context.router.popAndPush(SplashRoute());
-       
-       
+        print(
+            "Refresh failed with status: ${response.statusCode} — ${response.body}");
       }
     } catch (e) {
       final error = SnackBar(content: Text(e.toString()));

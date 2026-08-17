@@ -1786,29 +1786,44 @@ class _ObservationPageState extends State<ObservationPage> {
                                                   .size
                                                   .height *
                                               0.73,
-                                          child: ListView.builder(
-                                            itemCount: supportingstaffprovider
-                                                .patientobservations.length,
-                                            itemBuilder: (context, index) {
-                                              final item =
-                                                  supportingstaffprovider
-                                                          .patientobservations[
-                                                      index];
-                                              return DiagnosisModel(
-                                                patientId: widget.id,
-                                                chiefcomplaint:
-                                                    item['complaint'] ?? '',
-                                                complaintId:
-                                                    supportingstaffprovider
-                                                        .invisitId,
-                                                createdat: formatDate(
-                                                    item['createdAt']),
-                                                doneby: item['doneBy']['name'],
-                                                diagnosisId: item['id'],
-                                                observationNumber: index + 1,
-                                                doneById: item['doneBy']['userid'] ?? '',
+                                          child: Builder(
+                                            builder: (context) {
+                                              final sortedObservations = List<Map<String, dynamic>>.from(
+            supportingstaffprovider.patientobservations)
+          ..sort((a, b) {
+            DateTime getDate(Map<String, dynamic> item) {
+              try {
+                return DateTime.parse(item['createdAt'].toString());
+              } catch (_) {
+                return DateTime.fromMillisecondsSinceEpoch(0);
+              }
+            }
+
+            return getDate(b).compareTo(getDate(a)); // descending
+          });
+                                              return ListView.builder(
+                                                itemCount:sortedObservations.length,
+                                                itemBuilder: (context, index) {
+                                                  final item =
+                                                      sortedObservations[
+                                                          index];
+                                                  return DiagnosisModel(
+                                                    patientId: widget.id,
+                                                    chiefcomplaint:
+                                                        item['complaint'] ?? '',
+                                                    complaintId:
+                                                        supportingstaffprovider
+                                                            .invisitId,
+                                                    createdat: formatDate(
+                                                        item['createdAt']),
+                                                    doneby: item['doneBy']['name'],
+                                                    diagnosisId: item['id'],
+                                                    observationNumber: index + 1,
+                                                    doneById: item['doneBy']['userid'] ?? '',
+                                                  );
+                                                },
                                               );
-                                            },
+                                            }
                                           ),
                                         ),
                                 );

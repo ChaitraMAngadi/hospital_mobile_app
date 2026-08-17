@@ -125,165 +125,333 @@ Widget _customDropdownBuilder(
                 const SizedBox(height: 16),
 
                 /// Duty Doctor
-                const Text("Duty Doctor",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 6),
-                DropdownSearch<Map<String, dynamic>>(
-                  items: widget.alldoctors,
-                  itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
-                  selectedItem: selectedDutyDoctor,
-                  // popupProps: const PopupProps.menu(showSearchBox: true),
-                  popupProps:  PopupProps.menu(
-    showSearchBox: true,
-    showSelectedItems: false,
-     constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height*widget.alldoctors.length), // limit size
-  fit: FlexFit.loose, // don’t stretch
+                // const Text("Duty Doctor",
+                //     style: TextStyle(fontWeight: FontWeight.bold)),
+                // const SizedBox(height: 6),
+  //               DropdownSearch<Map<String, dynamic>>(
+  //                 items: widget.alldoctors,
+  //                 itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
+  //                 selectedItem: selectedDutyDoctor,
+  //                 // popupProps: const PopupProps.menu(showSearchBox: true),
+  //                 popupProps:  PopupProps.menu(
+  //   showSearchBox: true,
+  //   showSelectedItems: false,
+  //    constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height*widget.alldoctors.length), // limit size
+  // fit: FlexFit.loose, // don’t stretch
   
-  ),
-  // dropdownBuilder: (context, selectedItem) {
-  //   // 👇 force showing only text, no blank widget
-  //   return Text(
-  //     selectedItem == null
-  //         ? "Select Duty Doctor"
-  //         : "${selectedItem['name']} | ${selectedItem['userid']}",
-  //     overflow: TextOverflow.ellipsis,
-  //   );
-  // },
-                  dropdownDecoratorProps: DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(
-                      hintText: "Select Duty Doctor",
-                        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 12, vertical: 12), 
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12), // rounded corners
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF0857C0)),
-                      ),
-                    ),
-                  ),
-                  //         validator: (value) {
-                  //   if (value == null) {
-                  //     return "Please select a Duty Doctor";  
-                  //   }
-                  //   return null;
-                  // },
+  // ),
+  // // dropdownBuilder: (context, selectedItem) {
+  // //   // 👇 force showing only text, no blank widget
+  // //   return Text(
+  // //     selectedItem == null
+  // //         ? "Select Duty Doctor"
+  // //         : "${selectedItem['name']} | ${selectedItem['userid']}",
+  // //     overflow: TextOverflow.ellipsis,
+  // //   );
+  // // },
+  //                 dropdownDecoratorProps: DropDownDecoratorProps(
+  //                   dropdownSearchDecoration: InputDecoration(
+  //                     hintText: "Select Duty Doctor",
+  //                       contentPadding: const EdgeInsets.symmetric(
+  //         horizontal: 12, vertical: 12), 
+  //                     border: OutlineInputBorder(
+  //                       borderRadius:
+  //                           BorderRadius.circular(12), // rounded corners
+  //                     ),
+  //                     focusedBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(12),
+  //                       borderSide: const BorderSide(color: Color(0xFF0857C0)),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 //         validator: (value) {
+  //                 //   if (value == null) {
+  //                 //     return "Please select a Duty Doctor";  
+  //                 //   }
+  //                 //   return null;
+  //                 // },
                   
-                  onChanged: (value) {
-                    setState(() {
-                      selectedDutyDoctor = value;
+  //                 onChanged: (value) {
+  //                   setState(() {
+  //                     selectedDutyDoctor = value;
 
-                      // Reset visiting doctor if same as duty doctor
-                      if (selectedVisitingDoctor?['userid'] ==
-                          selectedDutyDoctor?['userid']) {
-                        selectedVisitingDoctor = null;
-                      }
-                    });
-                    debugPrint("Duty Doctor ID: ${value?['userid']}");
-                  },
-                ),
-                const SizedBox(height: 20),
+  //                     // Reset visiting doctor if same as duty doctor
+  //                     if (selectedVisitingDoctor?['userid'] ==
+  //                         selectedDutyDoctor?['userid']) {
+  //                       selectedVisitingDoctor = null;
+  //                     }
+  //                   });
+  //                   debugPrint("Duty Doctor ID: ${value?['userid']}");
+  //                 },
+  //               ),
+
+  /// Duty Doctor
+const Text("Duty Doctor",
+    style: TextStyle(fontWeight: FontWeight.bold)),
+const SizedBox(height: 6),
+widget.alldoctors.isEmpty
+    ? Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          "No doctors listed",
+          style: TextStyle(color: Colors.grey),
+        ),
+      )
+    : DropdownSearch<Map<String, dynamic>>(
+        items: widget.alldoctors,
+        itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
+        selectedItem: selectedDutyDoctor,
+        popupProps: PopupProps.menu(
+          showSearchBox: true,
+          showSelectedItems: false,
+          constraints: BoxConstraints(
+              maxHeight:
+                  MediaQuery.of(context).size.height * widget.alldoctors.length),
+          fit: FlexFit.loose,
+        ),
+        dropdownDecoratorProps: DropDownDecoratorProps(
+          dropdownSearchDecoration: InputDecoration(
+            hintText: "Select Duty Doctor",
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF0857C0)),
+            ),
+          ),
+        ),
+        onChanged: (value) {
+          setState(() {
+            selectedDutyDoctor = value;
+            if (selectedVisitingDoctor?['userid'] ==
+                selectedDutyDoctor?['userid']) {
+              selectedVisitingDoctor = null;
+            }
+          });
+          debugPrint("Duty Doctor ID: ${value?['userid']}");
+        },
+      ),
+const SizedBox(height: 20),
+                
 
                 /// Visiting Doctor
-                const Text("Visiting Doctor",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 6),
-                DropdownSearch<Map<String, dynamic>>(
-                  items: widget.alldoctors
-                      .where((doc) =>
-                          doc['userid'] != selectedDutyDoctor?['userid'])
-                      .toList(),
-                  itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
-                  selectedItem: selectedVisitingDoctor,
-                  popupProps:  PopupProps.menu(showSearchBox: true,
-                  showSelectedItems: false,
-                  constraints: BoxConstraints(maxHeight:300
-                  //  MediaQuery.of(context).size.height*widget.alldoctors.length
-                   ), // limit size
-  fit: FlexFit.loose,
-                  ),
-                  dropdownDecoratorProps: DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(
-                      hintText: "Select Visiting Doctor",
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12), // rounded corners
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF0857C0)),
-                      ),
-                    ),
-                  ),
-                  //         validator: (value) {
-                  //   if (value == null) {
-                  //     return "Please select a Visiting Doctor";
-                  //   }
-                  //   return null;
-                  // },
-                  onChanged: (value) {
-                    if (value?['userid'] == selectedDutyDoctor?['userid']) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text(
-                              "Visiting doctor cannot be the same as duty doctor")));
-                      return;
-                    }
-                    setState(() {
-                      selectedVisitingDoctor = value;
-                    });
-                    debugPrint("Visiting Doctor ID: ${value?['userid']}");
-                  },
-                ),
-                const SizedBox(height: 20),
+                // const Text("Visiting Doctor",
+                //     style: TextStyle(fontWeight: FontWeight.bold)),
+                // const SizedBox(height: 6),
+  //               DropdownSearch<Map<String, dynamic>>(
+  //                 items: widget.alldoctors
+  //                     .where((doc) =>
+  //                         doc['userid'] != selectedDutyDoctor?['userid'])
+  //                     .toList(),
+  //                 itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
+  //                 selectedItem: selectedVisitingDoctor,
+  //                 popupProps:  PopupProps.menu(showSearchBox: true,
+  //                 showSelectedItems: false,
+  //                 constraints: BoxConstraints(maxHeight:300
+  //                 //  MediaQuery.of(context).size.height*widget.alldoctors.length
+  //                  ), // limit size
+  // fit: FlexFit.loose,
+  //                 ),
+  //                 dropdownDecoratorProps: DropDownDecoratorProps(
+  //                   dropdownSearchDecoration: InputDecoration(
+  //                     hintText: "Select Visiting Doctor",
+  //                     border: OutlineInputBorder(
+  //                       borderRadius:
+  //                           BorderRadius.circular(12), // rounded corners
+  //                     ),
+  //                     focusedBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(12),
+  //                       borderSide: const BorderSide(color: Color(0xFF0857C0)),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 //         validator: (value) {
+  //                 //   if (value == null) {
+  //                 //     return "Please select a Visiting Doctor";
+  //                 //   }
+  //                 //   return null;
+  //                 // },
+  //                 onChanged: (value) {
+  //                   if (value?['userid'] == selectedDutyDoctor?['userid']) {
+  //                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //                         content: Text(
+  //                             "Visiting doctor cannot be the same as duty doctor")));
+  //                     return;
+  //                   }
+  //                   setState(() {
+  //                     selectedVisitingDoctor = value;
+  //                   });
+  //                   debugPrint("Visiting Doctor ID: ${value?['userid']}");
+  //                 },
+  //               ),
+                // const SizedBox(height: 20),
+
+                /// Visiting Doctor
+const Text("Visiting Doctor",
+    style: TextStyle(fontWeight: FontWeight.bold)),
+const SizedBox(height: 6),
+Builder(
+  builder: (context) {
+    final visitingDoctorList = widget.alldoctors
+        .where((doc) => doc['userid'] != selectedDutyDoctor?['userid'])
+        .toList();
+
+    if (visitingDoctorList.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          "No doctors listed",
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    return DropdownSearch<Map<String, dynamic>>(
+      items: visitingDoctorList,
+      itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
+      selectedItem: selectedVisitingDoctor,
+      popupProps: PopupProps.menu(
+        showSearchBox: true,
+        showSelectedItems: false,
+        constraints: BoxConstraints(maxHeight: 300),
+        fit: FlexFit.loose,
+      ),
+      dropdownDecoratorProps: DropDownDecoratorProps(
+        dropdownSearchDecoration: InputDecoration(
+          hintText: "Select Visiting Doctor",
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF0857C0)),
+          ),
+        ),
+      ),
+      onChanged: (value) {
+        if (value?['userid'] == selectedDutyDoctor?['userid']) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                  "Visiting doctor cannot be the same as duty doctor")));
+          return;
+        }
+        setState(() {
+          selectedVisitingDoctor = value;
+        });
+        debugPrint("Visiting Doctor ID: ${value?['userid']}");
+      },
+    );
+  },
+),
+const SizedBox(height: 20),
 
                 /// Associated Nurse
-                const Text("Associated Nurse",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 6),
-                DropdownSearch<Map<String, dynamic>>(
-                  items: widget.allnurses,
-                  itemAsString: (nurse) =>
-                      "${nurse['name']} | ${nurse['userid']}",
-                  selectedItem: selectedNurse,
- popupProps:  PopupProps.menu(showSearchBox: true,
-showSelectedItems: false,
-                  constraints: BoxConstraints(maxHeight:300
-                  //  MediaQuery.of(context).size.height*widget.alldoctors.length
-                   ), // limit size
-  fit: FlexFit.loose,
-                  ),
-                  // popupProps: const PopupProps.menu(showSearchBox: true),
-                  dropdownDecoratorProps: DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(
-                      hintText: "Select Nurse",
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12), // rounded corners
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF0857C0)),
-                      ),
-                    ),
-                  ),
-                  //         validator: (value) {
-                  //   if (value == null) {
-                  //     return "Please select a Supporting staff";
-                  //   }
-                  //   return null;
-                  // },
-                  onChanged: (value) {
-                    setState(() {
-                      selectedNurse = value;
-                    });
-                    debugPrint("Nurse ID: ${value?['userid']}");
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                // const Text("Associated Nurse",
+                //     style: TextStyle(fontWeight: FontWeight.bold)),
+                // const SizedBox(height: 6),
+//                 DropdownSearch<Map<String, dynamic>>(
+//                   items: widget.allnurses,
+//                   itemAsString: (nurse) =>
+//                       "${nurse['name']} | ${nurse['userid']}",
+//                   selectedItem: selectedNurse,
+//  popupProps:  PopupProps.menu(showSearchBox: true,
+// showSelectedItems: false,
+//                   constraints: BoxConstraints(maxHeight:300
+//                   //  MediaQuery.of(context).size.height*widget.alldoctors.length
+//                    ), // limit size
+//   fit: FlexFit.loose,
+//                   ),
+//                   // popupProps: const PopupProps.menu(showSearchBox: true),
+//                   dropdownDecoratorProps: DropDownDecoratorProps(
+//                     dropdownSearchDecoration: InputDecoration(
+//                       hintText: "Select Nurse",
+//                       border: OutlineInputBorder(
+//                         borderRadius:
+//                             BorderRadius.circular(12), // rounded corners
+//                       ),
+//                       focusedBorder: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(12),
+//                         borderSide: const BorderSide(color: Color(0xFF0857C0)),
+//                       ),
+//                     ),
+//                   ),
+//                   //         validator: (value) {
+//                   //   if (value == null) {
+//                   //     return "Please select a Supporting staff";
+//                   //   }
+//                   //   return null;
+//                   // },
+//                   onChanged: (value) {
+//                     setState(() {
+//                       selectedNurse = value;
+//                     });
+//                     debugPrint("Nurse ID: ${value?['userid']}");
+//                   },
+//                 ),
+
+/// Associated Nurse
+const Text("Associated Nurse",
+    style: TextStyle(fontWeight: FontWeight.bold)),
+const SizedBox(height: 6),
+widget.allnurses.isEmpty
+    ? Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          "No nurses listed",
+          style: TextStyle(color: Colors.grey),
+        ),
+      )
+    : DropdownSearch<Map<String, dynamic>>(
+        items: widget.allnurses,
+        itemAsString: (nurse) => "${nurse['name']} | ${nurse['userid']}",
+        selectedItem: selectedNurse,
+        popupProps: PopupProps.menu(
+          showSearchBox: true,
+          showSelectedItems: false,
+          constraints: BoxConstraints(maxHeight: 300),
+          fit: FlexFit.loose,
+        ),
+        dropdownDecoratorProps: DropDownDecoratorProps(
+          dropdownSearchDecoration: InputDecoration(
+            hintText: "Select Nurse",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF0857C0)),
+            ),
+          ),
+        ),
+        onChanged: (value) {
+          setState(() {
+            selectedNurse = value;
+          });
+          debugPrint("Nurse ID: ${value?['userid']}");
+        },
+      ),
+SizedBox(
+  height: 20,
+),
+                // SizedBox(
+                //   height: 20,
+                // ),
                 Container(
                   decoration: BoxDecoration(
                     gradient:doctorprovider.addinginvisit?LinearGradient(colors: [

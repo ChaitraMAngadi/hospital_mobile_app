@@ -193,6 +193,49 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
       },
     );
   }
+  String calculateAge(String dob) {
+  DateTime birthDate;
+
+  try {
+    // Handle dd/MM/yyyy format
+    if (dob.contains('/')) {
+      birthDate = DateFormat('dd/MM/yyyy').parseStrict(dob);
+    } else {
+      // Handle yyyy-MM-dd / ISO format
+      birthDate = DateTime.parse(dob);
+    }
+  } catch (e) {
+    return '';
+  }
+
+  final today = DateTime.now();
+
+  int years = today.year - birthDate.year;
+  int months = today.month - birthDate.month;
+  int days = today.day - birthDate.day;
+
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(today.year, today.month, 0);
+    days += prevMonth.day;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years >= 5) {
+    return '$years ${years == 1 ? 'year' : 'years'}';
+  }
+
+  if (years == 0 && months == 0) {
+    return '0 month $days ${days == 1 ? 'day' : 'days'}';
+  }
+
+  return '$years ${years == 1 ? 'year' : 'years'} '
+      '$months ${months == 1 ? 'month' : 'months'}';
+}
 
   @override
   Widget build(BuildContext context) {
@@ -269,7 +312,7 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                                                   phone:
                                                       item['phone'].toString(),
                                                   email: item['email'] ?? '',
-                                                  age: item['age'],
+                                                  age: calculateAge(item['DOB'])??'',
                                                   dob: formatDate(item['DOB']),
                                                   createdbydoctor:
                                                       item['createdByDoctor']?
@@ -1028,6 +1071,11 @@ Widget build(BuildContext context) {
               icon: Icons.cake,
               label: "DOB",
               value: dob,
+            ),
+            infoTile(
+              icon: Icons.cake,
+              label: "Age",
+              value: age,
             ),
             if (email.isNotEmpty)
               infoTile(
