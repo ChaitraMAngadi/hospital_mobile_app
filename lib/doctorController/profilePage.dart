@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
+import 'package:hospital_mobile_app/service/cacheManager.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
@@ -19,6 +20,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late Future fetchdoctorprofile;
   final SecureStorage secureStorage = SecureStorage();
+  CacheManager cache = CacheManager();
 
   @override
   void initState() {
@@ -740,8 +742,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       secureStorage.deleteSecureData('doctortoken');
                       secureStorage.deleteSecureData('admintoken');
                       secureStorage.deleteSecureData('nursetoken');
+                      secureStorage.deleteSecureData('doctorrefreshtoken');
+                      secureStorage.deleteSecureData('adminrefreshtoken');
+                      secureStorage.deleteSecureData('nurserefreshtoken');
+                      
                       doctorprovider.logout();
-                
+                      cache.invalidateAll();
                       setState(() {});
                       Constants.token =
                           await secureStorage.readSecureData('token') ?? '';

@@ -818,6 +818,8 @@ Future<void> logout() async {
         },
       );
       invalidateCache();
+      _cache.invalidateAll();
+      notifyListeners();
       print(response);
 
     } catch (e) {
@@ -829,7 +831,8 @@ Future<void> logout() async {
    void invalidateCache({String? key}) {
     if (key != null) {
       _cache.invalidate(key);
-    } else {
+      
+         } else {
       _cache.invalidateAll(); // Clears everything
     }
   }

@@ -1626,7 +1626,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                               doctorprovider.addoutvisit(
                                 widget.patientId,
                                 cheifcomplaintController.text,
-                                heartrateController.text,
+                                heightController.text,
                                 weightController.text,
                                 bpController.text,
                                 temperatureController.text,

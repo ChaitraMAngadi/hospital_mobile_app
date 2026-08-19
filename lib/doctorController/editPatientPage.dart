@@ -68,6 +68,8 @@ class _EditPatientPageState extends State<EditPatientPage> {
     return '$years year, $months month, $days day';
   }
 
+  
+
   @override
   void initState() {
     super.initState();
@@ -83,7 +85,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
         formatedJoiDate = data["dob"] ?? "";
         _selectedGender = data["gender"];
         _emailController.text = data["email"] ?? "";
-        // _ageController.text = data["age"] ?? "";
+        _ageController.text = calculateAge(DateTime.parse(data["DOB"] ?? ""));
         _phoneController.text = (data["phone"] ?? "").toString();
       }
     });
@@ -275,7 +277,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
                             ),
                             const SizedBox(height: 16),
                             const Text(
-                              'Phone number of the patient',
+                              'Phone number of the patient*',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -394,23 +396,23 @@ class _EditPatientPageState extends State<EditPatientPage> {
                                 );
                               }).toList(),
                             ),
-                            // const SizedBox(height: 16),
-                            // const Text(
-                            //   'Age of the patient*',
-                            //   style: TextStyle(
-                            //     fontSize: 16,
-                            //     fontWeight: FontWeight.bold,
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 8),
-                            // TextFormField(
-                            //   readOnly: true,
-                            //   controller: _ageController,
-                            //   decoration: const InputDecoration(
-                            //     border: OutlineInputBorder(),
-                            //     hintText: 'Enter Age',
-                            //   ),
-                            // ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Age of the patient*',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              readOnly: true,
+                              controller: _ageController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Enter Age',
+                              ),
+                            ),
                             const SizedBox(height: 32),
                             Container(
                               width: double.infinity,

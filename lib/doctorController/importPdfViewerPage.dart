@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
+import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
 import 'package:shimmer/shimmer.dart';
@@ -101,10 +102,20 @@ class _ImportPdfViewerPageState extends State<ImportPdfViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
         title: const Text(
           'Diagnosis Report',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold,
+          color: Colors.white),
         ),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back,
+        color: Colors.white,)),
       
         elevation: 0,
        

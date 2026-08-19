@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
+import 'package:hospital_mobile_app/service/cacheManager.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
@@ -19,6 +20,8 @@ class AdminProfilePage extends StatefulWidget {
 class _AdminProfilePageState extends State<AdminProfilePage> {
   late Future fetchadminprofile;
   final SecureStorage secureStorage = SecureStorage();
+CacheManager cache = CacheManager();
+
 
   @override
   void initState() {
@@ -509,7 +512,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                       secureStorage.deleteSecureData('doctortoken');
                       secureStorage.deleteSecureData('admintoken');
                       secureStorage.deleteSecureData('nursetoken');
-
+                      cache.invalidateAll();
                       adminprovider.logout();
                 
                       setState(() {});

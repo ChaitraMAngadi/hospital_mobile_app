@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -99,181 +101,215 @@ class _ImportPatientsPageState extends State<ImportPatientsPage> {
   //   }
   // }
 
-  Future<void> _verifyOtp(String phone, String dob) async {
-  if (!validationformkey.currentState!.validate()) return;
+//   Future<void> _verifyOtp(String phone, String dob) async {
+//   if (!validationformkey.currentState!.validate()) return;
   
-  setState(() {
-    _isLoading = true;
-  });
+//   setState(() {
+//     _isLoading = true;
+//   });
 
-  try {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
-    await doctorprovider.verifyphoneOtp(
-      phone,  
-      dob,
-      otpController.text,
-      context
-    );
+//   try {
+//     Doctorprovider doctorprovider = context.read<Doctorprovider>();
+//     await doctorprovider.verifyphoneOtp(
+//       phone,  
+//       dob,
+//       otpController.text,
+//       context
+//     );
     
-    // After successful OTP verification, refresh the data
-    if (mounted) {
-      await _handleRefresh();
-    }
+//     // After successful OTP verification, refresh the data
+//     if (mounted) {
+//       await _handleRefresh();
+//     }
    
+//   } catch (e) {
+//     // Handle error if needed
+//     print('Error verifying OTP: $e');
+//   } finally {
+//     // Always set loading to false when done
+//     if (mounted) {
+//       setState(() {
+//         _isLoading = false;
+//       });
+//     }
+//   }
+// }
+Future<void> _verifyOtp(String phone, String dob, String otp) async {
+  try {
+    Doctorprovider patientpageprovider = context.read<Doctorprovider>();
+    await patientpageprovider.verifyphoneOtp(
+      phone,
+      dob,
+      otp, // ✅ comes from dialog now
+      context,
+    );
+    if (mounted) await _handleRefresh();
   } catch (e) {
-    // Handle error if needed
     print('Error verifying OTP: $e');
-  } finally {
-    // Always set loading to false when done
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    rethrow; // ✅ rethrow so dialog catches it and re-enables the button
   }
 }
 
+// void _showOtpDialog(BuildContext context, String phone, String dob) {
+//   showDialog(
+//     context: context,
+//     barrierDismissible: false,
+//     builder: (context) {
+//       return Dialog(
+//         insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+//         // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+//         child: Container(
+//            decoration: BoxDecoration(
+//             borderRadius: BorderRadius.only(
+//               bottomLeft: Radius.circular(22),
+//               bottomRight: Radius.circular(22)
+//             ),
+//           ),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//                Container(
+//                   height: 4,
+//                   decoration: BoxDecoration(
+//                     gradient: AppColors.primaryGradient,
+//                     borderRadius:BorderRadius.vertical(top: Radius.circular(22))
+//                   ),
+//                 ),
+//               Padding(
+//                 padding: const EdgeInsets.all(16),
+//                 child: Form(
+//                   key: validationformkey,
+//                   child: Column(
+//                     mainAxisSize: MainAxisSize.min,
+//                     children: [
+//                       const SizedBox(height: 12),
+//                       const Text(
+//                         "Enter OTP to verify",
+//                         style: TextStyle(
+//                           fontSize: 20,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                         textAlign: TextAlign.center,
+//                       ),
+//                       const SizedBox(height: 8),
+//                       Text(
+//                         'OTP sent to $phone',
+//                         style: TextStyle(color: Colors.grey[600]),
+//                         textAlign: TextAlign.center,
+//                       ),
+//                       const SizedBox(height: 16),
+//                       PinCodeTextField(
+//                         appContext: context,
+//                         controller: otpController,
+//                         length: 6,
+//                         animationType: AnimationType.fade,
+//                         cursorColor: Colors.white,
+//                         inputFormatters: [
+//                           FilteringTextInputFormatter.digitsOnly,
+//                         ],
+//                         validator: (value) {
+//                           if (value == null || value.isEmpty) {
+//                             return 'Please enter OTP';
+//                           }
+//                           if (value.length < 6) {
+//                             return 'Enter 6 digit OTP';
+//                           }
+//                           return null;
+//                         },
+//                         pinTheme: PinTheme(
+//                           shape: PinCodeFieldShape.box,
+//                           borderRadius: BorderRadius.circular(10),
+//                           fieldHeight: 50,
+//                           fieldWidth: 40,
+//                          activeFillColor: AppColors.badgeBg,
+//                           selectedColor: AppColors.accent,
+//                           inactiveColor: Colors.grey,
+//                         ),
+//                       ),
+//                       const SizedBox(height: 16),
+//                       Container(
+//                         width: double.infinity,
+//                         decoration: BoxDecoration(
+//                           gradient: AppColors.primaryGradient,
+//                           borderRadius: BorderRadius.all(Radius.circular(12))
+//                         ),
+//                         child: FilledButton(
+//                           style: FilledButton.styleFrom(
+//                             backgroundColor: Colors.transparent,
+//                             shadowColor: Colors.transparent,
+//                             padding: const EdgeInsets.symmetric(vertical: 14),
+//                             shape: RoundedRectangleBorder(
+//                               borderRadius: BorderRadius.circular(12),
+//                             ),
+//                           ),
+//                           onPressed: _isLoading
+//                               ? null
+//                               : () async {
+//                                   await _verifyOtp(phone, dob);
+//                                   if (mounted && !_isLoading) {
+//                                     Navigator.pop(context); 
+//                                     otpController.clear();
+//                                   }
+//                                 },
+//                     //                    () async {
+//                     //                        Doctorprovider doctorprovider = context.read<Doctorprovider>();
+//                     // await doctorprovider.verifyphoneOtp(
+//                     //   phone,  
+//                     //   dob,
+//                     //   otpController.text,
+//                     //   context
+//                     // );
+//                     // Navigator.pop(context);
+//                     //                     },
+//                           child: _isLoading
+//                               ? const SizedBox(
+//                                   width: 24,
+//                                   height: 24,
+//                                   child: CircularProgressIndicator(
+//                                     color: Colors.white,
+//                                     strokeWidth: 2,
+//                                   ),
+//                                 )
+//                               : const Text(
+//                                   'Verify OTP',
+//                                   style: TextStyle(
+//                                     fontSize: 16,
+//                                     fontWeight: FontWeight.bold,
+//                                     color: Colors.white,
+//                                   ),
+//                                 ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }
 
 void _showOtpDialog(BuildContext context, String phone, String dob) {
   showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) {
-      return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Container(
-           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(22),
-              bottomRight: Radius.circular(22)
-            ),
-          ),
-          child: Column(
-            children: [
-               Container(
-                  height: 4,
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius:BorderRadius.vertical(top: Radius.circular(22))
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: validationformkey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(height: 12),
-                      const Text(
-                        "Enter OTP to verify",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'OTP sent to $phone',
-                        style: TextStyle(color: Colors.grey[600]),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      PinCodeTextField(
-                        appContext: context,
-                        controller: otpController,
-                        length: 6,
-                        animationType: AnimationType.fade,
-                        cursorColor: Colors.white,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter OTP';
-                          }
-                          if (value.length < 6) {
-                            return 'Enter 6 digit OTP';
-                          }
-                          return null;
-                        },
-                        pinTheme: PinTheme(
-                          shape: PinCodeFieldShape.box,
-                          borderRadius: BorderRadius.circular(10),
-                          fieldHeight: 50,
-                          fieldWidth: 40,
-                         activeFillColor: AppColors.badgeBg,
-                          selectedColor: AppColors.accent,
-                          inactiveColor: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.all(Radius.circular(12))
-                        ),
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: _isLoading
-                              ? null
-                              : () async {
-                                  await _verifyOtp(phone, dob);
-                                  if (mounted && !_isLoading) {
-                                    Navigator.pop(context); 
-                                    otpController.clear();
-                                  }
-                                },
-                    //                    () async {
-                    //                        Doctorprovider doctorprovider = context.read<Doctorprovider>();
-                    // await doctorprovider.verifyphoneOtp(
-                    //   phone,  
-                    //   dob,
-                    //   otpController.text,
-                    //   context
-                    // );
-                    // Navigator.pop(context);
-                    //                     },
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text(
-                                  'Verify OTP',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+      return OtpDialog(
+        phone: phone,
+        dob: dob,
+        onVerify: _verifyOtp, // ✅ now takes (phone, dob, otp)
+        onResend: (phone, dob) async {
+          Doctorprovider patientpageprovider = context.read<Doctorprovider>();
+          await patientpageprovider.requsetaccess(phone, dob, context);
+        },
       );
     },
   );
 }
+
 
 
   @override
@@ -423,6 +459,50 @@ void _showOtpDialog(BuildContext context, String phone, String dob) {
       },
     );
   }
+
+String calculateAge(String dob) {
+  DateTime birthDate;
+
+  try {
+    // Handle dd/MM/yyyy format
+    if (dob.contains('/')) {
+      birthDate = DateFormat('dd/MM/yyyy').parseStrict(dob);
+    } else {
+      // Handle yyyy-MM-dd / ISO format
+      birthDate = DateTime.parse(dob);
+    }
+  } catch (e) {
+    return '';
+  }
+
+  final today = DateTime.now();
+
+  int years = today.year - birthDate.year;
+  int months = today.month - birthDate.month;
+  int days = today.day - birthDate.day;
+
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(today.year, today.month, 0);
+    days += prevMonth.day;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years >= 5) {
+    return '$years ${years == 1 ? 'year' : 'years'}';
+  }
+
+  if (years == 0 && months == 0) {
+    return '0 month $days ${days == 1 ? 'day' : 'days'}';
+  }
+
+  return '$years ${years == 1 ? 'year' : 'years'} '
+      '$months ${months == 1 ? 'month' : 'months'}';
+}
 
   @override
   Widget build(BuildContext context) {
@@ -601,38 +681,39 @@ void _showOtpDialog(BuildContext context, String phone, String dob) {
                                                               ),
                                                             );
                                                         
-                                                            if (phone == '8217309343' && dob == '1998-11-11') {
-                                                          isloded = await doctorprovider.requsetdirectaccess(phone, dob, context);
+                                  //                           if (phone == '8217309343' && dob == '1998-11-11') {
+                                  //                         isloded = await doctorprovider.requsetdirectaccess(phone, dob, context);
 
-                                                           if (mounted) Navigator.pop(context);
+                                  //                          if (mounted) Navigator.pop(context);
                                                               
-                                                              // Close main dialog
-                                                              if (mounted) Navigator.pop(context);
+                                  //                             // Close main dialog
+                                  //                             if (mounted) Navigator.pop(context);
                                                               
-                                                              // Clear controllers
-                                                              _phoneController.clear();
-                                                              _dobController.clear();
-                                                              requestFormKey.currentState?.reset();
+                                  //                             // Clear controllers
+                                  //                             _phoneController.clear();
+                                  //                             _dobController.clear();
+                                  //                             requestFormKey.currentState?.reset();
                                                               
-                                                              // Refresh data if successful
-                                                              if (isloded) {
-                                  await _handleRefresh();
-                                                              }
-                                  //                        Navigator.pop(context); 
-                                  //                        if (mounted && !isloded) {
-                                  //   Navigator.pop(context); 
-                                  //     _phoneController.clear();
-                                  //                           _dobController.clear();
-                                  // }
-                                                          // if (isloded) {
-                                                          //    Navigator.pop(context);
-                                                            // _phoneController.clear();
-                                                            // _dobController.clear();
-                                                          //   requestFormKey.currentState?.reset();
-                                                          //    fetchallsharedpatients =  doctorprovider.getallsharedpatients();
-                                                          //   // patientpageprovider.notifyListeners(); // ✅ Refresh UI
-                                                          // }
-                                                        } else {
+                                  //                             // Refresh data if successful
+                                  //                             if (isloded) {
+                                  // await _handleRefresh();
+                                  //                             }
+                                  // //                        Navigator.pop(context); 
+                                  // //                        if (mounted && !isloded) {
+                                  // //   Navigator.pop(context); 
+                                  // //     _phoneController.clear();
+                                  // //                           _dobController.clear();
+                                  // // }
+                                  //                         // if (isloded) {
+                                  //                         //    Navigator.pop(context);
+                                  //                           // _phoneController.clear();
+                                  //                           // _dobController.clear();
+                                  //                         //   requestFormKey.currentState?.reset();
+                                  //                         //    fetchallsharedpatients =  doctorprovider.getallsharedpatients();
+                                  //                         //   // patientpageprovider.notifyListeners(); // ✅ Refresh UI
+                                  //                         // }
+                                  //                       }
+                                                        //  else {
                                                           isotpsent = await doctorprovider.requsetaccess(phone, dob, context);
                                                           // Navigator.pop(context); // Close loading
                                                         
@@ -649,7 +730,7 @@ void _showOtpDialog(BuildContext context, String phone, String dob) {
                                                             requestFormKey.currentState?.reset();
                                                             _showOtpDialog(context, phone, dob);
                                                           }
-                                                        }
+                                                        // }
                                                         
                                                             // try {
                                                             //   Doctorprovider doctorprovider =
@@ -779,7 +860,7 @@ void _showOtpDialog(BuildContext context, String phone, String dob) {
                                                   phone:
                                                       item['phone'].toString(),
                                                   email: item['email'] ?? '',
-                                                  age: item['age'],
+                                                  age: calculateAge(item['DOB'])??'',
                                                   dob: formatDate(item['DOB']),
                                                   createdbydoctor:
                                                       item['createdByDoctor']
@@ -1614,6 +1695,292 @@ class ActiveInVisitViewModel extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class OtpDialog extends StatefulWidget {
+  final String phone;
+  final String dob;
+  final Future<void> Function(String phone, String dob, String otp) onVerify; // pass otp from inside
+  final Future<void> Function(String phone, String dob) onResend;
+
+  const OtpDialog({
+    super.key,
+    required this.phone,
+    required this.dob,
+    required this.onVerify,
+    required this.onResend,
+  });
+
+  @override
+  State<OtpDialog> createState() => _OtpDialogState();
+}
+class _OtpDialogState extends State<OtpDialog> {
+  final _formKey = GlobalKey<FormState>();
+  // ✅ Controller lives here now, not in parent
+  final TextEditingController _otpController = TextEditingController();
+  bool _isVerifying = false;
+  bool _isResending = false;
+  bool _verifyButtonDisabled = false;
+
+  int _timerSeconds = 30;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    // _otpController.dispose(); // ✅ safely disposed here
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timerSeconds = 30;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timerSeconds == 0) {
+        timer.cancel();
+        if (mounted) setState(() {});
+      } else {
+        if (mounted) setState(() => _timerSeconds--);
+      }
+    });
+  }
+
+  // Future<void> _handleVerify() async {
+  //   if (!_formKey.currentState!.validate()) return;
+
+  //   setState(() {
+  //     _isVerifying = true;
+  //     _verifyButtonDisabled = true;
+  //   });
+
+  //   try {
+  //     // ✅ Pass the otp text up to parent
+  //     await widget.onVerify(widget.phone, widget.dob, _otpController.text);
+  //     if (mounted) Navigator.pop(context);
+  //   } catch (e) {
+  //     if (mounted) {
+  //       setState(() {
+  //         _verifyButtonDisabled = false;
+  //       });
+  //     }
+  //   } finally {
+  //     if (mounted) setState(() => _isVerifying = false);
+  //   }
+  // }
+
+  Future<void> _handleVerify() async {
+  // ✅ Guard against double-tap
+  if (_isVerifying || _verifyButtonDisabled) return;
+  if (!_formKey.currentState!.validate()) return;
+
+  // ✅ Capture OTP text IMMEDIATELY into a local variable
+  // before any async gap where the controller could be disposed
+  final String otpText = _otpController.text;
+
+  setState(() {
+    _isVerifying = true;
+    _verifyButtonDisabled = true;
+  });
+
+  try {
+    await widget.onVerify(widget.phone, widget.dob, otpText); // ✅ use local var, not controller
+    if (mounted) Navigator.pop(context);
+    return;
+  } catch (e) {
+    if (mounted) {
+      setState(() {
+        _isVerifying = false;
+        _verifyButtonDisabled = false;
+      });
+    }
+  }
+}
+
+  Future<void> _handleResend() async {
+    setState(() => _isResending = true);
+    _otpController.clear();
+
+    try {
+      await widget.onResend(widget.phone, widget.dob);
+      _startTimer();
+      setState(() => _verifyButtonDisabled = false);
+    } finally {
+      if (mounted) setState(() => _isResending = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool canResend = _timerSeconds == 0 && !_isResending;
+    final bool canVerify = !_verifyButtonDisabled && !_isVerifying;
+
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(22),
+            bottomRight: Radius.circular(22),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        
+                        
+                        IconButton(onPressed: (){
+                          Navigator.pop(context);
+                        }, icon: Icon(Icons.close,
+                        color: Colors.grey,))
+                      ],
+                    ),
+                    const Text(
+                          "Enter OTP to verify",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryDark,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'OTP sent to ${widget.phone}',
+                      style: TextStyle(color: Colors.grey[600]),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    PinCodeTextField(
+                      appContext: context,
+                      controller: _otpController, // ✅ uses local controller
+                      length: 6,
+                      animationType: AnimationType.fade,
+                      cursorColor: Colors.white,
+                      enabled: !_verifyButtonDisabled,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Please enter OTP';
+                        if (value.length < 6) return 'Enter 6 digit OTP';
+                        return null;
+                      },
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(10),
+                        fieldHeight: 50,
+                        fieldWidth: 40,
+                        activeFillColor: AppColors.badgeBg,
+                        selectedColor: AppColors.accent,
+                        inactiveColor: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (_timerSeconds > 0) ...[
+                          const Icon(Icons.timer_outlined, size: 16, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Resend in ${_timerSeconds}s',
+                            style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                          ),
+                        ] else ...[
+                          TextButton.icon(
+                            onPressed: canResend ? _handleResend : null,
+                            icon: _isResending
+                                ? const SizedBox(
+                                    width: 14,
+                                    height: 14,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.refresh, size: 16),
+                            label: Text(
+                              _isResending ? 'Sending...' : 'Resend OTP',
+                              style: TextStyle(
+                                color: canResend ? Colors.blue : Colors.grey,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    AbsorbPointer(
+                      absorbing: _isVerifying,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                          gradient: canVerify
+                              ? AppColors.primaryGradient
+                              : LinearGradient(
+                                  colors: [Colors.grey.shade300, Colors.grey.shade300]),
+                        ),
+                        child: FilledButton(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: canVerify ? _handleVerify : null,
+                          child: _isVerifying
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  _verifyButtonDisabled ? 'Verifying...' : 'Verify OTP',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: canVerify ? Colors.white : Colors.grey.shade500,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

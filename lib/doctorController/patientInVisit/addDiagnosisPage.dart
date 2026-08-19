@@ -1616,7 +1616,7 @@ Future<void> pickFiles() async {
                     maxLines: 3,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter Diagnosis';
+                        return null;
                       }
                       return null;
                     },
