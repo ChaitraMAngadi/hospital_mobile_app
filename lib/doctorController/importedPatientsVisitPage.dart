@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hospital_mobile_app/doctorController/importHospitalViewReportButton.dart';
 import 'package:hospital_mobile_app/doctorController/importSupportingFilesDialogBox.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosisPage.dart';
@@ -368,7 +369,8 @@ String generateComplaintIdFromString(String createdAt) {
                                                           bp: visit["bp"] ?? "",
                                                           temprature: visit["temperature"] ?? "",
                                                           heartrate: visit["heart_rate"] ?? "",
-                                                          visitdate: formatDate(visit["visit_date"]),
+                                                          visitdate: formatDate(visit["visit_date"])??'',
+                                                          diagnosedby: visit['associatedDoctor'][0]['name']??"",
                                                         );
                                                       },
                                                     );
@@ -1314,7 +1316,7 @@ class VisitViewModel extends StatelessWidget {
     required this.bp,
     required this.temprature,
     required this.heartrate,
-    required this.visitdate,
+    required this.visitdate, required this.diagnosedby,
   });
 
   final String cheifcomplaint;
@@ -1324,6 +1326,7 @@ class VisitViewModel extends StatelessWidget {
   final String temprature;
   final String heartrate;
   final String visitdate;
+  final String diagnosedby;
 
   @override
   Widget build(BuildContext context) {
@@ -1411,6 +1414,14 @@ class VisitViewModel extends StatelessWidget {
                   icon: Icons.calendar_today,
                   label: "VISIT DATE",
                   value: visitdate,
+                ),
+                 const SizedBox(height: 16),
+          
+                /// VISIT DATE
+                _infoCard(
+                  icon: FontAwesomeIcons.userDoctor,
+                  label: "DIAGNOSED BY",
+                  value: diagnosedby,
                 ),
               ],
             ),

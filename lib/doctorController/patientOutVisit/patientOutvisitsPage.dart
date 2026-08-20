@@ -1738,7 +1738,7 @@ class _EditVisitModelState extends State<EditVisitModel> {
 
   @override
   Widget build(BuildContext context) {
-    final patientpageprovider = context.read<Doctorprovider>();
+    final patientpageprovider = context.watch<Doctorprovider>();
 
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),

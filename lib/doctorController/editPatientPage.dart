@@ -68,6 +68,50 @@ class _EditPatientPageState extends State<EditPatientPage> {
     return '$years year, $months month, $days day';
   }
 
+  String calculateAgeString(String dob) {
+  DateTime birthDate;
+
+  try {
+    // Handle dd/MM/yyyy format
+    if (dob.contains('/')) {
+      birthDate = DateFormat('dd/MM/yyyy').parseStrict(dob);
+    } else {
+      // Handle yyyy-MM-dd / ISO format
+      birthDate = DateTime.parse(dob);
+    }
+  } catch (e) {
+    return '';
+  }
+
+  final today = DateTime.now();
+
+  int years = today.year - birthDate.year;
+  int months = today.month - birthDate.month;
+  int days = today.day - birthDate.day;
+
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(today.year, today.month, 0);
+    days += prevMonth.day;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years >= 5) {
+    return '$years ${years == 1 ? 'year' : 'years'}';
+  }
+
+  if (years == 0 && months == 0) {
+    return '0 month $days ${days == 1 ? 'day' : 'days'}';
+  }
+
+  return '$years ${years == 1 ? 'year' : 'years'} '
+      '$months ${months == 1 ? 'month' : 'months'}';
+}
+
   
 
   @override
@@ -78,6 +122,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
     fetchpatient = doctorprovider.getpatient(widget.patientId, context).then((_) {
       if (doctorprovider.patientdetails.isNotEmpty) {
         final data = doctorprovider.patientdetails.first;
+        print(data);
         _patientData = data;
         _nameController.text = data["name"] ?? "";
         formatedJoiPreviousDate = data["dob"] ?? "";
@@ -85,8 +130,11 @@ class _EditPatientPageState extends State<EditPatientPage> {
         formatedJoiDate = data["dob"] ?? "";
         _selectedGender = data["gender"];
         _emailController.text = data["email"] ?? "";
-        _ageController.text = calculateAge(DateTime.parse(data["DOB"] ?? ""));
         _phoneController.text = (data["phone"] ?? "").toString();
+        _ageController.text = calculateAgeString(data["dob"])??'';
+        print(_phoneController);
+        print(_ageController);
+        
       }
     });
   }
@@ -345,6 +393,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
 
                                           String age = calculateAge(pickedDate);
                                           _ageController.text = age;
+                                          print(_ageController);
                                         } else {}
                                       },
                                       child:

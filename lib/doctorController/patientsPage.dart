@@ -1,7 +1,4 @@
-
-
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
@@ -10,6 +7,7 @@ import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 
 class PatientsPage extends StatefulWidget {
   const PatientsPage({super.key});

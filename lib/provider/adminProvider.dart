@@ -167,6 +167,17 @@ Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
       print(e);
     }
       }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
+      
       
        else {
         print('${response.body}');
@@ -226,6 +237,16 @@ try {
       print(e);
     }
 
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
       
       else if (response.statusCode == 404) {
@@ -327,6 +348,16 @@ Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildCont
 
 
     }
+    else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
     
      else {
       print('Error: ${response.statusCode} - ${response.body}');
@@ -457,6 +488,16 @@ Future<void> getPatientsByPage(int page, BuildContext context ) async {
 
 
       }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
        else {
         print(response.body);
         addingpatient = false;
@@ -534,6 +575,16 @@ Future<void> getPatientsByPage(int page, BuildContext context ) async {
     } catch (e) {
       print(e);
     }
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
       
        else {
@@ -664,6 +715,16 @@ Future<void> getPatientsByPage(int page, BuildContext context ) async {
       ScaffoldMessenger.of(context).showSnackBar(error);
     }
       }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
       
        else {
         final responseData = jsonDecode(response.body);
@@ -744,6 +805,16 @@ Future<void> getpatientinvisits(String id, BuildContext context) async {
       print(e);
     }
       } 
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
       
       else if (response.statusCode == 404) {
         final responseData = jsonDecode(response.body);
@@ -812,6 +883,16 @@ Future<void> getpatientinvisits(String id, BuildContext context) async {
     } catch (e) {
       print(e);
     }
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
       
       else if (response.statusCode == 404) {
@@ -976,6 +1057,16 @@ Future<void> addoutvisit(
       addingoutvisit = false;
     }
       }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
        else {
         print(response.body);
         final responseData = jsonDecode(response.body);
@@ -1054,6 +1145,16 @@ Future<void> getinvisitbyid(String patientId, String complaintId, BuildContext c
       print(e);
     }
       }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
        else {
         print('${response.body}');
       }
@@ -1115,6 +1216,16 @@ Future<void> getdoctorsnurses(BuildContext context) async {
       print(e);
     }
 
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       } 
       else if (response.statusCode == 404) {
         final responseData = jsonDecode(response.body);
@@ -1264,6 +1375,17 @@ invalidateCache();
       Navigator.pop(context);
       addinginvisit = false;
     }
+      }
+
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
       
        else {
@@ -1432,6 +1554,17 @@ invalidateCache();
        updatinginvisit = false;
     }
       }
+
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
       
        else {
         print(response.body);
@@ -1516,6 +1649,16 @@ invalidateCache();
     } catch (e) {
       print(e);
     }
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
        else if (response.statusCode == 404) {
         print('No visits found');
@@ -1657,6 +1800,16 @@ Future<void> getalldoctorsdetails(BuildContext context) async {
       print(e);
     }
 
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
       else if (response.statusCode == 404) {
         final responseData = jsonDecode(response.body);
@@ -2010,6 +2163,16 @@ final Map<String, dynamic> requestBody = {
       ScaffoldMessenger.of(context).showSnackBar(error);
    }
       }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
       
        else {
         print(response.body);  
@@ -2142,6 +2305,16 @@ final Map<String, dynamic> requestBody = {
     final error = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(error);
    }
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
        else {
         print(response.body);  
@@ -2280,6 +2453,17 @@ final Map<String, dynamic> requestBody = {
       ScaffoldMessenger.of(context).showSnackBar(error);
    }
       }
+
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        // logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
       
        else {
         print(response.body);  
@@ -2353,6 +2537,17 @@ final Map<String, dynamic> requestBody = {
     } catch (e) {
       print(e);
     }
+      }
+
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
       }
        else if (response.statusCode == 404) {
         print('No visits found');

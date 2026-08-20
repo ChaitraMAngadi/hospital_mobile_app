@@ -150,6 +150,8 @@ Future<void> _verifyOtp(String phone, String dob, String otp) async {
   }
 }
 
+
+
 // void _showOtpDialog(BuildContext context, String phone, String dob) {
 //   showDialog(
 //     context: context,
@@ -846,7 +848,7 @@ String calculateAge(String dob) {
                                         final item = doctorprovider
                                             .filteredallsharedpatients[index];
                                         return ActiveInvisitModel(
-                                          createdat: item["createdAt"],
+                                          createdat: formatDate(item["createdAt"]),
                                           patientname: item['name'],
                                           patientId: item['patientId'],
                                           viewonTap: () {
@@ -863,9 +865,8 @@ String calculateAge(String dob) {
                                                   age: calculateAge(item['DOB'])??'',
                                                   dob: formatDate(item['DOB']),
                                                   createdbydoctor:
-                                                      item['createdByDoctor']
-                                                              ??
-                                                          '',
+                                                     item['doctorDetails']
+                                                          ['name']??'',
                                               
                                                  
                                                   
@@ -874,7 +875,7 @@ String calculateAge(String dob) {
                                                       item['createdAt']),
                                                   consultingdoctor:
                                                       item['doctorDetails']
-                                                          ['name'],
+                                                          ['name']??'',
                                                   // consultingdocid:
                                                   //     item['doctorDetails']
                                                   //         ['userid'],
@@ -1535,15 +1536,15 @@ class ActiveInVisitViewModel extends StatelessWidget {
                   const SizedBox(height: 12),
           
                   /// CONSULTING DOCTOR
-                  _infoTile(
-                    icon: Icons.person_pin,
-                    label: "CONSULTING DOCTOR",
-                    value: consultingdoctor,
-                    iconBg: Colors.red.shade50,
-                    iconColor: Colors.red,
-                  ),
+                  // _infoTile(
+                  //   icon: Icons.person_pin,
+                  //   label: "CONSULTING DOCTOR",
+                  //   value: consultingdoctor,
+                  //   iconBg: Colors.red.shade50,
+                  //   iconColor: Colors.red,
+                  // ),
           
-                  const SizedBox(height: 12),
+                  // const SizedBox(height: 12),
           
                   /// VISIT DATE
                   _infoTile(

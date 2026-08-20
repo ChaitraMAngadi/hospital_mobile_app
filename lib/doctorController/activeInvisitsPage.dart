@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
@@ -1088,11 +1089,31 @@ Widget build(BuildContext context) {
               label: "Chief Complaint",
               value: cheifcomplaint,
             ),
+            if(consultingdoctor != '')
             infoTile(
-              icon: Icons.medical_services,
+              icon: FontAwesomeIcons.stethoscope,
               label: "Consulting Doctor",
               value: "$consultingdoctor , $consultingdocid",
             ),
+            if(dutydoctor != '')
+            infoTile(
+              icon: FontAwesomeIcons.userDoctor,
+              label: "Duty Doctor",
+              value: "$dutydoctor , $dutydocid",
+            ),
+            if(visitingdoctor != '')
+            infoTile(
+              icon: FontAwesomeIcons.stethoscope,
+              label: "Visiting Doctor",
+              value: "$visitingdoctor , $visitingdocid",
+            ),
+            if(associatedstaff != '')
+            infoTile(
+              icon: Icons.medical_services,
+              label: "Associated Staff",
+              value: "$associatedstaff , $supportingstaffid",
+            ),
+
           ],
         ),
       ),
