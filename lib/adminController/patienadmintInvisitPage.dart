@@ -1242,10 +1242,13 @@ class InVisitViewModel extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   value,
+                  maxLines: 3,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

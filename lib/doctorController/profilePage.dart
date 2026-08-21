@@ -182,9 +182,11 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  _logoInfoRow(hospital['logo'], "Hospital Logo"),
                   infoRow("Hospital ID", hospital['userid']),
                   infoRow("Hospital Name", hospital['name']),
                   infoRow("Email", hospital['email']),
+                  
                 ],
               ),
             ),
@@ -891,6 +893,92 @@ Widget sectionHeader({
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _logoInfoRow(String? logoUrl, String label) {
+  final bool hasNetworkLogo = logoUrl != null && logoUrl.trim().isNotEmpty;
+
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          // decoration: BoxDecoration(
+          //   color: AppColors.primary,
+          //   borderRadius: BorderRadius.circular(8),
+          // ),
+          child: hasNetworkLogo
+                ? Image.network(
+                    logoUrl,
+                    width: 30,
+                    height: 34,
+                    fit: BoxFit.cover,
+                    // If the network image fails to load, fall back to asset
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/default_hospital_logo.png',
+                        width: 30,
+                        height: 34,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const SizedBox(
+                        width: 30,
+                        height: 34,
+                        child: Center(
+                          child: SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                // No URL from backend -> use asset directly
+                : Image.asset(
+                    'assets/images/doclogo.png',
+                    width: 30,
+                    height: 34,
+                    fit: BoxFit.cover,
+                  ),
+        ),
+        Expanded(child: const SizedBox(width: 12)),
+        Expanded(
+          flex: 2,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                hasNetworkLogo ? "Custom logo" : "Default logo",
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
       ],

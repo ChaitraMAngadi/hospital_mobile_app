@@ -298,7 +298,7 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                                       temprature: item["temperature"] ?? "",
                                                       heartrate: item["heart_rate"] ?? "",
                                                       visitdate: formatDate(item["visit_date"]),
-                                                      associateddoctor: '${item['associatedDoctor']['name']}',
+                                                      associateddoctor: '${item['associatedDoctor']['name']}(${item['associatedDoctor']['userid']})',
                                                     );
                                                   },
                                                 );
@@ -841,29 +841,32 @@ class VisitViewModel extends StatelessWidget {
             child: Icon(icon, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  overflow: TextOverflow.ellipsis
-
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  maxLines: 3,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    overflow: TextOverflow.ellipsis
+            
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

@@ -1454,6 +1454,7 @@ Widget build(BuildContext context) {
             ...widget.diagnoses.asMap().entries.map((entry) {
               final index = entry.key;
               final d = entry.value;
+              print('diagnosis summary: ${d["diagnosis_summary"]}');
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -1549,30 +1550,53 @@ Widget build(BuildContext context) {
                           ),
                     
                           const SizedBox(height: 12),
+                          
                     
                           /// DIAGNOSIS SUMMARY
-                          if (d["diagnosis_summary"] != null) ...[
-                            _section("Diagnosis Summary", Icons.description),
-                            _htmlCard(d["diagnosis_summary"]),
-                          ],
+                          // if (d["diagnosis_summary"] != null ) ...[
+                            
+                          //   _section("Diagnosis Summary", Icons.description),
+                          //   _htmlCard(d["diagnosis_summary"]),
+                          // ],
+                          if (d["diagnosis_summary"] != null &&
+    d["diagnosis_summary"].toString().trim().isNotEmpty) ...[
+  _section("Diagnosis Summary", Icons.description),
+  _htmlCard(d["diagnosis_summary"]),
+],
                     
                           /// MEDICAL ADVICE
-                          if (d["medical_advice"] != null) ...[
-                            _section("Medical Advice", Icons.medical_services),
-                            _htmlCard(d["medical_advice"]),
-                          ],
+                          // if (d["medical_advice"] != null) ...[
+                          //   _section("Medical Advice", Icons.medical_services),
+                          //   _htmlCard(d["medical_advice"]),
+                          // ],
+                          if (d["medical_advice"] != null &&
+    d["medical_advice"].toString().trim().isNotEmpty) ...[
+  _section("Medical Advice", Icons.medical_services),
+  _htmlCard(d["medical_advice"]),
+],
                     
                           /// LAB TESTS
-                          if (d["lab_test"] != null) ...[
-                            _section("Lab Tests", Icons.science),
-                            _htmlCard(d["lab_test"]),
-                          ],
+                          // if (d["lab_test"] != null) ...[
+                          //   _section("Lab Tests", Icons.science),
+                          //   _htmlCard(d["lab_test"]),
+                          // ],
+                          if (d["lab_test"] != null &&
+    d["lab_test"].toString().trim().isNotEmpty) ...[
+  _section("Lab Tests", Icons.science),
+  _htmlCard(d["lab_test"]),
+],
                     
                           /// DOCTOR REMARK
-                          if (d["doctors_remark"] != null) ...[
-                            _section("Doctor's Remark", Icons.chat),
-                            _htmlCard(d["doctors_remark"]),
-                          ],
+                          // if (d["doctors_remark"] != null) ...[
+                          //   _section("Doctor's Remark", Icons.chat),
+                          //   _htmlCard(d["doctors_remark"]),
+                          // ],
+                          if (d["doctors_remark"] != null &&
+    d["doctors_remark"].toString().trim().isNotEmpty) ...[
+  _section("Doctor's Remark", Icons.chat),
+  _htmlCard(d["doctors_remark"]),
+],
+                          
                     
                           /// MEDICATION
                           if (d["medication"] != null &&
