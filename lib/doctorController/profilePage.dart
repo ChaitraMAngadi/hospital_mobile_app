@@ -85,14 +85,14 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  infoRow("Doctor ID", item['userid']),
-                  infoRow("Full Name", item['name']),
-                  infoRow("Email Address", item['email']),
+                  infoRow("Doctor ID", item['userid']??''),
+                  infoRow("Full Name", item['name']??''),
+                  infoRow("Email Address", item['email']??''),
                   infoRow("Phone Number", item['phone'].toString()),
-                  infoRow("Gender", item['gender']),
+                  infoRow("Gender", item['gender']??''),
                   infoRow(
                     "Registration Number",
-                    item['doctorRegistrationNumber'],
+                    item['doctorRegistrationNumber']??'',
                   ),
                 ],
               ),
@@ -117,17 +117,24 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  if(item['board_of_registration'] != null)
                   infoRow(
                     "Board of Registration",
-                    item['board_of_registration'],
+                    item['board_of_registration']??'',
                   ),
+                  if(item['year_of_registration'] != null)
                   infoRow(
                     "Year of Registration",
-                    item['year_of_registration'].toString(),
+                    item['year_of_registration'].toString()??"",
                   ),
-                  infoRow("Qualification", item['qualification']),
-                  infoRow("Specialization", item['specialization']),
-                  infoRow("Address", item['address']),
+                  // if(item['Qualification'] != null)
+                  infoRow("Qualification", item['qualification']??''),
+
+                  // if(item['Specialization'] != null)
+                  infoRow("Specialization", item['specialization']??''),
+
+                  if(item['address'] != null)
+                  infoRow("Address", item['address']??""),
                 ],
               ),
             ),
@@ -151,13 +158,14 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  infoRow("Branch ID", hospitalbranch['userid']),
-                  infoRow("Branch Name", hospitalbranch['name']),
-                  infoRow("Address", hospitalbranch['address']),
-                  infoRow("Email", hospitalbranch['email']),
+                  infoRow("Branch ID", hospitalbranch['userid']??""),
+                  infoRow("Branch Name", hospitalbranch['name']??''),
+                  
+                  infoRow("Address", hospitalbranch['address']??''),
+                  infoRow("Email", hospitalbranch['email']??''),
                   infoRow(
                     "Phone",
-                    hospitalbranch['phone'].toString(),
+                    hospitalbranch['phone'].toString()??"",
                   ),
                 ],
               ),
@@ -183,9 +191,9 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   _logoInfoRow(hospital['logo'], "Hospital Logo"),
-                  infoRow("Hospital ID", hospital['userid']),
-                  infoRow("Hospital Name", hospital['name']),
-                  infoRow("Email", hospital['email']),
+                  infoRow("Hospital ID", hospital['userid']??""),
+                  infoRow("Hospital Name", hospital['name']??""),
+                  infoRow("Email", hospital['email']??''),
                   
                 ],
               ),

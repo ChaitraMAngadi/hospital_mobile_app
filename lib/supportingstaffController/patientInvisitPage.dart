@@ -716,157 +716,159 @@ class TodaysVisitViewModel extends StatelessWidget {
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Patient Details",
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline),
-                ),
-                IconButton(
-                    onPressed: () {
-                      context.router.pop();
-                    },
-                    icon: const Icon(Icons.close))
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Patient name: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${name}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Patient Id: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${patientId}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Age : ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${age}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Gender: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${gender}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Phone Number: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${phone.toString()}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Date of Birth: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${dob}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            if (email != "") ...[
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Patient Details",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        context.router.pop();
+                      },
+                      icon: const Icon(Icons.close))
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               Row(
                 children: [
                   const Text(
-                    "Email: ",
+                    "Patient name: ",
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
-                  Text("${email}", style: TextStyle(fontSize: 14)),
+                  Text("${name}", style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Patient Id: ",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  Text("${patientId}", style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Age : ",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  Text("${age}", style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Gender: ",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  Text("${gender}", style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Phone Number: ",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  Text("${phone.toString()}", style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Date of Birth: ",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  Text("${dob}", style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              if (email != "") ...[
+                Row(
+                  children: [
+                    const Text(
+                      "Email: ",
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                    Text("${email}", style: TextStyle(fontSize: 14)),
+                  ],
+                ),
+              ],
+              SizedBox(
+                height: 20,
+              ),
+              const Text(
+                "Complaint Details",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              SizedBox(
+                height: 14,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    " Chief Complaint: ",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  Flexible(
+                    child: Text(
+                      "$cheifcomplaint",
+                      style: const TextStyle(fontSize: 14),
+                      softWrap: true,
+                    ),
+                  ),
+                  // Text("${cheifcomplaint}", style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Creation Time: ",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  Text("${createdat}", style: TextStyle(fontSize: 14)),
                 ],
               ),
             ],
-            SizedBox(
-              height: 20,
-            ),
-            const Text(
-              "Complaint Details",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            SizedBox(
-              height: 14,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  " Chief Complaint: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                  child: Text(
-                    "$cheifcomplaint",
-                    style: const TextStyle(fontSize: 14),
-                    softWrap: true,
-                  ),
-                ),
-                // Text("${cheifcomplaint}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Creation Time: ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                Text("${createdat}", style: TextStyle(fontSize: 14)),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

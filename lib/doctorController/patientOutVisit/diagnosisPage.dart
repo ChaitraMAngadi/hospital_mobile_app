@@ -3243,6 +3243,30 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
           return List<Map<String, dynamic>>.from(data['medicines']);
         }
       }
+      else{
+        refreshtoken();
+        try {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
+        
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.token}',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
+      }
     } catch (e) {
       print('Error fetching medicine suggestions: $e');
     }
@@ -3252,12 +3276,13 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
 
   Future<void> _warmupModal() async {
   try {
+    
     print("Called warmup model");
    final resp = await http.post(
       Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/warmup'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.token}',
+        'Authorization': 'Bearer ${Constants.doctortoken}',
       },
     );
     print("response: ${resp.body}");
@@ -4594,7 +4619,12 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
           children: [
             Expanded(
               child: TextField(
+
                 controller: widget.controllers.durationController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                ],
                 decoration: InputDecoration(
                   enabled: isMedicationNameAdded,
                   hintText: 'Duration in days',

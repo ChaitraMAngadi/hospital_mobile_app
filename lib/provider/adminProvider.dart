@@ -68,6 +68,8 @@ class Adminprovider extends ChangeNotifier {
       List<Map<String, dynamic>> todaysappointments = [];
   List<Map<String, dynamic>> filteredtodaysappointments = [];
 
+  bool hideExpiryBanner = false;
+
 
    final CacheManager _cache = CacheManager(cacheDuration: Duration(minutes: 10));
 
@@ -2627,6 +2629,43 @@ await secureStorage.writeSecureData('admintoken', responseData['token']);
      
     }
   }
+  DateTime? getValidityDate() {
+  if (admindetailedprofile.isEmpty) return null;
+
+  final validTill = admindetailedprofile.first["validity"];
+  print(validTill);
+  if (validTill == null) return null;
+
+  return DateTime.parse(validTill); // yyyy-MM-dd
+}
+
+
+
+void closeExpiryBanner() {
+  hideExpiryBanner = true;
+  notifyListeners();
+}
+
+  bool shouldShowExpiryBanner() {
+  final validityDate = getValidityDate();
+  if (validityDate == null) return false;
+
+  final daysLeft = remainingDays();
+
+  // ── matches web logic: diffDays <= 7 && diffDays >= 0 ──
+  return daysLeft <= 7 && daysLeft >= 0 && !hideExpiryBanner;
+}
+
+int remainingDays() {
+  final validityDate = getValidityDate();
+  if (validityDate == null) return 0;
+
+  final today = DateTime.now();
+  final diff = validityDate.difference(
+      DateTime(today.year, today.month, today.day));
+  // matches Math.ceil in JS
+  return (diff.inHours / 24).ceil();
+}
 
  void invalidateCache({String? key}) {
     if (key != null) {

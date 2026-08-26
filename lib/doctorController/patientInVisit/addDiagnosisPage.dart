@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/services.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:auto_route/auto_route.dart';
 
@@ -1389,16 +1390,15 @@ Future<void> _pickFromCamera() async {
   //   }
   // }
 
-Future<void> pickFiles() async {
-
+    Future<void> pickFiles() async {
   if (selectedFiles.length >= 5) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Maximum 5 files allowed"),
-      ),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Maximum 5 files allowed")));
     return;
   }
+
+  // ✅ Calculate how many slots are remaining before opening picker
+  final int remainingSlots = 5 - selectedFiles.length;
 
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     allowMultiple: true,
@@ -1407,47 +1407,103 @@ Future<void> pickFiles() async {
   );
 
   if (result != null) {
+    const int maxBytes = 5 * 1024 * 1024;
 
-    const int maxFileSizeBytes = 5 * 1024 * 1024; // 5MB in bytes
+    // ✅ Slice to only take as many files as slots remaining
+    final allowedFiles = result.files.take(remainingSlots).toList();
 
-    // Filter out files exceeding 5MB
-    List<PlatformFile> oversizedFiles = result.files
-        .where((file) => (file.size) > maxFileSizeBytes)
-        .toList();
+    // ✅ Notify user if some files were trimmed
+    if (result.files.length > remainingSlots) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Only $remainingSlots more file(s) allowed. Extra files were ignored.",
+        ),
+      ));
+    }
 
-    if (oversizedFiles.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+    // ✅ Check for oversized files within the allowed subset
+    final oversized = allowedFiles.where((f) => f.size > maxBytes).toList();
+    if (oversized.isNotEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-            "Cannot upload files larger than 5MB: ${oversizedFiles.map((f) => f.name).join(', ')}",
-          ),
-        ),
-      );
+              "Files >5MB skipped: ${oversized.map((f) => f.name).join(', ')}")));
+      // ✅ Filter out oversized, still add valid ones
+      final validFiles = allowedFiles
+          .where((f) => f.size <= maxBytes)
+          .map((f) => File(f.path!))
+          .toList();
+      if (validFiles.isNotEmpty) {
+        setState(() => selectedFiles.addAll(validFiles));
+      }
       return;
     }
 
-    List<File> newFiles =
-        result.paths.map((path) => File(path!)).toList();
-
-    // Check total limit
-    if (selectedFiles.length + newFiles.length > 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("You can select maximum 10 files only"),
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      selectedFiles.addAll(newFiles);
-    });
-
-    print("Selected ${selectedFiles.length} files");
-  } else {
-    print("No files selected");
+    final newFiles = allowedFiles.map((f) => File(f.path!)).toList();
+    setState(() => selectedFiles.addAll(newFiles));
   }
 }
+
+// Future<void> pickFiles() async {
+
+//   if (selectedFiles.length >= 5) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       const SnackBar(
+//         content: Text("Maximum 5 files allowed"),
+//       ),
+//     );
+//     return;
+//   }
+
+//   FilePickerResult? result = await FilePicker.platform.pickFiles(
+//     allowMultiple: true,
+//     type: FileType.custom,
+//     allowedExtensions: ['jpg', 'png', 'pdf', 'doc', 'docx'],
+//   );
+
+//   if (result != null) {
+
+//     const int maxFileSizeBytes = 5 * 1024 * 1024; // 5MB in bytes
+
+//     // Filter out files exceeding 5MB
+//     List<PlatformFile> oversizedFiles = result.files
+//         .where((file) => (file.size) > maxFileSizeBytes)
+//         .toList();
+
+//     if (oversizedFiles.isNotEmpty) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(
+//           content: Text(
+//             "Cannot upload files larger than 5MB: ${oversizedFiles.map((f) => f.name).join(', ')}",
+//           ),
+//         ),
+//       );
+//       return;
+//     }
+
+//     List<File> newFiles =
+//         result.paths.map((path) => File(path!)).toList();
+
+//     // Check total limit
+//     if (selectedFiles.length + newFiles.length > 10) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content: Text("You can select maximum 10 files only"),
+//         ),
+//       );
+//       return;
+//     }
+
+//     setState(() {
+//       selectedFiles.addAll(newFiles);
+//     });
+
+//     print("Selected ${selectedFiles.length} files");
+//   } else {
+//     print("No files selected");
+//   }
+// }
 
   @override
   void dispose() {
@@ -2455,6 +2511,10 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
             Expanded(
               child: TextField(
                 controller: widget.controllers.durationController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                ],
                 decoration: InputDecoration(
                   enabled: isMedicationNameAdded,
                   hintText: 'Duration in days',

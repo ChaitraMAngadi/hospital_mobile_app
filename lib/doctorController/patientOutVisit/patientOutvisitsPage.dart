@@ -1212,76 +1212,78 @@ class VisitViewModel extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// CLOSE BUTTON
-            Align(
-              alignment: Alignment.topRight,
-              child: InkWell(
-                onTap: () => context.router.pop(),
-                child: const CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.close, size: 18, color: Colors.red),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// CLOSE BUTTON
+              Align(
+                alignment: Alignment.topRight,
+                child: InkWell(
+                  onTap: () => context.router.pop(),
+                  child: const CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.close, size: 18, color: Colors.red),
+                  ),
                 ),
               ),
-            ),
-
-            const SizedBox(height: 6),
-
-            /// TOP ICON
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(14),
+          
+              const SizedBox(height: 6),
+          
+              /// TOP ICON
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.medical_services_outlined,
+                  color: Colors.white,
+                  size: 28,
+                ),
               ),
-              child: const Icon(
-                Icons.medical_services_outlined,
-                color: Colors.white,
-                size: 28,
+          
+              const SizedBox(height: 10),
+          
+              /// TITLE
+              const Text(
+                "Out-Visit Details",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
               ),
-            ),
-
-            const SizedBox(height: 10),
-
-            /// TITLE
-            const Text(
-              "Out-Visit Details",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+          
+              const SizedBox(height: 20),
+          
+              /// CHIEF COMPLAINT CARD
+              _infoTile(
+                icon: Icons.description_outlined,
+                title: "CHIEF COMPLAINT",
+                value: cheifcomplaint,
               ),
-            ),
-
-            const SizedBox(height: 20),
-
-            /// CHIEF COMPLAINT CARD
-            _infoTile(
-              icon: Icons.description_outlined,
-              title: "CHIEF COMPLAINT",
-              value: cheifcomplaint,
-            ),
-
-            const SizedBox(height: 12),
-
-            /// VISIT DATE CARD
-            _infoTile(
-              icon: Icons.calendar_today_outlined,
-              title: "VISIT DATE",
-              value: visitdate,
-            ),
-
-            /// ⚠️ VITALS LOGIC KEPT (NOT REMOVED)
-            if (height.isNotEmpty ||
-                weight.isNotEmpty ||
-                bp.isNotEmpty ||
-                temprature.isNotEmpty ||
-                heartrate.isNotEmpty)
-              const SizedBox(height: 0),
-          ],
+          
+              const SizedBox(height: 12),
+          
+              /// VISIT DATE CARD
+              _infoTile(
+                icon: Icons.calendar_today_outlined,
+                title: "VISIT DATE",
+                value: visitdate,
+              ),
+          
+              /// ⚠️ VITALS LOGIC KEPT (NOT REMOVED)
+              if (height.isNotEmpty ||
+                  weight.isNotEmpty ||
+                  bp.isNotEmpty ||
+                  temprature.isNotEmpty ||
+                  heartrate.isNotEmpty)
+                const SizedBox(height: 0),
+            ],
+          ),
         ),
       ),
     );
@@ -1301,6 +1303,7 @@ class VisitViewModel extends StatelessWidget {
         border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(10),

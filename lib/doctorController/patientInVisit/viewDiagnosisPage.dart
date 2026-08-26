@@ -1628,6 +1628,9 @@ Widget build(BuildContext context) {
                                               "Dose: ${med["power"]} • ${med["duration"]} days"),
                                           Text(
                                               "When: ${med["time"]?.join(", ")}"),
+                                              
+                                              Text(
+                                              "Special Instruction: ${med["special_instruction"]}"),
                                         ],
                                       ),
                                     ),
@@ -1678,20 +1681,23 @@ Widget _section(String title, IconData icon) {
 
 Widget _pill(String text, Color color) {
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(20),
     ),
     child: Text(text,
         style:
-            TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            TextStyle(
+              fontSize: 13,
+              color: Colors.white, fontWeight: FontWeight.bold)),
   );
 }
 
 Widget _vitalCard(String name, String value) {
   return Container(
-    width: 90,
+    width: 140, 
+    height: 85,
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
       border: Border.all(color: AppColors.accent),
@@ -1704,8 +1710,14 @@ Widget _vitalCard(String name, String value) {
             style: const TextStyle(
                 fontSize: 12, fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: AppColors.primary,
-        fontWeight: FontWeight.bold)),
+        Text(value,
+        maxLines: 2, style: const TextStyle(color: AppColors.primary,
+        fontWeight: FontWeight.bold,
+        overflow: TextOverflow.ellipsis,
+        ),
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        ),
       ],
     ),
   );

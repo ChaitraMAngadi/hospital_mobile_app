@@ -29,7 +29,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
   Timer? _debounceTimer;
   String _currentSearchQuery = '';
   bool _isSearching = false; 
-
+bool _isInitialLoading = true;   // NEW
   @override
   void initState() {
     super.initState();
@@ -61,6 +61,12 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
 
   Future<void> _fetchInitialData() async {
     await adminprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
+
+    if (mounted) {
+    setState(() {
+      _isInitialLoading = false;   // NEW
+    });
+  }
     // await homePageProvider.getdoctordetails();
   }
 
@@ -101,6 +107,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
     setState(() {
       _currentPage = 1;
       _hasMore = true;
+      _isInitialLoading = true; 
       _isSearching = false; // Reset searching flag
       adminprovider.allpatients.clear();
       adminprovider.filteredPatients.clear();
@@ -381,6 +388,11 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
 
 
   Widget _buildMainContent(Adminprovider adminprovider) {
+
+    if (_isInitialLoading) {
+    return _buildShimmerList();
+  }
+  
     // Show shimmer while searching or initial load
     if (_isSearching || (_currentPage == 1 && adminprovider.allpatients.isEmpty && _isLoadingMore)) {
       return _buildShimmerList();
@@ -393,7 +405,9 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
     
     // Show shimmer for initial load (when no search query)
     if (adminprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
-      return _buildShimmerList();
+      return Center(
+        child: Text("No Patients to show Please Register"),
+      );
     }
     
     // Show the actual list

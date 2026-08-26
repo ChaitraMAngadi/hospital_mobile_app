@@ -210,14 +210,14 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return SizedBox(
-                              height: MediaQuery.of(context).size.height*0.76,
+                              height: MediaQuery.of(context).size.height*0.8,
                               child: _buildShimmerList());
                         } else {
                           return SafeArea(
                               child: doctorprovider.patientinvisits.isEmpty
                                   ? SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height*0.76,
+                                          MediaQuery.of(context).size.height*0.8,
                                       child: const Center(
                                           child: Padding(
                                         padding: EdgeInsets.symmetric(
@@ -233,7 +233,7 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                       )))
 
                                       : SizedBox(
-    height: MediaQuery.of(context).size.height * 0.76,
+    height: MediaQuery.of(context).size.height * 0.8,
     child: Builder(
       builder: (context) {
         // 🔽 Recent IPD visit sabse pehle dikhane ke liye sort karo
@@ -953,75 +953,77 @@ class TodaysVisitViewModel extends StatelessWidget {
           color: const Color(0xFFFFF5F5),
           borderRadius: BorderRadius.circular(22),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// TOP ICON
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: const BoxDecoration(
-                color: Colors.redAccent,
-                shape: BoxShape.circle,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// TOP ICON
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: const BoxDecoration(
+                  color: Colors.redAccent,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.assignment,
+                  color: Colors.white,
+                  size: 26,
+                ),
               ),
-              child: const Icon(
-                Icons.assignment,
-                color: Colors.white,
-                size: 26,
+          
+              const SizedBox(height: 12),
+          
+              /// TITLE
+              const Text(
+                "In-Visit Details",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.redAccent,
+                ),
               ),
-            ),
-
-            const SizedBox(height: 12),
-
-            /// TITLE
-            const Text(
-              "In-Visit Details",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.redAccent,
+          
+              const SizedBox(height: 20),
+          
+              /// CHIEF COMPLAINT
+              _detailTile(
+                icon: Icons.medical_information,
+                title: "CHIEF COMPLAINT",
+                value: cheifcomplaint,
               ),
-            ),
-
-            const SizedBox(height: 20),
-
-            /// CHIEF COMPLAINT
-            _detailTile(
-              icon: Icons.medical_information,
-              title: "CHIEF COMPLAINT",
-              value: cheifcomplaint,
-            ),
-
-            const SizedBox(height: 14),
-
-            /// CONSULTING DOCTOR (using patient name as per available data)
-            _detailTile(
-              icon: Icons.person,
-              title: "CONSULTING DOCTOR",
-              value: name,
-            ),
-
-            const SizedBox(height: 14),
-
-            /// VISIT DATE
-            _detailTile(
-              icon: Icons.calendar_month,
-              title: "VISIT DATE",
-              value: visitdate,
-            ),
-
-            const SizedBox(height: 10),
-
-            /// CLOSE BUTTON
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.grey),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+          
+              const SizedBox(height: 14),
+          
+              /// CONSULTING DOCTOR (using patient name as per available data)
+              _detailTile(
+                icon: Icons.person,
+                title: "CONSULTING DOCTOR",
+                value: name,
               ),
-            ),
-          ],
+          
+              const SizedBox(height: 14),
+          
+              /// VISIT DATE
+              _detailTile(
+                icon: Icons.calendar_month,
+                title: "VISIT DATE",
+                value: visitdate,
+              ),
+          
+              const SizedBox(height: 10),
+          
+              /// CLOSE BUTTON
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.grey),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1041,6 +1043,7 @@ class TodaysVisitViewModel extends StatelessWidget {
         border: Border.all(color: Colors.redAccent.shade100),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
@@ -1287,98 +1290,100 @@ class InVisitViewModel extends StatelessWidget {
           color: const Color(0xFFFFF5F5),
           borderRadius: BorderRadius.circular(22),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// CLOSE BUTTON
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: AppColors.primaryDark),
-                onPressed: () => Navigator.pop(context),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// CLOSE BUTTON
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: AppColors.primaryDark),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
-            ),
-
-            /// TOP ICON
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
+          
+              /// TOP ICON
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.assignment,
+                  color: Colors.white,
+                  size: 26,
+                ),
               ),
-              child: const Icon(
-                Icons.assignment,
-                color: Colors.white,
-                size: 26,
+          
+              const SizedBox(height: 12),
+          
+              /// TITLE
+              const Text(
+                "In-Visit Details",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryDark,
+                ),
               ),
-            ),
-
-            const SizedBox(height: 12),
-
-            /// TITLE
-            const Text(
-              "In-Visit Details",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryDark,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            /// CHIEF COMPLAINT
-            _detailTile(
-              icon: Icons.medical_information,
-              title: "CHIEF COMPLAINT",
-              value: cheifcomplaint,
-            ),
-
-            const SizedBox(height: 14),
-
-            /// CONSULTING DOCTOR
-            _detailTile(
-              icon: Icons.person,
-              title: "CONSULTING DOCTOR",
-              value: consultingdoctor,
-            ),
-
-            if (visitingdoctor.isNotEmpty) ...[
-              const SizedBox(height: 14),
+          
+              const SizedBox(height: 20),
+          
+              /// CHIEF COMPLAINT
               _detailTile(
-                icon: Icons.person_outline,
-                title: "VISITING DOCTOR",
-                value: visitingdoctor,
+                icon: Icons.medical_information,
+                title: "CHIEF COMPLAINT",
+                value: cheifcomplaint,
+              ),
+          
+              const SizedBox(height: 14),
+          
+              /// CONSULTING DOCTOR
+              _detailTile(
+                icon: Icons.person,
+                title: "CONSULTING DOCTOR",
+                value: consultingdoctor,
+              ),
+          
+              if (visitingdoctor.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _detailTile(
+                  icon: Icons.person_outline,
+                  title: "VISITING DOCTOR",
+                  value: visitingdoctor,
+                ),
+              ],
+          
+              if (dutydoctor.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _detailTile(
+                  icon: Icons.person_2_outlined,
+                  title: "DUTY DOCTOR",
+                  value: dutydoctor,
+                ),
+              ],
+          
+              if (associatedstaff.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _detailTile(
+                  icon: Icons.groups,
+                  title: "ASSOCIATED STAFF",
+                  value: associatedstaff,
+                ),
+              ],
+          
+              const SizedBox(height: 14),
+          
+              /// VISIT DATE
+              _detailTile(
+                icon: Icons.calendar_month,
+                title: "VISIT DATE",
+                value: visitdate,
               ),
             ],
-
-            if (dutydoctor.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              _detailTile(
-                icon: Icons.person_2_outlined,
-                title: "DUTY DOCTOR",
-                value: dutydoctor,
-              ),
-            ],
-
-            if (associatedstaff.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              _detailTile(
-                icon: Icons.groups,
-                title: "ASSOCIATED STAFF",
-                value: associatedstaff,
-              ),
-            ],
-
-            const SizedBox(height: 14),
-
-            /// VISIT DATE
-            _detailTile(
-              icon: Icons.calendar_month,
-              title: "VISIT DATE",
-              value: visitdate,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -1398,6 +1403,7 @@ class InVisitViewModel extends StatelessWidget {
         border: Border.all(color: AppColors.secondary),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(10),

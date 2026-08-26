@@ -1074,129 +1074,131 @@ class InVisitViewModel extends StatelessWidget {
           color: const Color(0xFFFFF6F6),
           borderRadius: BorderRadius.circular(24),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// Top icon
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(""),
-                Column(
-                  children: [
-                    Container(
-                      height: 56,
-                      width: 56,
-                      decoration: BoxDecoration(
-                        color:AppColors.primary,
-                        borderRadius: BorderRadius.circular(16),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Top icon
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(""),
+                  Column(
+                    children: [
+                      Container(
+                        height: 56,
+                        width: 56,
+                        decoration: BoxDecoration(
+                          color:AppColors.primary,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.assignment,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.assignment,
-                        color: Colors.white,
-                        size: 28,
+                      
+                      const SizedBox(height: 12),
+                      
+                      /// Title
+                      const Text(
+                        "In-Visit Details",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                       ),
-                    ),
-                    
-                    const SizedBox(height: 12),
-                    
-                    /// Title
-                    const Text(
-                      "In-Visit Details",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  
+          
+             
+              IconButton(onPressed: (){
+                Navigator.pop(context);
+              }, icon: Icon(Icons.close,
+              color: AppColors.primary,))
+                ],
+              ),
+          
+              const SizedBox(height: 20),
+          
+              _infoCard(
+                icon: Icons.medical_services,
+                title: "CHIEF COMPLAINT",
+                value: cheifcomplaint,
+              ),
+          
+              const SizedBox(height: 14),
+          
+              _infoCard(
+                icon: Icons.person,
+                title: "CONSULTING DOCTOR",
+                value: consultingdoctor,
+              ),
+          
+              if (visitingdoctor.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _infoCard(
+                  icon: Icons.person_outline,
+                  title: "VISITING DOCTOR",
+                  value: visitingdoctor,
                 ),
-                
-
-           
-            IconButton(onPressed: (){
-              Navigator.pop(context);
-            }, icon: Icon(Icons.close,
-            color: AppColors.primary,))
               ],
-            ),
-
-            const SizedBox(height: 20),
-
-            _infoCard(
-              icon: Icons.medical_services,
-              title: "CHIEF COMPLAINT",
-              value: cheifcomplaint,
-            ),
-
-            const SizedBox(height: 14),
-
-            _infoCard(
-              icon: Icons.person,
-              title: "CONSULTING DOCTOR",
-              value: consultingdoctor,
-            ),
-
-            if (visitingdoctor.isNotEmpty) ...[
+          
+              if (dutydoctor.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _infoCard(
+                  icon: Icons.local_hospital,
+                  title: "DUTY DOCTOR",
+                  value: dutydoctor,
+                ),
+              ],
+          
+              if (associatedstaff.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _infoCard(
+                  icon: Icons.groups,
+                  title: "ASSOCIATED STAFF",
+                  value: associatedstaff,
+                ),
+              ],
+          
               const SizedBox(height: 14),
+          
               _infoCard(
-                icon: Icons.person_outline,
-                title: "VISITING DOCTOR",
-                value: visitingdoctor,
+                icon: Icons.calendar_month,
+                title: "VISIT DATE",
+                value: visitdate,
               ),
+          
+              const SizedBox(height: 18),
+          
+              /// Close button
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: InkWell(
+              //     onTap: () => context.router.pop(),
+              //     child: Container(
+              //       padding: const EdgeInsets.all(10),
+              //       decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         shape: BoxShape.circle,
+              //         boxShadow: [
+              //           BoxShadow(
+              //             color: Colors.black.withOpacity(0.1),
+              //             blurRadius: 6,
+              //           ),
+              //         ],
+              //       ),
+              //       child: const Icon(Icons.close, color: Colors.red),
+              //     ),
+              //   ),
+              // ),
             ],
-
-            if (dutydoctor.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              _infoCard(
-                icon: Icons.local_hospital,
-                title: "DUTY DOCTOR",
-                value: dutydoctor,
-              ),
-            ],
-
-            if (associatedstaff.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              _infoCard(
-                icon: Icons.groups,
-                title: "ASSOCIATED STAFF",
-                value: associatedstaff,
-              ),
-            ],
-
-            const SizedBox(height: 14),
-
-            _infoCard(
-              icon: Icons.calendar_month,
-              title: "VISIT DATE",
-              value: visitdate,
-            ),
-
-            const SizedBox(height: 18),
-
-            /// Close button
-            // Align(
-            //   alignment: Alignment.centerRight,
-            //   child: InkWell(
-            //     onTap: () => context.router.pop(),
-            //     child: Container(
-            //       padding: const EdgeInsets.all(10),
-            //       decoration: BoxDecoration(
-            //         color: Colors.white,
-            //         shape: BoxShape.circle,
-            //         boxShadow: [
-            //           BoxShadow(
-            //             color: Colors.black.withOpacity(0.1),
-            //             blurRadius: 6,
-            //           ),
-            //         ],
-            //       ),
-            //       child: const Icon(Icons.close, color: Colors.red),
-            //     ),
-            //   ),
-            // ),
-          ],
+          ),
         ),
       ),
     );
@@ -1216,6 +1218,7 @@ class InVisitViewModel extends StatelessWidget {
         border: Border.all(color: Colors.red.shade200),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 42,

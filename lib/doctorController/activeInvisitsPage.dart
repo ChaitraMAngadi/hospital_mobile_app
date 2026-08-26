@@ -246,25 +246,25 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
       child: Consumer<Doctorprovider>(
         builder: (context, doctorprovider, child) {
           return SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search Patient by id or name...',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search Patient by id or name...',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                  RefreshIndicator(
+                ),
+                Expanded(
+                  child: RefreshIndicator(
                     onRefresh: _handleRefresh,
                     child: FutureBuilder(
                       future: fetchactiveallinvisits,
@@ -377,8 +377,8 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                       },
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

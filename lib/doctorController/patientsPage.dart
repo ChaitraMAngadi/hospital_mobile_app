@@ -30,6 +30,7 @@ class _PatientsPageState extends State<PatientsPage> {
   Timer? _debounceTimer;
   String _currentSearchQuery = '';
   bool _isSearching = false; // Add this flag to track search state
+bool _isInitialLoading = true;   // NEW
 
   @override
   void initState() {
@@ -61,11 +62,18 @@ class _PatientsPageState extends State<PatientsPage> {
     });
   }
 
-  Future<void> _fetchInitialData() async {
-    await doctorprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
-    // await homePageProvider.getdoctordetails();
+  // Future<void> _fetchInitialData() async {
+  //   await doctorprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
+  //   // await homePageProvider.getdoctordetails();
+  // }
+Future<void> _fetchInitialData() async {
+  await doctorprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
+  if (mounted) {
+    setState(() {
+      _isInitialLoading = false;   // NEW
+    });
   }
-
+}
 
 String calculateAge(String dob) {
   DateTime birthDate;
@@ -174,16 +182,28 @@ String calculateAge(String dob) {
     setState(() => _isLoadingMore = false);
   }
 
+  // Future<void> _handleRefresh() async {
+  //   setState(() {
+  //     _currentPage = 1;
+  //     _hasMore = true;
+  //     _isSearching = false; // Reset searching flag
+  //     doctorprovider.allpatients.clear();
+  //     doctorprovider.filteredPatients.clear();
+  //   });
+  //   await _fetchInitialData();
+  // }
+
   Future<void> _handleRefresh() async {
-    setState(() {
-      _currentPage = 1;
-      _hasMore = true;
-      _isSearching = false; // Reset searching flag
-      doctorprovider.allpatients.clear();
-      doctorprovider.filteredPatients.clear();
-    });
-    await _fetchInitialData();
-  }
+  setState(() {
+    _currentPage = 1;
+    _hasMore = true;
+    _isSearching = false;
+    _isInitialLoading = true;   // NEW
+    doctorprovider.allpatients.clear();
+    doctorprovider.filteredPatients.clear();
+  });
+  await _fetchInitialData();
+}
 
   String formatDate(String date) {
     final parsedDate = DateTime.tryParse(date);
@@ -455,6 +475,11 @@ String calculateAge(String dob) {
   }
 
   Widget _buildMainContent(Doctorprovider doctorprovider) {
+
+     if (_isInitialLoading) {
+    return _buildShimmerList();
+  }
+
     // Show shimmer while searching or initial load
     if (_isSearching || (_currentPage == 1 && _isLoadingMore)) {
       return _buildShimmerList();
@@ -466,9 +491,11 @@ String calculateAge(String dob) {
     }
     
     // Show shimmer for initial load (when no search query)
-    if (doctorprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
-      return _buildShimmerList();
-    }
+    // if (doctorprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
+    //   return Center(
+    //     child: Text("No Patients to show Please Register"),
+    //   );
+    // }
 
 if(doctorprovider.allpatients.isEmpty){
   return Center(
@@ -538,6 +565,7 @@ if(doctorprovider.allpatients.isEmpty){
                 context.router.push(PatientOutvisitsRoute(patientId: item['patientId']));
               }, invisitonTap: (){
                 context.router.push(PatientInvisitsRoute(patientId: item['patientId'], name: item['name']));
+
               },),
             );
           } else if (_hasMore && _isLoadingMore) {

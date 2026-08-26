@@ -1254,12 +1254,13 @@ Future<void> getdoctorsnurses(BuildContext context) async {
     
     try {
       // if (_cache.isCacheValid(Outvisits)) return;
-       final cached = _cache.get<List<Map<String, dynamic>>>(Outvisits);
-      if (cached != null) {
-        gettodaysvisits = cached;
-        notifyListeners();
-        return;
-      }
+      //  final cached = _cache.get<List<Map<String, dynamic>>>(Outvisits);
+      // if (cached != null) {
+      //   gettodaysvisits = cached;
+      //   notifyListeners();
+      //   return;
+      // }
+      print(url);
 
       final response = await http.get(
         Uri.parse(url),
@@ -1276,6 +1277,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
             //  _cache.markCached(Outvisits);
             _cache.set(Outvisits, gettodaysvisits);
+            print("today outvisit: ${gettodaysvisits}");
         notifyListeners();
       }else if(response.statusCode == 401){
         await refreshtoken(context);

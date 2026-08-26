@@ -82,6 +82,7 @@ CacheManager cache = CacheManager();
           _infoRow(Icons.email, "Email", item['email']),
           _infoRow(Icons.phone, "Phone", item['phone'].toString()),
           _infoRow(Icons.male, "Gender", item['gender']),
+          if(item['address'] != '')
           _infoRow(
             Icons.location_on,
             "Address",

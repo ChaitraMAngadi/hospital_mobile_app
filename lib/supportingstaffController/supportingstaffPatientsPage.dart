@@ -360,7 +360,9 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
     
     // Show shimmer for initial load (when no search query)
     if (supportingstaffprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
-      return _buildShimmerList();
+     return Center(
+        child: Text("No Patients to show Please Register"),
+      );
     }
     
     // Show the actual list

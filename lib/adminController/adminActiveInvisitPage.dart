@@ -263,25 +263,25 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                   return dateB.compareTo(dateA); // latest first
                 });
           return SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search Patient by id or name...',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search Patient by id or name...',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                  RefreshIndicator(
+                ),
+                Expanded(
+                  child: RefreshIndicator(
                     onRefresh: _handleRefresh,
                     child: FutureBuilder(
                       future: fetchactiveallinvisits,
@@ -289,14 +289,14 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.76,
+                              height: MediaQuery.of(context).size.height * 0.8,
                               child: _buildShimmerList());
                         } else {
                           return SafeArea(
                             child: adminprovider.filteredactiveinvisits.isEmpty
                                 ? SizedBox(
                                     height: MediaQuery.of(context).size.height *
-                                        0.76,
+                                        0.8,
                                     child: _searchController.text.isNotEmpty
                                         ? _buildNoSearchResults() // <-- show no results UI if searching
                                         : const Center(
@@ -309,8 +309,8 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                                   )
                                 : SizedBox(
                                     height: MediaQuery.of(context).size.height *
-                                        0.76,
-
+                                        0.8,
+                              
                                     child: ListView.builder(
                                       
                                       itemCount: adminprovider
@@ -397,8 +397,8 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                                                 );
                                               await  adminprovider.getactiveinvisits(context);
                                                setState(() {
-    adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
-  });
+                  adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
+                                });
                                           },
                                           viewallvisitsonTap: (){
                                             context.router.push(PatientAdminInvisitsRoute(patientId: item['patientId'], name: item['name'],
@@ -420,8 +420,8 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                       },
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
