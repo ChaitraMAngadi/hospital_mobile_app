@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 
 class DischargeDialogBox extends StatefulWidget {
   final String patientId;
+
   final String complaintId;
-  const DischargeDialogBox({super.key, required this.patientId, required this.complaintId});
+  final String name;
+  const DischargeDialogBox({super.key, required this.patientId, required this.complaintId, required this.name});
 
   @override
   State<DischargeDialogBox> createState() => _DischargeDialogBoxState();
@@ -139,7 +141,7 @@ class _DischargeDialogBoxState extends State<DischargeDialogBox> {
                     onPressed: () async {
                       if (formkey.currentState!.validate()) {
                       print(dischargesummaryController.text);
-                      await doctorprovider.dischargeInPatient(widget.patientId, widget.complaintId, dischargesummaryController.text,formatedJoiDate, context);
+                      await doctorprovider.dischargeInPatient(widget.patientId, widget.complaintId, dischargesummaryController.text,formatedJoiDate,widget.name, context);
 
                       await doctorprovider.getpatientinvisits(widget.patientId, context);
                       

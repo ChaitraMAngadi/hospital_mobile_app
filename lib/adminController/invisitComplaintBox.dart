@@ -104,6 +104,10 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                   items: widget.alldoctors,
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedConsultingDoctor,
+                  clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
                   popupProps: PopupProps.menu(
                     showSearchBox: true,
                     showSelectedItems: false,
@@ -163,6 +167,10 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                       .toList(),
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedDutyDoctor,
+                  clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
                   popupProps: PopupProps.menu(
                     showSearchBox: true,
                     showSelectedItems: false,
@@ -211,6 +219,10 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                       .toList(),
                   itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
                   selectedItem: selectedVisitingDoctor,
+                  clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ), 
                   popupProps: PopupProps.menu(
                     showSearchBox: true,
                     showSelectedItems: false,
@@ -258,6 +270,10 @@ class _ComplaintDialogBoxState extends State<ComplaintDialogBox> {
                   itemAsString: (nurse) =>
                       "${nurse['name']} | ${nurse['userid']}",
                   selectedItem: selectedNurse,
+                  clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
                   popupProps: PopupProps.menu(
                     showSearchBox: true,
                     showSelectedItems: false,

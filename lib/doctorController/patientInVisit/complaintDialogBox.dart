@@ -111,7 +111,7 @@ Widget _customDropdownBuilder(
                   maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter cheif complaint';
+                      return 'Please enter Chief complaint';
                     }
                     return null; // Return null if validation is successful
                   },
@@ -206,6 +206,10 @@ widget.alldoctors.isEmpty
         items: widget.alldoctors,
         itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
         selectedItem: selectedDutyDoctor,
+        clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
         popupProps: PopupProps.menu(
           showSearchBox: true,
           showSelectedItems: false,
@@ -323,6 +327,10 @@ Builder(
       items: visitingDoctorList,
       itemAsString: (doc) => "${doc['name']} | ${doc['userid']}",
       selectedItem: selectedVisitingDoctor,
+      clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
       popupProps: PopupProps.menu(
         showSearchBox: true,
         showSelectedItems: false,
@@ -421,6 +429,10 @@ widget.allnurses.isEmpty
         items: widget.allnurses,
         itemAsString: (nurse) => "${nurse['name']} | ${nurse['userid']}",
         selectedItem: selectedNurse,
+        clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
         popupProps: PopupProps.menu(
           showSearchBox: true,
           showSelectedItems: false,

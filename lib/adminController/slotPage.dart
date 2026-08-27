@@ -29,6 +29,8 @@ class _SlotPageState extends State<SlotPage> {
 
   late TextEditingController dateController;
 
+  bool _isUpdatingTime = false; 
+
   String? newSelectedTime;
   final Map<int, String> durationToLabel = {
     15: "15 Minutes",
@@ -409,7 +411,7 @@ String normalizeTo24(String time) {
                                         ),
                                       ),
                                     ),
-                                    onPressed:hasBookedSlots? null: () async {
+                                    onPressed: (hasBookedSlots || _isUpdatingTime) ? null: () async {
 
                                       loginController.text = normalizeTo24(loginController.text.trim());
   logoutController.text = normalizeTo24(logoutController.text.trim());
@@ -487,7 +489,19 @@ String normalizeTo24(String time) {
                                   
                                       // Implement time change logic
                                     },
-                                    child:  Text(
+                                    child: 
+                                    _isUpdatingTime
+        // NEW: spinner while API call is in progress
+        ? const SizedBox(
+            height: 18,
+            width: 18,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          )
+        :
+                                     Text(
                                       "Update Time",
                                       style: TextStyle(
                                         color:hasBookedSlots?Colors.grey.shade800: Colors.white,

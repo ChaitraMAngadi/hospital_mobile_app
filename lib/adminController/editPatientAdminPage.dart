@@ -42,7 +42,6 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
   final List<String> _genderOptions = [
     'male',
     'female',
-    'transgender',
     'other'
   ];
   String? _selectedGender;
@@ -370,9 +369,17 @@ class _EditPatientAdminPageState extends State<EditPatientAdminPage> {
                                   padding: const EdgeInsets.only(right: 16),
                                   child: GestureDetector(
                                       onTap: () async {
+                                         DateTime initialPickerDate;
+  try {
+    initialPickerDate = formatedJoiDate.isNotEmpty
+        ? DateTime.parse(formatedJoiDate)   // formatedJoiDate already yyyy-MM-dd format mein hai
+        : DateTime.now();
+  } catch (e) {
+    initialPickerDate = DateTime.now();
+  }
                                         DateTime? pickedDate = await showDatePicker(
                                             context: context,
-                                            initialDate: DateTime.now(),
+                                            initialDate: initialPickerDate,
                                             firstDate: DateTime(1950),
                                             lastDate: DateTime.now());
 

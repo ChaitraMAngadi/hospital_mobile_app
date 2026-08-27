@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/complaintDialogBox.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosisPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/downloadPdfButton.dart';
@@ -297,7 +298,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                         0.81,
                                     child: const Center(
                                       child: Text(
-                                        "No OPD Visits for this pateint \nPlaese add OPD Visit",
+                                        "No OPD Visits for this pateint \nPlease add OPD Visit",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -330,7 +331,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
 
             return VisitModel(
               visitnumber: index + 1,
-              cheifcomplaint: item['chief_complaint'],
+              Chiefcomplaint: item['chief_complaint'],
               visitdate: formatDate(item['visit_date']),
               complaintId: item['id'],
               patientId: widget.patientId,
@@ -367,7 +368,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                   context: context,
                   builder: (context) {
                     return VisitViewModel(
-                      cheifcomplaint: item["chief_complaint"],
+                      Chiefcomplaint: item["chief_complaint"],
                       height: item["height"] ?? "",
                       weight: item["weight"] ?? "",
                       bp: item["bp"] ?? "",
@@ -431,7 +432,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
 
                         //                 return VisitModel(
                         //                   visitnumber: index + 1,
-                        //                   cheifcomplaint:
+                        //                   Chiefcomplaint:
                         //                       item['chief_complaint'],
                         //                   visitdate:
                         //                       formatDate(item['visit_date']),
@@ -471,7 +472,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                         //                       context: context,
                         //                       builder: (context) {
                         //                         return VisitViewModel(
-                        //                           cheifcomplaint:
+                        //                           Chiefcomplaint:
                         //                               item["chief_complaint"],
                         //                           height: item["height"] ?? "",
                         //                           weight: item["weight"] ?? "",
@@ -566,7 +567,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 // class VisitModel extends StatelessWidget {
 //   const VisitModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     // required this.supportingimages,
 //     // required this.createdtime,
@@ -578,7 +579,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 //     required this.patientId, required this.supportingimagesontap, required this.remarkontap,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String visitdate;
 //   // final List<dynamic> supportingimages;
 //   final String complaintId;
@@ -652,7 +653,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 //                 height: 4,
 //               ),
 //               const Text(
-//                 "Cheif-Complaint :",
+//                 "Chief-Complaint :",
 //                 style: TextStyle(
 //                   fontSize: 16,
 //                   fontWeight: FontWeight.bold,
@@ -664,7 +665,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 //                 height: 4,
 //               ),
 //               Text(
-//                 cheifcomplaint,
+//                 Chiefcomplaint,
 //                 style: const TextStyle(fontSize: 16),
 //                 overflow: TextOverflow.ellipsis,
 //               ),
@@ -724,7 +725,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 class VisitModel extends StatelessWidget {
   const VisitModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.viewontap,
     required this.buttonText,
@@ -737,7 +738,7 @@ class VisitModel extends StatelessWidget {
     
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String visitdate;
   final String complaintId;
   final String patientId;
@@ -819,7 +820,7 @@ class VisitModel extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  cheifcomplaint,
+                  Chiefcomplaint,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -1010,7 +1011,7 @@ class VisitModel extends StatelessWidget {
 // class VisitViewModel extends StatelessWidget {
 //   const VisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.height,
 //     required this.weight,
 //     required this.bp,
@@ -1019,7 +1020,7 @@ class VisitModel extends StatelessWidget {
 //     required this.visitdate,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String height;
 //   final String weight;
 //   final String bp;
@@ -1065,13 +1066,13 @@ class VisitModel extends StatelessWidget {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1184,7 +1185,7 @@ class VisitModel extends StatelessWidget {
 class VisitViewModel extends StatelessWidget {
   const VisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.height,
     required this.weight,
     required this.bp,
@@ -1193,7 +1194,7 @@ class VisitViewModel extends StatelessWidget {
     required this.visitdate,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String height;
   final String weight;
   final String bp;
@@ -1203,6 +1204,12 @@ class VisitViewModel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(Chiefcomplaint);
+    print(height);
+    print(weight);
+    print(bp);
+    print(temprature);
+    print(heartrate);
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -1263,7 +1270,7 @@ class VisitViewModel extends StatelessWidget {
               _infoTile(
                 icon: Icons.description_outlined,
                 title: "CHIEF COMPLAINT",
-                value: cheifcomplaint,
+                value: Chiefcomplaint,
               ),
           
               const SizedBox(height: 12),
@@ -1273,6 +1280,56 @@ class VisitViewModel extends StatelessWidget {
                 icon: Icons.calendar_today_outlined,
                 title: "VISIT DATE",
                 value: visitdate,
+              ),
+
+               if(height.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(height.isNotEmpty)
+              _infoTile(
+                icon: Icons.height,
+                title: "Height",
+                value: height,
+              ),
+
+               if(weight.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(weight.isNotEmpty)
+              _infoTile(
+                icon: FontAwesomeIcons.weightScale,
+                title: "WEIGHT",
+                value: weight,
+              ),
+
+               if(bp.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(bp.isNotEmpty)
+              _infoTile(
+                icon: FontAwesomeIcons.heartCirclePlus,
+                title: "BP",
+                value: bp,
+              ),
+
+               if(temprature.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(temprature.isNotEmpty)
+              _infoTile(
+                icon: Icons.thermostat,
+                title: "Temperature",
+                value: temprature,
+              ),
+
+               if(heartrate.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(heartrate.isNotEmpty)
+              _infoTile(
+                icon: FontAwesomeIcons.heartPulse,
+                title: "Heart Rate",
+                value: heartrate,
               ),
           
               /// ⚠️ VITALS LOGIC KEPT (NOT REMOVED)
@@ -1355,7 +1412,7 @@ class RegisterVisitModel extends StatefulWidget {
 }
 
 class _RegisterVisitModelState extends State<RegisterVisitModel> {
-  final TextEditingController cheifcomplaintController =
+  final TextEditingController ChiefcomplaintController =
       TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
@@ -1418,14 +1475,14 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                   height: 8,
                 ),
                 const Text(
-                  " Cheif Complaint* ",
+                  " Chief Complaint* ",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 6,
                 ),
                 TextFormField(
-                  controller: cheifcomplaintController,
+                  controller: ChiefcomplaintController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   // controller: _nameController,
                   // inputFormatters: [
@@ -1437,13 +1494,13 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                   maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter cheif complaint';
+                      return 'Please enter Chief complaint';
                     }
                     return null; // Return null if validation is successful
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: 'Enter Cheif Complaint',
+                    hintText: 'Enter Chief Complaint',
                   ),
                 ),
                 const SizedBox(
@@ -1628,7 +1685,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
 
                               doctorprovider.addoutvisit(
                                 widget.patientId,
-                                cheifcomplaintController.text,
+                                ChiefcomplaintController.text,
                                 heightController.text,
                                 weightController.text,
                                 bpController.text,
@@ -1704,7 +1761,7 @@ class EditVisitModel extends StatefulWidget {
   State<EditVisitModel> createState() => _EditVisitModelState();
 }
 class _EditVisitModelState extends State<EditVisitModel> {
-  final TextEditingController cheifcomplaintController = TextEditingController();
+  final TextEditingController ChiefcomplaintController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   final TextEditingController bpController = TextEditingController();
@@ -1720,7 +1777,7 @@ class _EditVisitModelState extends State<EditVisitModel> {
     formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
     // Prefill controllers with widget data
-    cheifcomplaintController.text = widget.chief_complaint;
+    ChiefcomplaintController.text = widget.chief_complaint;
     heightController.text = widget.height ?? '';
     weightController.text = widget.weight ?? '';
     bpController.text = widget.bp ?? '';
@@ -1730,7 +1787,7 @@ class _EditVisitModelState extends State<EditVisitModel> {
 
   @override
   void dispose() {
-    cheifcomplaintController.dispose();
+    ChiefcomplaintController.dispose();
     heightController.dispose();
     weightController.dispose();
     bpController.dispose();
@@ -1805,7 +1862,7 @@ shape: RoundedRectangleBorder(
                     ),
                     const SizedBox(height: 6),
                     TextFormField(
-                      controller: cheifcomplaintController,
+                      controller: ChiefcomplaintController,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       maxLines: 3,
                       validator: (value) {
@@ -1873,7 +1930,7 @@ shape: RoundedRectangleBorder(
                             await patientpageprovider.editvisit(
                               widget.patientId,
                               widget.complaintId,
-                              cheifcomplaintController.text,
+                              ChiefcomplaintController.text,
                               heightController.text,
                               weightController.text,
                               bpController.text,

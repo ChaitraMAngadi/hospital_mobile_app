@@ -247,7 +247,7 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                       context: context,
                                       builder: (context) {
                                         print(doctorprovider.invisitId);
-                                        return DischargeDialogBox(patientId: widget.id, complaintId: doctorprovider.invisitId);
+                                        return DischargeDialogBox(patientId: widget.id, complaintId: doctorprovider.invisitId, name: widget.name);
                                       },
                                     );
                                 // context.router.push(RegisterPatientRoute());
@@ -1401,6 +1401,11 @@ String formatDate(String date) {
     final formattedDate = DateFormat('dd/MM/yyyy').format(parsedDate);
     return formattedDate;
   }
+String formatCreatedAt(String createdAt) {
+  DateTime dateTime = DateTime.parse(createdAt).toLocal(); // UTC ko local time mein convert
+  return DateFormat('dd/MM/yyyy hh:mm a').format(dateTime);
+}
+
   @override
 Widget build(BuildContext context) {
   return Dialog(
@@ -1490,7 +1495,7 @@ Widget build(BuildContext context) {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _pill("Diagnosis #${index + 1}", Colors.blue),
-                              Text(formatDate(d["createdAt"]) ?? "",
+                              Text(formatCreatedAt(d["createdAt"]) ?? "",
                                   style: const TextStyle(
                                       fontSize: 12, color: Colors.grey)),
                             ],

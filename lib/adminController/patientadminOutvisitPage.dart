@@ -245,7 +245,7 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                 ? SizedBox(
                                     height: MediaQuery.of(context).size.height * 0.81,
                                     child: const Center(child: Text(
-                                          "No Outvisits for this pateint \nPlaese add Outvisit",
+                                          "No Outvisits for this pateint \n Please add Outvisit",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -280,7 +280,7 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                           
                                             return VisitModel(
                                               indexnum: index+1,
-                                              cheifcomplaint: item['chief_complaint'],
+                                              Chiefcomplaint: item['chief_complaint'],
                                               visitdate: formatDate(item['visit_date']),
                                               complaintId: item['id'],
                                               patientId: widget.patientId,
@@ -291,7 +291,7 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                                   context: context,
                                                   builder: (context) {
                                                     return VisitViewModel(
-                                                      cheifcomplaint: item["chief_complaint"],
+                                                      Chiefcomplaint: item["chief_complaint"],
                                                       height: item["height"] ?? "",
                                                       weight: item["weight"] ?? "",
                                                       bp: item["bp"] ?? "",
@@ -341,7 +341,7 @@ adminprovider.invalidateCache(key: adminprovider.PatientOutvisit);
 // class VisitModel extends StatelessWidget {
 //   const VisitModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     // required this.supportingimages,
 //     // required this.createdtime,
@@ -351,7 +351,7 @@ adminprovider.invalidateCache(key: adminprovider.PatientOutvisit);
 //     required this.patientId, required this.isDiagnosed,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String visitdate;
 //   // final List<dynamic> supportingimages;
 //   final String complaintId;
@@ -413,7 +413,7 @@ adminprovider.invalidateCache(key: adminprovider.PatientOutvisit);
 //                 height: 4,
 //               ),
 //               const Text(
-//                 "Cheif-Complaint :",
+//                 "Chief-Complaint :",
 //                 style: TextStyle(
 //                   fontSize: 16,
 //                   fontWeight: FontWeight.bold,
@@ -425,7 +425,7 @@ adminprovider.invalidateCache(key: adminprovider.PatientOutvisit);
 //                 height: 4,
 //               ),
 //               Text(
-//                 cheifcomplaint,
+//                 Chiefcomplaint,
 //                 style: const TextStyle(fontSize: 16),
 //                 overflow: TextOverflow.ellipsis,
 //               ),
@@ -450,7 +450,7 @@ adminprovider.invalidateCache(key: adminprovider.PatientOutvisit);
 class VisitModel extends StatelessWidget {
   const VisitModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.viewontap,
     required this.complaintId,
@@ -458,7 +458,7 @@ class VisitModel extends StatelessWidget {
     required this.isDiagnosed, required this.indexnum,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String visitdate;
   final String complaintId;
   final String patientId;
@@ -567,7 +567,7 @@ class VisitModel extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  cheifcomplaint,
+                  Chiefcomplaint,
                   style: const TextStyle(fontSize: 16,
                   fontWeight: FontWeight.bold,),
                 ),
@@ -609,7 +609,7 @@ class VisitModel extends StatelessWidget {
 // class VisitViewModel extends StatelessWidget {
 //   const VisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.height,
 //     required this.weight,
 //     required this.bp,
@@ -618,7 +618,7 @@ class VisitModel extends StatelessWidget {
 //     required this.visitdate, required this.associateddoctor,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String associateddoctor;
 //   final String height;
 //   final String weight;
@@ -685,7 +685,7 @@ class VisitModel extends StatelessWidget {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
@@ -798,7 +798,7 @@ class VisitModel extends StatelessWidget {
 class VisitViewModel extends StatelessWidget {
   const VisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.height,
     required this.weight,
     required this.bp,
@@ -808,7 +808,7 @@ class VisitViewModel extends StatelessWidget {
     required this.associateddoctor,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String associateddoctor;
   final String height;
   final String weight;
@@ -933,7 +933,7 @@ class VisitViewModel extends StatelessWidget {
               _infoTile(
                 icon: Icons.assignment_outlined,
                 label: "Chief Complaint",
-                value: cheifcomplaint,
+                value: Chiefcomplaint,
               ),
 
               const SizedBox(height: 12),
@@ -1023,7 +1023,7 @@ class RegisterVisitModel extends StatefulWidget {
 }
 
 class _RegisterVisitModelState extends State<RegisterVisitModel> {
-  final TextEditingController cheifcomplaintController =
+  final TextEditingController ChiefcomplaintController =
       TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
@@ -1089,14 +1089,14 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                   height: 8,
                 ),
                 const Text(
-                  " Cheif Complaint* ",
+                  " Chief Complaint* ",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 6,
                 ),
                 TextFormField(
-                  controller: cheifcomplaintController,
+                  controller: ChiefcomplaintController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   // controller: _nameController,
                   // inputFormatters: [
@@ -1108,13 +1108,13 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                   maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter cheif complaint';
+                      return 'Please enter Chief complaint';
                     }
                     return null; // Return null if validation is successful
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: 'Enter Cheif Complaint',
+                    hintText: 'Enter Chief Complaint',
                   ),
                 ),
                 const SizedBox(
@@ -1328,8 +1328,8 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                                 });
                         adminprovider.addoutvisit(
                           widget.patientId,
-                          cheifcomplaintController.text,
-                          heartrateController.text,
+                          ChiefcomplaintController.text,
+                          heightController.text,
                           weightController.text,
                           bpController.text,
                           temperatureController.text,

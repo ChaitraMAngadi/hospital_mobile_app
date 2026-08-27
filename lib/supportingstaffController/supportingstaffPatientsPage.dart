@@ -28,7 +28,9 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
   bool _hasMore = true;
   Timer? _debounceTimer;
   String _currentSearchQuery = '';
-  bool _isSearching = false; 
+  bool _isSearching = false;
+  bool _isInitialLoading = true;   // NEW
+ 
  
   @override
   void initState() {
@@ -62,6 +64,12 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
   Future<void> _fetchInitialData() async {
     await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
     // await homePageProvider.getdoctordetails();
+
+    if (mounted) {
+    setState(() {
+      _isInitialLoading = false;   // NEW
+    });
+  }
   }
 
   Future<void> _performSearch(String query) async {
@@ -102,6 +110,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
       _currentPage = 1;
       _hasMore = true;
       _isSearching = false; // Reset searching flag
+          _isInitialLoading = true;   // NEW
       supportingstaffprovider.allpatients.clear();
       supportingstaffprovider.filteredPatients.clear();
     });
@@ -348,6 +357,11 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
 }
 
   Widget _buildMainContent(Supportingstaffprovider supportingstaffprovider) {
+    
+     if (_isInitialLoading) {
+    return _buildShimmerList();
+  }
+    
     // Show shimmer while searching or initial load
     if (_isSearching || (_currentPage == 1 && supportingstaffprovider.allpatients.isEmpty && _isLoadingMore)) {
       return _buildShimmerList();

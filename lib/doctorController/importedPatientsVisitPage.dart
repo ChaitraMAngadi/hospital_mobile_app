@@ -231,7 +231,7 @@ String generateComplaintIdFromString(String createdAt) {
   //                                             context: context,
   //                                             builder: (context) {
   //                                               return VisitViewModel(
-  //                                                 cheifcomplaint: visit["complaint"],
+  //                                                 Chiefcomplaint: visit["complaint"],
   //                                                 height: visit["height"] ?? "",
   //                                                 weight: visit["weight"] ?? "",
   //                                                 bp: visit["bp"] ?? "",
@@ -363,7 +363,7 @@ String generateComplaintIdFromString(String createdAt) {
                                                       context: context,
                                                       builder: (context) {
                                                         return VisitViewModel(
-                                                          cheifcomplaint: visit["complaint"],
+                                                          Chiefcomplaint: visit["complaint"],
                                                           height: visit["height"] ?? "",
                                                           weight: visit["weight"] ?? "",
                                                           bp: visit["bp"] ?? "",
@@ -411,7 +411,7 @@ String generateComplaintIdFromString(String createdAt) {
  const SizedBox(height: 6),
 
                         const Text(
-                      "Cheif Complaint",
+                      "Chief Complaint",
                       style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 15,
                       ),
@@ -561,7 +561,7 @@ String generateComplaintIdFromString(String createdAt) {
   //                                             context: context,
   //                                             builder: (context) {
   //                                               return InVisitViewModel(
-  //                                                       cheifcomplaint: visit[
+  //                                                       Chiefcomplaint: visit[
   //                                                           'chief_complaint'],
   //                                                       visitdate: formatDate(
   //                                                           visit['visit_date']),
@@ -780,7 +780,7 @@ String generateComplaintIdFromString(String createdAt) {
                                                   context: context,
                                                   builder: (context) {
                                                     return InVisitViewModel(
-                                                            cheifcomplaint: visit[
+                                                            Chiefcomplaint: visit[
                                                                 'chief_complaint'],
                                                             visitdate: formatDate(
                                                                 visit['visit_date']),
@@ -831,7 +831,7 @@ String generateComplaintIdFromString(String createdAt) {
  const SizedBox(height: 6),
 
                         const Text(
-                      "Cheif Complaint",
+                      "Chief Complaint",
                       style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 15,
                       ),
@@ -1044,7 +1044,7 @@ String generateComplaintIdFromString(String createdAt) {
     //                                           context: context,
     //                                           builder: (context) {
     //                                             return InVisitViewModel(
-    //                                                     cheifcomplaint: visit[
+    //                                                     Chiefcomplaint: visit[
     //                                                         'chief_complaint'],
     //                                                     visitdate: formatDate(
     //                                                         visit['visit_date']),
@@ -1136,7 +1136,7 @@ String generateComplaintIdFromString(String createdAt) {
 // class VisitViewModel extends StatelessWidget {
 //   const VisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.height,
 //     required this.weight,
 //     required this.bp,
@@ -1145,7 +1145,7 @@ String generateComplaintIdFromString(String createdAt) {
 //     required this.visitdate,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String height;
 //   final String weight;
 //   final String bp;
@@ -1191,13 +1191,13 @@ String generateComplaintIdFromString(String createdAt) {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1310,7 +1310,7 @@ String generateComplaintIdFromString(String createdAt) {
 class VisitViewModel extends StatelessWidget {
   const VisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.height,
     required this.weight,
     required this.bp,
@@ -1319,7 +1319,7 @@ class VisitViewModel extends StatelessWidget {
     required this.visitdate, required this.diagnosedby,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String height;
   final String weight;
   final String bp;
@@ -1381,7 +1381,7 @@ class VisitViewModel extends StatelessWidget {
                   /// CHIEF COMPLAINT
                   _highlightCard(
                     label: "CHIEF COMPLAINT",
-                    value: cheifcomplaint,
+                    value: Chiefcomplaint,
                   ),
                         
                   const SizedBox(height: 16),
@@ -1556,7 +1556,7 @@ class VisitViewModel extends StatelessWidget {
 // class InVisitViewModel extends StatelessWidget {
 //   const InVisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     required this.consultingdoctor,
 //     required this.dutydoctor,
@@ -1564,7 +1564,7 @@ class VisitViewModel extends StatelessWidget {
 //     required this.associatedstaff,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String consultingdoctor;
 //   final String dutydoctor;
 //   final String visitingdoctor;
@@ -1609,13 +1609,13 @@ class VisitViewModel extends StatelessWidget {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1732,7 +1732,7 @@ class VisitViewModel extends StatelessWidget {
 class InVisitViewModel extends StatelessWidget {
   const InVisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.consultingdoctor,
     required this.dutydoctor,
@@ -1740,7 +1740,7 @@ class InVisitViewModel extends StatelessWidget {
     required this.associatedstaff,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String consultingdoctor;
   final String dutydoctor;
   final String visitingdoctor;
@@ -1791,7 +1791,7 @@ class InVisitViewModel extends StatelessWidget {
               /// CHIEF COMPLAINT
               _highlightCard(
                 label: "CHIEF COMPLAINT",
-                value: cheifcomplaint,
+                value: Chiefcomplaint,
               ),
           
               const SizedBox(height: 16),

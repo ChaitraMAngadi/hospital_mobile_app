@@ -331,7 +331,7 @@ void initState() {
                                               context: context,
                                               builder: (context) {
                                                 return VisitViewModel(
-                                                  cheifcomplaint: item["chief_complaint"],
+                                                  Chiefcomplaint: item["chief_complaint"],
                                                   height: item["height"] ?? "",
                                                   weight: item["weight"] ?? "",
                                                   bp: item["bp"] ?? "",

@@ -121,7 +121,7 @@ final cached = _cache.get<List<Map<String, dynamic>>>(kProfile);
 
         if (data is List) {
           admindetailedprofile = List<Map<String, dynamic>>.from(data);
-                  _cache.set(kProfile, admindetailedprofile);
+                  
 
 //  _cache.markCached(kProfile);
 
@@ -131,6 +131,7 @@ final cached = _cache.get<List<Map<String, dynamic>>>(kProfile);
           print('doctor details : $admindetailedprofile');
           // print(doctordetailedprofile);
         }
+        _cache.set(kProfile, admindetailedprofile);
         notifyListeners();
       } else if(response.statusCode == 401){
       await  refreshtoken(context);
@@ -909,7 +910,7 @@ Future<void> getpatientinvisits(String id, BuildContext context) async {
 
 Future<void> addoutvisit(
       String patientId,
-      String cheifcomplaint,
+      String Chiefcomplaint,
       String height,
       String weight,
       String bp,
@@ -923,7 +924,7 @@ Future<void> addoutvisit(
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
         "associatedDoctor": associatedDoctor
       };
 
@@ -986,7 +987,7 @@ Future<void> addoutvisit(
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
         "associatedDoctor": associatedDoctor
       };
 
@@ -1242,7 +1243,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
 
   Future<void> addinvisit(
       String patientId,
-      String cheifcomplaint,
+      String Chiefcomplaint,
       String consultingdoctor,
       String visitingdoctor,
       String dutydoctor,
@@ -1254,7 +1255,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
         "consultingDoctor": consultingdoctor,
       };
 
@@ -1310,7 +1311,7 @@ invalidateCache();
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
         "consultingDoctor": consultingdoctor,
       };
 

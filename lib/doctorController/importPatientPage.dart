@@ -1828,10 +1828,11 @@ class _OtpDialogState extends State<OtpDialog> {
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(22),
-            bottomRight: Radius.circular(22),
-          ),
+           borderRadius: BorderRadius.vertical(bottom: Radius.circular(22)),
+          // borderRadius: BorderRadius.only(
+          //   bottomLeft: Radius.circular(22),
+          //   bottomRight: Radius.circular(22),
+          // ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

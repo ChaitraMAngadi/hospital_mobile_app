@@ -284,7 +284,7 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                                         ? _buildNoSearchResults() // <-- show no results UI if searching
                                         : const Center(
                                             child: Text(
-                                              "No Out Visits to show",
+                                              "No In Visits to show",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
@@ -331,7 +331,7 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                                                       item['createdByAdmin']
                                                               ?['userid'] ??
                                                           '',
-                                                  cheifcomplaint:
+                                                  Chiefcomplaint:
                                                       item['chief_complaint'],
                                                   visitdate: formatDate(
                                                       item['visit_date']),
@@ -719,7 +719,7 @@ class ActiveInvisitModel extends StatelessWidget {
 class ActiveInVisitViewModel extends StatelessWidget {
   const ActiveInVisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.consultingdoctor,
     required this.dutydoctor,
@@ -757,7 +757,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
   final String dutydocid;
   final String visitingdocid;
   final String supportingstaffid;
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String consultingdoctor;
   final String dutydoctor;
   final String visitingdoctor;
@@ -893,7 +893,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
 //           children: [
 //             const Text("Chief Complaint: ",
 //                 style: TextStyle(fontWeight: FontWeight.bold)),
-//             Flexible(child: Text(cheifcomplaint)),
+//             Flexible(child: Text(Chiefcomplaint)),
 //           ],
 //         ),
 //          SizedBox(height: 4,),
@@ -1087,7 +1087,7 @@ Widget build(BuildContext context) {
             infoTile(
               icon: Icons.report_problem,
               label: "Chief Complaint",
-              value: cheifcomplaint,
+              value: Chiefcomplaint,
             ),
             if(consultingdoctor != '')
             infoTile(

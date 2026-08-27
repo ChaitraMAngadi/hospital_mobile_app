@@ -2459,7 +2459,10 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
       ),
     );
   }
-
+String formatCreatedAt(String createdAt) {
+  DateTime dateTime = DateTime.parse(createdAt).toLocal(); // UTC ko local time mein convert
+  return DateFormat('dd/MM/yyyy hh:mm a').format(dateTime);
+}
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -2493,6 +2496,8 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
               final index = entry.key;
               final d = entry.value;
 
+              print(d);
+
               return Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 20),
@@ -2525,9 +2530,9 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                             ),
                           ),
                         ),
-                        if (d["created_at"] != null)
+                        if (d["createdAt"] != null)
                           Text(
-                            d["created_at"],
+                            formatCreatedAt(d["createdAt"]),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,
@@ -2615,56 +2620,66 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                     const SizedBox(height: 16),
 
                     // Done By Section
-                    if (d["doctor_name"] != null)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Done By",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
+                    if (d["doctorName"] != null)
+                      Container(
+                         padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(16)),
+                              border: Border.all(
+                                color: Colors.grey
+                              )
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Text(
-                                d["doctor_name"] ?? "",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              if (d["status"] != null)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade400,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    d["status"],
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          if (d["doctor_specialty"] != null)
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              d["doctor_specialty"],
+                              "Done By",
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade600,
                               ),
                             ),
-                        ],
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  d["doctorName"] ?? "",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                // const SizedBox(width: 8),
+                                if (d["doneByType"] != null)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.shade400,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      d["doneByType"],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            if (d["doctorSpecialization"] != null)
+                              Text(
+                                d["doctorSpecialization"],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
 
                     const SizedBox(height: 16),
@@ -2716,7 +2731,7 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                     const SizedBox(height: 16),
 
                     // Medical Advice
-                    if (d["medical_advice"] != null)
+                    if (d["medical_advice"] != null && d['medical_advice'] != '')
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -2735,6 +2750,7 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                               ),
                             ],
                           ),
+                          
                           const SizedBox(height: 4),
                           Container(
                              padding: EdgeInsets.symmetric(horizontal: 8),
@@ -2758,11 +2774,11 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                           ),
                         ],
                       ),
-
+if (d["medical_advice"] != null && d['medical_advice'] != '')
                     const SizedBox(height: 16),
 
                     // Lab Tests
-                    if (d["lab_test"] != null)
+                    if (d["lab_test"] != null && d["lab_test"] != '' )
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -2805,11 +2821,11 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                           ),
                         ],
                       ),
-
+if (d["lab_test"] != null && d["lab_test"] != '' )
                     const SizedBox(height: 16),
 
                     // Doctor's Remark
-                    if (d["doctors_remark"] != null)
+                    if (d["doctors_remark"] != null && d["doctors_remark"] != '')
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -2851,7 +2867,7 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                           ),
                         ],
                       ),
-
+ if (d["doctors_remark"] != null && d["doctors_remark"] != '')
                     const SizedBox(height: 16),
 
                     // Medication Section
@@ -2968,7 +2984,9 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
                           }).toList(),
                         ],
                       ),
-
+ if (d["medication"] != null &&
+                        d["medication"] is List &&
+                        d["medication"].isNotEmpty)
                     const SizedBox(height: 16),
 
                     // Supporting Documents

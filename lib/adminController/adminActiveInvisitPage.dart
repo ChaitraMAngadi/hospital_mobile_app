@@ -352,7 +352,7 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
                                                       item['createdByAdmin']
                                                               ?['userid'] ??
                                                           '',
-                                                  cheifcomplaint:
+                                                  Chiefcomplaint:
                                                       item['chief_complaint'],
                                                   visitdate: formatDate(
                                                       item['visit_date']),
@@ -841,7 +841,7 @@ class ActiveInvisitModel extends StatelessWidget {
 // class ActiveInVisitViewModel extends StatelessWidget {
 //   const ActiveInVisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     required this.consultingdoctor,
 //     required this.dutydoctor,
@@ -879,7 +879,7 @@ class ActiveInvisitModel extends StatelessWidget {
 //   final String dutydocid;
 //   final String visitingdocid;
 //   final String supportingstaffid;
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String consultingdoctor;
 //   final String dutydoctor;
 //   final String visitingdoctor;
@@ -1015,7 +1015,7 @@ class ActiveInvisitModel extends StatelessWidget {
 //           children: [
 //             const Text("Chief Complaint: ",
 //                 style: TextStyle(fontWeight: FontWeight.bold)),
-//             Flexible(child: Text(cheifcomplaint)),
+//             Flexible(child: Text(Chiefcomplaint)),
 //           ],
 //         ),
 //          SizedBox(height: 4,),
@@ -1075,7 +1075,7 @@ class ActiveInvisitModel extends StatelessWidget {
 class ActiveInVisitViewModel extends StatelessWidget {
   const ActiveInVisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.consultingdoctor,
     required this.dutydoctor,
@@ -1113,7 +1113,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
   final String dutydocid;
   final String visitingdocid;
   final String supportingstaffid;
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String consultingdoctor;
   final String dutydoctor;
   final String visitingdoctor;
@@ -1193,7 +1193,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
               /// COMPLAINT DETAILS
               _sectionTitle("Complaint Details"),
 
-              _infoTile(Icons.report_problem, "Chief Complaint", cheifcomplaint),
+              _infoTile(Icons.report_problem, "Chief Complaint", Chiefcomplaint),
               _infoTile(
                 Icons.person_outline,
                 "Consulting Doctor",

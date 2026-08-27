@@ -245,17 +245,14 @@ class _TodaysAppointmentsPageState extends State<TodaysAppointmentsPage> {
   ),
 ),
 
-        body: RefreshIndicator(
-      onRefresh: _handleRefresh,
-      child: Consumer<Adminprovider>(
-        builder: (context, adminPageProvider, child) {
-          return SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                
-                  RefreshIndicator(
+        body: Consumer<Adminprovider>(
+          builder: (context, adminPageProvider, child) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+              
+                Expanded(
+                  child: RefreshIndicator(
                     onRefresh: _handleRefresh,
                     child: FutureBuilder(
                       future: fetchtodaysappointments,
@@ -298,7 +295,7 @@ class _TodaysAppointmentsPageState extends State<TodaysAppointmentsPage> {
                     child: TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
-                        hintText: 'Search Patient by id or name...',
+                        hintText: 'Search Patient by name...',
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -306,56 +303,48 @@ class _TodaysAppointmentsPageState extends State<TodaysAppointmentsPage> {
                       ),
                     ),
                   ),
-                              SafeArea(
-                                child: adminPageProvider
-                                        .filteredtodaysappointments.isEmpty
-                                    ? SizedBox(
-                                        height: MediaQuery.of(context).size.height *
-                                            0.76,
-                                        child: _searchController.text.isNotEmpty
-                                            ? _buildNoSearchResults() // <-- show no results UI if searching
-                                            : const Center(
-                                                child: Text(
-                                                  "No Appoiments to show",
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                              ),
-                                      )
-                                    : SizedBox(
-                                        height: MediaQuery.of(context).size.height *
-                                            0.76,
-                                        child: ListView.builder(
-                                          itemCount: adminPageProvider
-                                              .filteredtodaysappointments.length,
-                                          itemBuilder: (context, index) {
-                                            final item = adminPageProvider
-                                                .filteredtodaysappointments[index];
-                                            return TodaysAppointmentModel(
-                                              patientname: item['patientname']??'',
-                                              patientmobile: item['patientMobile'].toString()??'',
-                                              starttime: item['startTime']??'',
-                                              endtime: item['endTime']??'',
-                                              doctorname: item['doctor']['name']??'',
-                                              status: item['status']??'',
-                                            );
-                                          },
-                                        ),
-                                      ),
-                              ),
+                              adminPageProvider
+                                      .filteredtodaysappointments.isEmpty
+                                  ? Expanded(
+                                    child: _searchController.text.isNotEmpty
+                                        ? _buildNoSearchResults() // <-- show no results UI if searching
+                                        : const Center(
+                                            child: Text(
+                                              "No Appoiments to show",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                  )
+                                  : Expanded(
+                                    child: ListView.builder(
+                                      itemCount: adminPageProvider
+                                          .filteredtodaysappointments.length,
+                                      itemBuilder: (context, index) {
+                                        final item = adminPageProvider
+                                            .filteredtodaysappointments[index];
+                                        return TodaysAppointmentModel(
+                                          patientname: item['patientname']??'',
+                                          patientmobile: item['patientMobile'].toString()??'',
+                                          starttime: item['startTime']??'',
+                                          endtime: item['endTime']??'',
+                                          doctorname: item['doctor']['name']??'',
+                                          status: item['status']??'',
+                                        );
+                                      },
+                                    ),
+                                  ),
                             ],
                           );
                         }
                       },
                     ),
                   ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    ));
+                ),
+              ],
+            );
+          },
+        ));
   }
 
   Future<void> _handleRefresh() async {

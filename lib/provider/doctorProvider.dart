@@ -851,7 +851,7 @@ Future<void> getpatientinvisits(String id, BuildContext context ) async {
 
 Future<void> addoutvisit(
       String patientId,
-      String cheifcomplaint,
+      String Chiefcomplaint,
       String height,
       String weight,
       String bp,
@@ -864,7 +864,7 @@ Future<void> addoutvisit(
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
       };
 
       if (height.isNotEmpty) {
@@ -924,7 +924,7 @@ Future<void> addoutvisit(
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
       };
 
       if (height.isNotEmpty) {
@@ -1330,7 +1330,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
 
   Future<void> addinvisit(
       String patientId,
-      String cheifcomplaint,
+      String Chiefcomplaint,
       String visitingdoctor,
       String dutydoctor,
       String supportingstaff,
@@ -1341,7 +1341,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
       };
 
       if (visitingdoctor.isNotEmpty) {
@@ -1397,7 +1397,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
 
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
       };
 
       if (visitingdoctor.isNotEmpty) {
@@ -1954,6 +1954,7 @@ Future<void> dischargeInPatient(
       String complaintId,
       String dischargesummary,
       String followupdate,
+      String patientname,
       BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
@@ -2000,7 +2001,7 @@ Future<void> dischargeInPatient(
 
         Navigator.pop(context);
 
-        await context.router.popAndPush(PatientInvisitsRoute(patientId: patientId, name: 'name'));
+        await context.router.popAndPush(PatientInvisitsRoute(patientId: patientId, name: patientname));
         
         
       } else if(response.statusCode == 401){
@@ -3381,7 +3382,7 @@ Future<void> getinpatienthistoryairesponse(String patientid, String id, BuildCon
 bool iseditingvisit = false;
 
 
-Future<void> editvisit(String patientid, String complaintid, String cheifcomplaint, String height, String weight,
+Future<void> editvisit(String patientid, String complaintid, String Chiefcomplaint, String height, String weight,
   String bp, String temperature, String heartrate, BuildContext context,) async {
     try {
       // Constants.token = await secureStorage.readSecureData('token') ?? '';
@@ -3392,7 +3393,7 @@ Future<void> editvisit(String patientid, String complaintid, String cheifcomplai
       
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
         // "height": height,
         // "weight": weight,
         // "bp": bp,
@@ -3463,7 +3464,7 @@ invalidateCache();
       
 
       final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
+        "chief_complaint": Chiefcomplaint,
         // "height": height,
         // "weight": weight,
         // "bp": bp,

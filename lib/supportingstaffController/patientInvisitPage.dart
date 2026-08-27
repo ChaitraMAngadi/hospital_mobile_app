@@ -215,7 +215,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 16),
                                         child: Text(
-                                          "No Invisits for this pateint \nPlaese add Invisit",
+                                          "No Invisits for this pateint \nPlease add Invisit",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -252,7 +252,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
                                           
                                               return InVisitModel(
                                                 visitnumber: index+1,
-                                                  cheifcomplaint:
+                                                  Chiefcomplaint:
                                                       item['chief_complaint'],
                                                   visitdate: formatDate(
                                                       item['visit_date']),
@@ -261,7 +261,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
                                                       context: context,
                                                       builder: (context) {
                                                         return InVisitViewModel(
-                                                            cheifcomplaint: item[
+                                                            Chiefcomplaint: item[
                                                                 'chief_complaint'],
                                                             visitdate: formatDate(
                                                                 item['visit_date']),
@@ -330,7 +330,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
 // class InVisitModel extends StatelessWidget {
 //   const InVisitModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     required this.viewontap,
 //     // required this.diagnosisontap,
@@ -338,7 +338,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
 //     // required this.dischargedate,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String visitdate;
 //   final VoidCallback viewontap;
 //   // final VoidCallback diagnosisontap;
@@ -386,7 +386,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
 //                 height: 4,
 //               ),
 //               const Text(
-//                 "Cheif-Complaint :",
+//                 "Chief-Complaint :",
 //                 style: TextStyle(
 //                   fontSize: 15,
 //                   fontWeight: FontWeight.bold,
@@ -398,7 +398,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
 //                 height: 4,
 //               ),
 //               Text(
-//                 cheifcomplaint,
+//                 Chiefcomplaint,
 //                 style: const TextStyle(
 //                   fontSize: 15,
 //                   color: Colors.black,
@@ -488,7 +488,7 @@ class _SupportingstaffPatientInvisitsPageState extends State<SupportingstaffPati
 class InVisitModel extends StatelessWidget {
   const InVisitModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.viewontap,
     // required this.diagnosisontap,
@@ -497,7 +497,7 @@ class InVisitModel extends StatelessWidget {
     required this.visitnumber, // Add this parameter
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String visitdate;
   final VoidCallback viewontap;
   // final VoidCallback diagnosisontap;
@@ -598,7 +598,7 @@ class InVisitModel extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  cheifcomplaint,
+                  Chiefcomplaint,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -688,7 +688,7 @@ class TodaysVisitViewModel extends StatelessWidget {
   const TodaysVisitViewModel({
     super.key,
     required this.createdat,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.name,
     required this.patientId,
@@ -699,7 +699,7 @@ class TodaysVisitViewModel extends StatelessWidget {
     required this.email,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String name;
   final String patientId;
   final String age;
@@ -847,12 +847,12 @@ class TodaysVisitViewModel extends StatelessWidget {
                   ),
                   Flexible(
                     child: Text(
-                      "$cheifcomplaint",
+                      "$Chiefcomplaint",
                       style: const TextStyle(fontSize: 14),
                       softWrap: true,
                     ),
                   ),
-                  // Text("${cheifcomplaint}", style: TextStyle(fontSize: 14)),
+                  // Text("${Chiefcomplaint}", style: TextStyle(fontSize: 14)),
                 ],
               ),
               const SizedBox(
@@ -878,7 +878,7 @@ class TodaysVisitViewModel extends StatelessWidget {
 // class InVisitViewModel extends StatelessWidget {
 //   const InVisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     required this.consultingdoctor,
 //     required this.dutydoctor,
@@ -886,7 +886,7 @@ class TodaysVisitViewModel extends StatelessWidget {
 //     required this.associatedstaff,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String consultingdoctor;
 //   final String dutydoctor;
 //   final String visitingdoctor;
@@ -931,13 +931,13 @@ class TodaysVisitViewModel extends StatelessWidget {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1055,7 +1055,7 @@ class TodaysVisitViewModel extends StatelessWidget {
 class InVisitViewModel extends StatelessWidget {
   const InVisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.consultingdoctor,
     required this.dutydoctor,
@@ -1063,7 +1063,7 @@ class InVisitViewModel extends StatelessWidget {
     required this.associatedstaff,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String consultingdoctor;
   final String dutydoctor;
   final String visitingdoctor;
@@ -1108,7 +1108,7 @@ class InVisitViewModel extends StatelessWidget {
               _infoTile(
                 icon: Icons.report_problem_outlined,
                 title: "Chief Complaint",
-                value: cheifcomplaint,
+                value: Chiefcomplaint,
               ),
 
               _infoTile(
