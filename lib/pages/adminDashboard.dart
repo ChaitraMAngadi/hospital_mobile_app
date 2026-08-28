@@ -28,6 +28,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // ✅ Fetch once, after first frame — not during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<Adminprovider>().getadmindetailedprofile(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     Adminprovider adminprovider = context.watch<Adminprovider>();
     return Scaffold(
@@ -44,11 +53,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       // body: _pages[_selectedIndex],
       body:  Column(
           children: [
-            if (adminprovider.shouldShowExpiryBanner())
-              const ExpiryAlertBanner(),
-            Expanded(
-              child: _pages[_selectedIndex],
-            ),
+            if (adminprovider.shouldShowExpiryBanner)
+            const ExpiryAlertBanner(),
+          Expanded(
+            child: _pages[_selectedIndex],
+          ),
           ],
         ),
       bottomNavigationBar: 
@@ -137,25 +146,7 @@ class ExpiryAlertBanner extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      // TODO: point this to the admin app's payment route
-                      // context.router.push(AdminPaymentRoute());
-                    },
-                    child: const Text(
-                      "Click here to pay now",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                
               ],
             ),
           ),

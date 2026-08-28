@@ -535,19 +535,20 @@ String calculateAge(String dob) {
                             // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16),bottomRight: Radius.circular(16))
+                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(22))
+                                // borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16),bottomRight: Radius.circular(16))
                               ),
                               child: Column(
                                                                 mainAxisSize: MainAxisSize.min,
                               
                                 children: [
-                                  Container(
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        gradient: AppColors.primaryGradient,
-                                        borderRadius: BorderRadius.vertical(top: Radius.circular(22))
-                                      ),
-                                    ),
+                                  // Container(
+                                  //     height: 4,
+                                  //     decoration: BoxDecoration(
+                                  //       gradient: AppColors.primaryGradient,
+                                  //       borderRadius: BorderRadius.vertical(top: Radius.circular(22))
+                                  //     ),
+                                  //   ),
                                   Padding(
                                     padding: const EdgeInsets.all(16),
                                     child: Form(
@@ -1726,7 +1727,7 @@ class _OtpDialogState extends State<OtpDialog> {
   bool _isResending = false;
   bool _verifyButtonDisabled = false;
 
-  int _timerSeconds = 30;
+  int _timerSeconds = 100;
   Timer? _timer;
 
   @override
@@ -1743,7 +1744,7 @@ class _OtpDialogState extends State<OtpDialog> {
   }
 
   void _startTimer() {
-    _timerSeconds = 30;
+    _timerSeconds = 100;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timerSeconds == 0) {
@@ -1837,13 +1838,13 @@ class _OtpDialogState extends State<OtpDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 4,
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
-              ),
-            ),
+            // Container(
+            //   height: 4,
+            //   decoration: BoxDecoration(
+            //     gradient: AppColors.primaryGradient,
+            //     borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Form(

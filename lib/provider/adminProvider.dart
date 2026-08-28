@@ -45,6 +45,8 @@ class SlotModel {
 
 class Adminprovider extends ChangeNotifier {
     List<Map<String, dynamic>> admindetailedprofile = [];
+    List<Map<String, dynamic>> adminprofile = [];
+
     List<Map<String, dynamic>> patients = [];
     List<Map<String, dynamic>> filteredPatients = [];
     List<Map<String, dynamic>> allpatients = [];
@@ -131,6 +133,7 @@ final cached = _cache.get<List<Map<String, dynamic>>>(kProfile);
           print('doctor details : $admindetailedprofile');
           // print(doctordetailedprofile);
         }
+        print(admindetailedprofile);
         _cache.set(kProfile, admindetailedprofile);
         notifyListeners();
       } else if(response.statusCode == 401){
@@ -190,7 +193,87 @@ Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
     }
   }
 
+Future<void> getadminprofile(BuildContext context) async {
+    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getmyprofile";
 
+    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+    try {
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.admintoken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body)['myprofile'];
+
+        if (data is List) {
+          adminprofile = List<Map<String, dynamic>>.from(data);
+                  
+          notifyListeners();
+        } else if (data is Map) {
+          adminprofile = [Map<String, dynamic>.from(data)];
+
+        }
+        print(adminprofile);
+        notifyListeners();
+      } else if(response.statusCode == 401){
+      await  refreshtoken(context);
+Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+      try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.admintoken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body)['myprofile'];
+
+        if (data is List) {
+          adminprofile = List<Map<String, dynamic>>.from(data);
+          
+
+          notifyListeners();
+        } else if (data is Map) {
+          adminprofile = [Map<String, dynamic>.from(data)];
+          // print(doctordetailedprofile);
+        }
+
+        notifyListeners();
+      } 
+       else {
+        print('${response.body}');
+      }
+    } catch (e) {
+      print(e);
+    }
+      }
+      else if(response.statusCode == 403 ){
+        await secureStorage.deleteSecureData('admintoken');
+        await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+        Constants.admintoken = '';
+        Constants.adminrefreshtoken = '';
+        logout();
+        if (context.mounted) context.router.popAndPush(SplashRoute());
+        notifyListeners();
+      }
+      
+      
+       else {
+        print('${response.body}');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
 Future<void> getpatientbydoctor(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getpatientbydoctor";
@@ -917,6 +1000,7 @@ Future<void> addoutvisit(
       String temperature,
       String heartrate,
       String associatedDoctor,
+      List<Map<String, dynamic>> vitals,
       BuildContext context) async {
     try {
       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
@@ -943,6 +1027,8 @@ Future<void> addoutvisit(
       if (temperature.isNotEmpty) {
         requestBody["temperature"] = temperature;
       }
+          if (vitals.isNotEmpty) requestBody["vitals"] = vitals;   // ← NEW
+
       print(requestBody);
 
       final response = await http.post(
@@ -1006,6 +1092,8 @@ Future<void> addoutvisit(
       if (temperature.isNotEmpty) {
         requestBody["temperature"] = temperature;
       }
+          if (vitals.isNotEmpty) requestBody["vitals"] = vitals;   // ← NEW
+
       print(requestBody);
 
       final response = await http.post(
@@ -2630,32 +2718,44 @@ await secureStorage.writeSecureData('admintoken', responseData['token']);
      
     }
   }
-  DateTime? getValidityDate() {
+//   DateTime? getValidityDate() {
+//   if (adminprofile.isEmpty) return null;
+
+//   final validTill = adminprofile.first["validity"];
+//   print("validTill :$validTill");
+//   if (validTill == null) return null;
+
+//   return DateTime.parse(validTill); // yyyy-MM-dd
+// }
+
+DateTime? getValidityDate() {
   if (admindetailedprofile.isEmpty) return null;
 
-  final validTill = admindetailedprofile.first["validity"];
-  print(validTill);
+  final hospital = admindetailedprofile.first["associatedHospitalBranch"]
+      ?["associatedHospital"];
+
+  final validTill = hospital?["validity"];
+  print("validTill :$validTill");
   if (validTill == null) return null;
 
-  return DateTime.parse(validTill); // yyyy-MM-dd
+  return DateTime.parse(validTill);
 }
-
-
 
 void closeExpiryBanner() {
   hideExpiryBanner = true;
   notifyListeners();
 }
 
-  bool shouldShowExpiryBanner() {
+  bool get shouldShowExpiryBanner {
   final validityDate = getValidityDate();
   if (validityDate == null) return false;
 
   final daysLeft = remainingDays();
+  print("daysLeft $daysLeft");
 
-  // ── matches web logic: diffDays <= 7 && diffDays >= 0 ──
   return daysLeft <= 7 && daysLeft >= 0 && !hideExpiryBanner;
 }
+
 
 int remainingDays() {
   final validityDate = getValidityDate();

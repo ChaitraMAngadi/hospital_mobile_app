@@ -37,6 +37,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
     fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId, context);
+    
   }
 
   String formatDate(String date) {
@@ -359,6 +360,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                       bp: item["bp"] ?? "",
                       temperature: item["temperature"] ?? "",
                       heartrate: item["heart_rate"] ?? "",
+                      otherVitals: item["other_vitals"] ?? [],
                     );
                   },
                 );
@@ -374,6 +376,8 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                       bp: item["bp"] ?? "",
                       temprature: item["temperature"] ?? "",
                       heartrate: item["heart_rate"] ?? "",
+                      otherVitals:item["other_vitals"]?? [],
+
                       visitdate: formatDate(item["visit_date"]),
                     );
                   },
@@ -1191,7 +1195,7 @@ class VisitViewModel extends StatelessWidget {
     required this.bp,
     required this.temprature,
     required this.heartrate,
-    required this.visitdate,
+    required this.visitdate, this.otherVitals,
   });
 
   final String Chiefcomplaint;
@@ -1201,6 +1205,7 @@ class VisitViewModel extends StatelessWidget {
   final String temprature;
   final String heartrate;
   final String visitdate;
+  final List<dynamic>? otherVitals;   // ← NEW
 
   @override
   Widget build(BuildContext context) {
@@ -1331,6 +1336,36 @@ class VisitViewModel extends StatelessWidget {
                 title: "Heart Rate",
                 value: heartrate,
               ),
+
+              if (otherVitals != null && otherVitals!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "OTHER VITALS",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...otherVitals!.map((v) {
+                  final name = v['name']?.toString() ?? '';
+                  final value = v['value']?.toString() ?? '';
+                  if (name.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _infoTile(
+                      icon: Icons.monitor_heart_outlined,
+                      title: name.toUpperCase(),
+                      value: value,
+                    ),
+                  );
+                }).toList(),
+              ],
+
           
               /// ⚠️ VITALS LOGIC KEPT (NOT REMOVED)
               if (height.isNotEmpty ||
@@ -1421,10 +1456,38 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
   final TextEditingController temperatureController = TextEditingController();
 
   final formkey = GlobalKey<FormState>();
+  List<VitalControllers> vitalsControllersList = [];
 
   DateTime today = DateTime.now();
 
   String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+
+ @override
+  void initState() {
+    super.initState();
+    vitalsControllersList.add(VitalControllers()); // ← ek empty row se start
+  }
+
+  void addVital() {
+    setState(() {
+      vitalsControllersList.add(VitalControllers());
+    });
+  }
+
+   @override
+  void dispose() {
+    ChiefcomplaintController.dispose();
+    heightController.dispose();
+    weightController.dispose();
+    bpController.dispose();
+    heartrateController.dispose();
+    temperatureController.dispose();
+    for (var c in vitalsControllersList) {
+      c.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1661,6 +1724,48 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                     ),
                   ],
                 ),
+
+                                const SizedBox(height: 20),
+
+                const Text(
+                  "Other Vitals",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+
+                ...vitalsControllersList.asMap().entries.map((entry) {
+                  final controllers = entry.value;
+                  return VitalsFieldSet(
+                    key: ObjectKey(controllers),
+                    controllers: controllers,
+                  );
+                }).toList(),
+
+                const SizedBox(height: 6),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: addVital,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    ),
+                    child: const Text(
+                      "Add Vital",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
                 const SizedBox(
                   height: 20,
                 ),
@@ -1681,7 +1786,15 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                                 doctorprovider.addingoutvisit = true;
                               });
                               
-                             
+                              // ✅ vitals list build karo (jaise diagnosis page me hota hai)
+            List<Map<String, dynamic>> vitalsList = vitalsControllersList
+                .where((c) => c.nameController.text.trim().isNotEmpty)
+                .map((c) {
+              return {
+                'name': c.nameController.text,
+                'value': c.valueController.text,
+              };
+            }).toList();
 
                               doctorprovider.addoutvisit(
                                 widget.patientId,
@@ -1691,6 +1804,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                                 bpController.text,
                                 temperatureController.text,
                                 heartrateController.text,
+                                vitalsList,
                                 context,
                               );
 
@@ -1745,7 +1859,8 @@ class EditVisitModel extends StatefulWidget {
     this.weight,
     this.bp,
     this.temperature,
-    this.heartrate, required this.complaintId,
+    this.heartrate, required this.complaintId, this.otherVitals,
+    
   });
 
   final String patientId;
@@ -1756,6 +1871,8 @@ class EditVisitModel extends StatefulWidget {
   final String? bp;
   final String? temperature;
   final String? heartrate;
+  final List<dynamic>? otherVitals;   // ← NEW
+
 
   @override
   State<EditVisitModel> createState() => _EditVisitModelState();
@@ -1771,6 +1888,9 @@ class _EditVisitModelState extends State<EditVisitModel> {
   final formkey = GlobalKey<FormState>();
   late String formattedDate;
 
+  List<VitalControllers> vitalsControllersList = [];   // ← NEW
+
+
   @override
   void initState() {
     super.initState();
@@ -1783,6 +1903,31 @@ class _EditVisitModelState extends State<EditVisitModel> {
     bpController.text = widget.bp ?? '';
     heartrateController.text = widget.heartrate ?? '';
     temperatureController.text = widget.temperature ?? '';
+   // ✅ Prefill other vitals from existing data
+    if (widget.otherVitals != null && widget.otherVitals!.isNotEmpty) {
+      for (final v in widget.otherVitals!) {
+        final c = VitalControllers();
+        c.nameController.text = v['name']?.toString() ?? '';
+        c.valueController.text = v['value']?.toString() ?? '';
+        vitalsControllersList.add(c);
+      }
+    } else {
+      vitalsControllersList.add(VitalControllers());
+    }
+  
+  }
+
+   void addVital() {
+    setState(() {
+      vitalsControllersList.add(VitalControllers());
+    });
+  }
+
+   void removeVital(int index) {
+    setState(() {
+      vitalsControllersList[index].dispose();
+      vitalsControllersList.removeAt(index);
+    });
   }
 
   @override
@@ -1793,6 +1938,9 @@ class _EditVisitModelState extends State<EditVisitModel> {
     bpController.dispose();
     heartrateController.dispose();
     temperatureController.dispose();
+    for (var c in vitalsControllersList) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -1914,6 +2062,64 @@ shape: RoundedRectangleBorder(
                         const Expanded(child: SizedBox()), // spacing balance
                       ],
                     ),
+
+                    const SizedBox(height: 20),
+
+                    // ✅ NEW: Other Vitals (editable)
+                    const Text(
+                      "Other Vitals",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+
+                    ...vitalsControllersList.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final controllers = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: VitalsFieldSet(
+                                key: ObjectKey(controllers),
+                                controllers: controllers,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: vitalsControllersList.length > 1
+                                  ? () => removeVital(index)
+                                  : null,
+                              icon: const Icon(Icons.remove_circle_outline,
+                                  color: Colors.redAccent),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+
+                    const SizedBox(height: 6),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: addVital,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        ),
+                        child: const Text(
+                          "Add Vital",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ),
+
                     const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
@@ -1927,6 +2133,17 @@ shape: RoundedRectangleBorder(
                               setState(() {
                                       patientpageprovider.iseditingvisit = true;
                                     });
+
+                                    List<Map<String, dynamic>> vitalsList = vitalsControllersList
+                                  .where((c) => c.nameController.text.trim().isNotEmpty)
+                                  .map((c) {
+                                return {
+                                  'name': c.nameController.text,
+                                  'value': c.valueController.text,
+                                };
+                              }).toList();
+
+
                             await patientpageprovider.editvisit(
                               widget.patientId,
                               widget.complaintId,
@@ -1936,6 +2153,7 @@ shape: RoundedRectangleBorder(
                               bpController.text,
                               temperatureController.text,
                               heartrateController.text,
+                              vitalsList,
                               context,
                             );
             
@@ -1986,6 +2204,95 @@ shape: RoundedRectangleBorder(
           ),
         ),
       ],
+    );
+  }
+}
+class VitalControllers {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController valueController = TextEditingController();
+
+  void dispose() {
+    nameController.dispose();
+    valueController.dispose();
+  }
+}
+
+class VitalsFieldSet extends StatefulWidget {
+  final VitalControllers controllers;
+
+  const VitalsFieldSet({
+    Key? key,
+    required this.controllers,
+  }) : super(key: key);
+
+  @override
+  State<VitalsFieldSet> createState() => _VitalsFieldSetState();
+}
+
+class _VitalsFieldSetState extends State<VitalsFieldSet> {
+  bool isValueEnabled = false;
+
+//  @override
+//   void initState() {
+//     super.initState();
+//     // Listen to changes in name field
+//     widget.controllers.nameController.addListener(_checkNameField);
+//   }
+
+@override
+void initState() {
+  super.initState();
+  // ✅ Seed initial state from whatever the controller already holds
+  // (e.g. autofilled via voice transcription)
+  isValueEnabled = widget.controllers.nameController.text.trim().isNotEmpty;   // ← ADD THIS
+
+  // Listen to changes in name field
+  widget.controllers.nameController.addListener(_checkNameField);
+}
+
+   void _checkNameField() {
+    final isNotEmpty = widget.controllers.nameController.text.trim().isNotEmpty;
+    if (isNotEmpty != isValueEnabled) {
+      setState(() {
+        isValueEnabled = isNotEmpty;
+      });
+    }
+  }
+
+    @override
+  void dispose() {
+    widget.controllers.nameController.removeListener(_checkNameField);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: widget.controllers.nameController,
+              decoration: const InputDecoration(
+                hintText: 'Name (e.g. Temperature)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: widget.controllers.valueController,
+              enabled: isValueEnabled,
+              decoration: const InputDecoration(
+                hintText: 'Value (e.g. 101°F)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

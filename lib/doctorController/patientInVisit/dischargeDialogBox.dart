@@ -9,7 +9,8 @@ class DischargeDialogBox extends StatefulWidget {
 
   final String complaintId;
   final String name;
-  const DischargeDialogBox({super.key, required this.patientId, required this.complaintId, required this.name});
+  final int visitingindex;
+  const DischargeDialogBox({super.key, required this.patientId, required this.complaintId, required this.name, required this.visitingindex});
 
   @override
   State<DischargeDialogBox> createState() => _DischargeDialogBoxState();
@@ -32,7 +33,7 @@ class _DischargeDialogBoxState extends State<DischargeDialogBox> {
 
   @override
   Widget build(BuildContext context) {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
+    Doctorprovider doctorprovider = context.watch<Doctorprovider>();
     return Dialog(
                                            insetPadding:
                                               const EdgeInsets.all(16),
@@ -141,9 +142,10 @@ class _DischargeDialogBoxState extends State<DischargeDialogBox> {
                     onPressed: () async {
                       if (formkey.currentState!.validate()) {
                       print(dischargesummaryController.text);
-                      await doctorprovider.dischargeInPatient(widget.patientId, widget.complaintId, dischargesummaryController.text,formatedJoiDate,widget.name, context);
-
+                      await doctorprovider.dischargeInPatient(widget.patientId, widget.complaintId, dischargesummaryController.text,formatedJoiDate,widget.name,widget.visitingindex, context);
+                      doctorprovider.invalidateCache();
                       await doctorprovider.getpatientinvisits(widget.patientId, context);
+                      
                       
                       }
 

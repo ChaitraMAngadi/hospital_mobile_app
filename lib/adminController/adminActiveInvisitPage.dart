@@ -251,182 +251,179 @@ class _ActiveAdminInvisitsPageState extends State<ActiveAdminInvisitsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: RefreshIndicator(
-      onRefresh: _handleRefresh,
-      child: Consumer<Adminprovider>(
-        builder: (context, adminprovider, child) {
-          final List sortedList =
-              List.from(adminprovider.filteredactiveinvisits)
-                ..sort((a, b) {
-                  final dateA = DateTime.parse(a['visit_date']);
-                  final dateB = DateTime.parse(b['visit_date']);
-                  return dateB.compareTo(dateA); // latest first
-                });
-          return SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search Patient by id or name...',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+        body: Consumer<Adminprovider>(
+          builder: (context, adminprovider, child) {
+            final List sortedList =
+                List.from(adminprovider.filteredactiveinvisits)
+                  ..sort((a, b) {
+                    final dateA = DateTime.parse(a['visit_date']);
+                    final dateB = DateTime.parse(b['visit_date']);
+                    return dateB.compareTo(dateA); // latest first
+                  });
+            return SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search Patient by id or name...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _handleRefresh,
-                    child: FutureBuilder(
-                      future: fetchactiveallinvisits,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.8,
-                              child: _buildShimmerList());
-                        } else {
-                          return SafeArea(
-                            child: adminprovider.filteredactiveinvisits.isEmpty
-                                ? SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.8,
-                                    child: _searchController.text.isNotEmpty
-                                        ? _buildNoSearchResults() // <-- show no results UI if searching
-                                        : const Center(
-                                            child: Text(
-                                              "No Active In Visits to show",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: _handleRefresh,
+                      child: FutureBuilder(
+                        future: fetchactiveallinvisits,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.8,
+                                child: _buildShimmerList());
+                          } else {
+                            return SafeArea(
+                              child: adminprovider.filteredactiveinvisits.isEmpty
+                                  ? SizedBox(
+                                      height: MediaQuery.of(context).size.height *
+                                          0.8,
+                                      child: _searchController.text.isNotEmpty
+                                          ? _buildNoSearchResults() // <-- show no results UI if searching
+                                          : const Center(
+                                              child: Text(
+                                                "No Active In Visits to show",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold),
+                                              ),
                                             ),
-                                          ),
-                                  )
-                                : SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.8,
-                              
-                                    child: ListView.builder(
-                                      
-                                      itemCount: adminprovider
-                                          .filteredactiveinvisits.length,
-                                      itemBuilder: (context, index) {
-                                        final item = sortedList[index];
-                                        return ActiveInvisitModel(
-                                          patientname: item['name'],
-                                          patientId: item['patientId'],
-                                          viewonTap: () async {
-                                            // await adminprovider.getactiveinvisits();
-                                            // await adminprovider.getinvisitbyid(item['patientId'],item['id']);
-                                            //  adminprovider.notify();
-                                           await showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return ActiveInVisitViewModel(
-                                                  name: item['name'],
-                                                  id: item['patientId'],
-                                                  gender: item['gender'],
-                                                  phone:
-                                                      item['phone'].toString(),
-                                                  email: item['email'] ?? '',
-                                                  age:calculateAge(item['DOB'])??'',
-                                                  dob: formatDate(item['DOB']),
-                                                  createdbydoctor:
-                                                      item['createdByDoctor']?
-                                                              ['name'] ??
-                                                          '',
-                                                  createdbydoctorid:
-                                                      item['createdByDoctor']?
-                                                              ['userid'] ??
-                                                          '',
-                                                  createdbyadmin:
-                                                      item['createdByAdmin']
-                                                              ?['name'] ??
-                                                          '',
-                                                  createdbyadminid:
-                                                      item['createdByAdmin']
-                                                              ?['userid'] ??
-                                                          '',
-                                                  Chiefcomplaint:
-                                                      item['chief_complaint'],
-                                                  visitdate: formatDate(
-                                                      item['visit_date']),
-                                                  consultingdoctor:
-                                                      item['consultingDoctor']
-                                                          ['name'],
-                                                  consultingdocid:
-                                                      item['consultingDoctor']
-                                                          ['userid'],
-                                                  dutydoctor: item['dutyDoctor']?
-                                                      ['name']??'',
-                                                  dutydocid: item['dutyDoctor']?
-                                                      ['userid']??'',
-                                                  visitingdoctor:
-                                                      item['visitingDoctor']?
-                                                          ['name']??'',
-                                                  visitingdocid:
-                                                      item['visitingDoctor']?
-                                                          ['userid']??'',
-                                                  associatedstaff:
-                                                      item['associatedNurse']?
-                                                          ['name']??'',
-                                                  supportingstaffid:
-                                                      item['associatedNurse']?
-                                                          ['userid']??'',
-                                                );
-                                              },
-                                            );
-                                          },
-                                          editonTap: ()async{
-                                           await showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      EditComplaintDialogBox(
-                                                    alldoctors: adminprovider
-                                                        .alldoctors,
-                                                    allnurses:
-                                                        adminprovider.allnurses,
-                                                    patientId: item['patientId'],
-                                                    complaintId: item['id'],
-                                                  ),
-                                                );
-                                              await  adminprovider.getactiveinvisits(context);
-                                               setState(() {
-                  adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
-                                });
-                                          },
-                                          viewallvisitsonTap: (){
-                                            context.router.push(PatientAdminInvisitsRoute(patientId: item['patientId'], name: item['name'],
-                                                ));
-                                          },
-                                          // startdiagnosisonTap: () {
-                                          //   context.router.push(ViewDiagnosisRoute(name: item['name'], id: item['patientId'], visitingIndex: item['invisitIndex'],dischargeddate: ''));
-                                          // },
-                                          chiefcomplaint:
-                                              item['chief_complaint'] ?? '',
-                                          diagnosissummary:
-                                              item['diagnosis_summary'] ?? '',
-                                        );
-                                      },
+                                    )
+                                  : SizedBox(
+                                      height: MediaQuery.of(context).size.height *
+                                          0.8,
+                                
+                                      child: ListView.builder(
+                                        
+                                        itemCount: adminprovider
+                                            .filteredactiveinvisits.length,
+                                        itemBuilder: (context, index) {
+                                          final item = sortedList[index];
+                                          return ActiveInvisitModel(
+                                            patientname: item['name'],
+                                            patientId: item['patientId'],
+                                            viewonTap: () async {
+                                              // await adminprovider.getactiveinvisits();
+                                              // await adminprovider.getinvisitbyid(item['patientId'],item['id']);
+                                              //  adminprovider.notify();
+                                             await showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return ActiveInVisitViewModel(
+                                                    name: item['name'],
+                                                    id: item['patientId'],
+                                                    gender: item['gender'],
+                                                    phone:
+                                                        item['phone'].toString(),
+                                                    email: item['email'] ?? '',
+                                                    age:calculateAge(item['DOB'])??'',
+                                                    dob: formatDate(item['DOB']),
+                                                    createdbydoctor:
+                                                        item['createdByDoctor']?
+                                                                ['name'] ??
+                                                            '',
+                                                    createdbydoctorid:
+                                                        item['createdByDoctor']?
+                                                                ['userid'] ??
+                                                            '',
+                                                    createdbyadmin:
+                                                        item['createdByAdmin']
+                                                                ?['name'] ??
+                                                            '',
+                                                    createdbyadminid:
+                                                        item['createdByAdmin']
+                                                                ?['userid'] ??
+                                                            '',
+                                                    Chiefcomplaint:
+                                                        item['chief_complaint'],
+                                                    visitdate: formatDate(
+                                                        item['visit_date']),
+                                                    consultingdoctor:
+                                                        item['consultingDoctor']
+                                                            ['name'],
+                                                    consultingdocid:
+                                                        item['consultingDoctor']
+                                                            ['userid'],
+                                                    dutydoctor: item['dutyDoctor']?
+                                                        ['name']??'',
+                                                    dutydocid: item['dutyDoctor']?
+                                                        ['userid']??'',
+                                                    visitingdoctor:
+                                                        item['visitingDoctor']?
+                                                            ['name']??'',
+                                                    visitingdocid:
+                                                        item['visitingDoctor']?
+                                                            ['userid']??'',
+                                                    associatedstaff:
+                                                        item['associatedNurse']?
+                                                            ['name']??'',
+                                                    supportingstaffid:
+                                                        item['associatedNurse']?
+                                                            ['userid']??'',
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            editonTap: ()async{
+                                             await showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        EditComplaintDialogBox(
+                                                      alldoctors: adminprovider
+                                                          .alldoctors,
+                                                      allnurses:
+                                                          adminprovider.allnurses,
+                                                      patientId: item['patientId'],
+                                                      complaintId: item['id'],
+                                                    ),
+                                                  );
+                                                await  adminprovider.getactiveinvisits(context);
+                                                 setState(() {
+                    adminprovider.filteredactiveinvisits = adminprovider.activeinvisits;
+                                  });
+                                            },
+                                            viewallvisitsonTap: (){
+                                              context.router.push(PatientAdminInvisitsRoute(patientId: item['patientId'], name: item['name'],
+                                                  ));
+                                            },
+                                            // startdiagnosisonTap: () {
+                                            //   context.router.push(ViewDiagnosisRoute(name: item['name'], id: item['patientId'], visitingIndex: item['invisitIndex'],dischargeddate: ''));
+                                            // },
+                                            chiefcomplaint:
+                                                item['chief_complaint'] ?? '',
+                                            diagnosissummary:
+                                                item['diagnosis_summary'] ?? '',
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                          );
-                        }
-                      },
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    ));
+                ],
+              ),
+            );
+          },
+        ));
   }
 
   Future<void> _handleRefresh() async {

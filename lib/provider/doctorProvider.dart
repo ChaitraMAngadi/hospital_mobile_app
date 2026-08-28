@@ -267,7 +267,8 @@ print(newPatients);
       // }
 
       notifyListeners();
-    } else if(response.statusCode == 401){
+    } 
+    else if(response.statusCode == 401){
       await refreshtoken(context);
         Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
 
@@ -697,7 +698,6 @@ Future<void> getPatientsByPage(int page, BuildContext context) async {
 
 Future<void> getpatientinvisits(String id, BuildContext context ) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getinvisit/$id";
-    // '${Constants.baseUrl}/app/log-in/phone-otp'
     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
     try {
       // if (_cache.isCacheValid(PatientInvisits)) return;
@@ -714,6 +714,7 @@ Future<void> getpatientinvisits(String id, BuildContext context ) async {
           'Authorization': 'Bearer ${Constants.doctortoken}',
         },
       );
+      print(response);
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -857,6 +858,7 @@ Future<void> addoutvisit(
       String bp,
       String temperature,
       String heartrate,
+      List<Map<String, dynamic>> vitals,
       BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
@@ -882,6 +884,9 @@ Future<void> addoutvisit(
       if (temperature.isNotEmpty) {
         requestBody["temperature"] = temperature;
       }
+
+      if (vitals.isNotEmpty) requestBody["vitals"] = vitals;
+      
       print(requestBody);
 
       final response = await http.post(
@@ -942,6 +947,8 @@ Future<void> addoutvisit(
       if (temperature.isNotEmpty) {
         requestBody["temperature"] = temperature;
       }
+if (vitals.isNotEmpty) requestBody["vitals"] = vitals;
+
       print(requestBody);
 
       final response = await http.post(
@@ -1276,7 +1283,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         gettodaysvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
             //  _cache.markCached(Outvisits);
-            _cache.set(Outvisits, gettodaysvisits);
+            // _cache.set(Outvisits, gettodaysvisits);
             print("today outvisit: ${gettodaysvisits}");
         notifyListeners();
       }else if(response.statusCode == 401){
@@ -1297,7 +1304,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         print(responseData);
         gettodaysvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            _cache.set(Outvisits, gettodaysvisits);
+            // _cache.set(Outvisits, gettodaysvisits);
         notifyListeners();
       } else if (response.statusCode == 404) {
         print('No visits found');
@@ -1500,12 +1507,12 @@ Future<void> getdoctorsnurses(BuildContext context) async {
     
     try {
       // if (_cache.isCacheValid(Invisits)) return;
-      final cached = _cache.get<List<Map<String, dynamic>>>(Invisits);
-      if (cached != null) {
-        activeinvisits = cached;
-        notifyListeners();
-        return;
-      }
+      // final cached = _cache.get<List<Map<String, dynamic>>>(Invisits);
+      // if (cached != null) {
+      //   activeinvisits = cached;
+      //   notifyListeners();
+      //   return;
+      // }
 
       final response = await http.get(
         Uri.parse(url),
@@ -1521,7 +1528,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
         activeinvisits =
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
 // _cache.markCached(Invisits);
-        _cache.set(Invisits, activeinvisits);
+        // _cache.set(Invisits, activeinvisits);
 
         notifyListeners();
       } else if(response.statusCode == 401){
@@ -1543,7 +1550,7 @@ Future<void> getdoctorsnurses(BuildContext context) async {
             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
 // _cache.markCached(Invisits);
         
-                _cache.set(Invisits, activeinvisits);
+                // _cache.set(Invisits, activeinvisits);
 notifyListeners();
       } else if (response.statusCode == 404) {
         print('No visits found');
@@ -1904,6 +1911,7 @@ getpatientdiagnosis(patientId, visitIndex, context);
         ));
 getpatientdiagnosis(patientId, visitIndex, context);
         Navigator.pop(context);
+        notifyListeners();
       } else {
         print("Failed: ${response.statusCode}, ${response.body}");
         final responseData = jsonDecode(response.body);
@@ -1913,12 +1921,14 @@ getpatientdiagnosis(patientId, visitIndex, context);
               style: TextStyle(fontWeight: FontWeight.bold)),
         ));
         isSavingIndiagnosis = false;
+        notifyListeners();
       }
     } catch (e) {
       print("Error: $e");
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
           isSavingIndiagnosis = false;
+          notifyListeners();
     }
       }
       else if(response.statusCode == 403 ){
@@ -1940,12 +1950,14 @@ getpatientdiagnosis(patientId, visitIndex, context);
               style: TextStyle(fontWeight: FontWeight.bold)),
         ));
         isSavingIndiagnosis = false;
+        notifyListeners();
       }
     } catch (e) {
       print("Error: $e");
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
           isSavingIndiagnosis = false;
+          notifyListeners();
     }
   }
 
@@ -1955,6 +1967,7 @@ Future<void> dischargeInPatient(
       String dischargesummary,
       String followupdate,
       String patientname,
+      int visitingindex,
       BuildContext context) async {
     try {
       Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
@@ -1984,6 +1997,9 @@ Future<void> dischargeInPatient(
         // Successful POST request, handle the response here
         final responseData = jsonDecode(response.body);
         print(responseData);
+        invalidateCache();
+        invalidateCache(key: Invisits);
+        invalidateCache(key: Outvisits);
         notifyListeners();
 
         final sucessSnackbar = SnackBar(
@@ -1994,14 +2010,15 @@ Future<void> dischargeInPatient(
             ));
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
+        
         getpatientinvisits(patientId, context);
-
+        getactiveinvisits(context);
+ filteredactiveinvisits = activeinvisits; 
         notifyListeners();
 
         Navigator.pop(context);
 
-        await context.router.popAndPush(PatientInvisitsRoute(patientId: patientId, name: patientname));
+        await context.router.popAndPush(ViewDiagnosisRoute(id: patientId, name: patientname,dischargeddate: "discharged", visitingIndex:visitingindex ));
         
         
       } else if(response.statusCode == 401){
@@ -2044,14 +2061,17 @@ Future<void> dischargeInPatient(
             ));
 
         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
+        invalidateCache();
+reset();
         getpatientinvisits(patientId, context);
+        getactiveinvisits(context);
+ filteredactiveinvisits = activeinvisits; 
 
         notifyListeners();
 
         Navigator.pop(context);
 
-        await context.router.popAndPush(PatientInvisitsRoute(patientId: patientId, name: 'name'));
+        await context.router.popAndPush(PatientInvisitsRoute(patientId: patientId, name: patientname));
         
         
       } else {
@@ -3383,7 +3403,9 @@ bool iseditingvisit = false;
 
 
 Future<void> editvisit(String patientid, String complaintid, String Chiefcomplaint, String height, String weight,
-  String bp, String temperature, String heartrate, BuildContext context,) async {
+  String bp, String temperature, String heartrate,
+  List<Map<String, dynamic>> vitals,
+   BuildContext context,) async {
     try {
       // Constants.token = await secureStorage.readSecureData('token') ?? '';
  Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
@@ -3416,6 +3438,8 @@ Future<void> editvisit(String patientid, String complaintid, String Chiefcomplai
       if (heartrate.isNotEmpty) {
         requestBody["heart_rate"] = heartrate;
       }
+          if (vitals.isNotEmpty) requestBody["vitals"] = vitals;   // ← NEW
+
 
 print(requestBody);
 
@@ -3487,6 +3511,8 @@ invalidateCache();
       if (heartrate.isNotEmpty) {
         requestBody["heart_rate"] = heartrate;
       }
+          if (vitals.isNotEmpty) requestBody["vitals"] = vitals;   // ← NEW
+
 
 print(requestBody);
 
@@ -3662,6 +3688,14 @@ await secureStorage.writeSecureData('doctortoken', responseData['token']);
       _cache.invalidateAll(); // Clears everything app-wide now
     }
   }
+
+  void reset() {
+   patientinvisits = [];
+   activeinvisits = [];
+     _cache.invalidateAll();
+    notifyListeners();
+  }
+
 
 void notify() {
     notifyListeners();

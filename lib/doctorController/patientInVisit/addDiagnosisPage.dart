@@ -960,6 +960,112 @@ Future<void> refreshtoken() async {
   }
 
 
+  Future<List<Map<String, dynamic>>> fetchMedicineSuggestions(String query) async {
+    if (query.isEmpty) return [];
+
+     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+    
+    try {
+      print("Called the fecthsuggestions function");
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
+        
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.doctortoken}',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+      else if(response.statusCode == 401){
+        refreshtoken();
+        try {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
+        
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.doctortoken}',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+      else{
+        refreshtoken();
+        try {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
+        
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.token}',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
+    
+    return [];
+      }
+      else{
+        refreshtoken();
+        try {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
+        
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.token}',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
+    
+    return [];
+  }
+
+
   Future<void> _warmupModal() async {
   try {
     print("Called warmup model");
@@ -1171,6 +1277,8 @@ Future<void> _pauseRecording() async {
     final data = apiResponse['data'] as Map<String, dynamic>;
 
     setState(() {
+       if (data['complaint'] != null)
+    complaintController.text = _stripHtml(data['complaint'].toString());
       if (data['diagnosis_summary'] != null)
         diagnosisController.text = _stripHtml(data['diagnosis_summary']);
       if (data['medical_advice'] != null)
@@ -1549,6 +1657,16 @@ Future<void> _pickFromCamera() async {
     
   //   return [];
   // }
+// ✅ Convert dropdown display value to the exact casing the API expects
+String _normalizeFoodOption(String value) {
+  const apiFoodMap = {
+    'Before Food': 'Before food',   // dropdown shows capital F, API wants small f
+    'After Food': 'After Food',
+    'NA': 'NA',
+  };
+  return apiFoodMap[value] ?? value;
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -1693,6 +1811,7 @@ Future<void> _pickFromCamera() async {
           final index = entry.key;
           final controllers = entry.value;
           return VitalsFieldSet(
+            key: ObjectKey(controllers), 
         controllers: controllers,
           );
         }).toList(),
@@ -1726,8 +1845,9 @@ Future<void> _pickFromCamera() async {
                   // Updated medication field sets with autocomplete
                   ...medicationControllersList
                       .map((controllers) => MedicationFieldSet(
+                        key: ObjectKey(controllers),
                             controllers: controllers,
-                            // fetchMedicineSuggestions: fetchMedicineSuggestions,
+                            fetchMedicineSuggestions: fetchMedicineSuggestions,
                           ))
                       .toList(),
         
@@ -1896,42 +2016,42 @@ Future<void> _pickFromCamera() async {
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
-                  const SizedBox(height: 12),
+                  // const SizedBox(height: 12),
                   
-                  const Text(
-                    "Next Visit Date",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: dateController,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: GestureDetector(
-                            onTap: () async {
-                              DateTime today = DateTime.now();
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: today,
-                                firstDate: today,
-                                lastDate: DateTime(2101),
-                              );
+                  // const Text(
+                  //   "Next Visit Date",
+                  //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  // ),
+                  // const SizedBox(height: 6),
+                  // TextFormField(
+                  //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  //   controller: dateController,
+                  //   readOnly: true,
+                  //   decoration: InputDecoration(
+                  //     suffixIcon: Padding(
+                  //       padding: const EdgeInsets.only(right: 16),
+                  //       child: GestureDetector(
+                  //           onTap: () async {
+                  //             DateTime today = DateTime.now();
+                  //             DateTime? pickedDate = await showDatePicker(
+                  //               context: context,
+                  //               initialDate: today,
+                  //               firstDate: today,
+                  //               lastDate: DateTime(2101),
+                  //             );
         
-                              if (pickedDate != null) {
-                                String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
-                                dateController.text = formattedDate;
-                                formatedJoiDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-                              }
-                            },
-                            child: const Icon(Icons.calendar_month_outlined)),
-                      ),
-                      border: const OutlineInputBorder(),
-                      hintText: 'dd/MM/yyyy',
-                    ),
-                  ),
+                  //             if (pickedDate != null) {
+                  //               String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
+                  //               dateController.text = formattedDate;
+                  //               formatedJoiDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                  //             }
+                  //           },
+                  //           child: const Icon(Icons.calendar_month_outlined)),
+                  //     ),
+                  //     border: const OutlineInputBorder(),
+                  //     hintText: 'dd/MM/yyyy',
+                  //   ),
+                  // ),
                   const SizedBox(height: 12),
                   
                   const Text(
@@ -1981,7 +2101,7 @@ Future<void> _pickFromCamera() async {
                           return {
                             'medicine': controllers.medicineController.text,
                             'type': controllers.typeController.text,
-                            'food': controllers.foodOptionController.text,
+                            'food': _normalizeFoodOption(controllers.foodOptionController.text),
                             'time': controllers.selectedTimes,
                             'power': controllers.powerController.text,
                             'count': controllers.countController.text,
@@ -2087,11 +2207,12 @@ class MedicationControllers {
 
 class MedicationFieldSet extends StatefulWidget {
   final MedicationControllers controllers;
-  // final Future<List<Map<String, dynamic>>> Function(String) fetchMedicineSuggestions;
+  final Future<List<Map<String, dynamic>>> Function(String) fetchMedicineSuggestions;
 
   const MedicationFieldSet({
+    super.key,           
     required this.controllers,
-    // required this.fetchMedicineSuggestions,
+    required this.fetchMedicineSuggestions,
   });
 
   @override
@@ -2100,6 +2221,8 @@ class MedicationFieldSet extends StatefulWidget {
 
 class _MedicationFieldSetState extends State<MedicationFieldSet> {
   bool isMedicationNameAdded = false;
+   String? selectedType;       // ← NEW
+  String? selectedFood;       // ← NEW
   List<Map<String, dynamic>> suggestions = [];
   bool showSuggestions = false;
   final LayerLink _layerLink = LayerLink();
@@ -2107,9 +2230,30 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
   final FocusNode _focusNode = FocusNode();
   bool _isSelecting = false; // Flag to prevent showing suggestions during selection
   
+static const _typeOptions = [
+    "Tablet", "Ointment", "Injection", "IV",
+    "Supporter", "Drops", "Bandage", "Syrup", "Others",
+  ];
+  static const _foodOptions = ["Before Food", "After Food", "NA"];
+
+
+
   @override
   void initState() {
     super.initState();
+ isMedicationNameAdded =
+        widget.controllers.medicineController.text.trim().isNotEmpty;
+
+     // ✅ Seed dropdown display state from whatever the controller already
+    // holds (e.g. autofilled via voice transcription). Only accept a value
+    // that's actually in the dropdown's item list, otherwise
+    // DropdownButtonFormField throws/asserts.
+    final typeText = widget.controllers.typeController.text.trim();
+    selectedType = _typeOptions.contains(typeText) ? typeText : null;
+
+    final foodText = widget.controllers.foodOptionController.text.trim();
+    selectedFood = _foodOptions.contains(foodText) ? foodText : null;
+
     widget.controllers.medicineController.addListener(_onMedicineTextChanged);
     _focusNode.addListener(_onFocusChanged);
   }
@@ -2141,24 +2285,24 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
       isMedicationNameAdded = query.isNotEmpty;
     });
 
-    // if (query.length >= 1) {
-    //   final fetchedSuggestions = await widget.fetchMedicineSuggestions(query);
-    //   setState(() {
-    //     suggestions = fetchedSuggestions;
+    if (query.length >= 1) {
+      final fetchedSuggestions = await widget.fetchMedicineSuggestions(query);
+      setState(() {
+        suggestions = fetchedSuggestions;
         
-    //   });
+      });
       
-    //   if (fetchedSuggestions.isNotEmpty && _focusNode.hasFocus) {
-    //     _showOverlay();
-    //   } else {
-    //     _removeOverlay();
-    //   }
-    // } else {
-    //   setState(() {
-    //     suggestions = [];
-    //   });
-    //   _removeOverlay();
-    // }
+      if (fetchedSuggestions.isNotEmpty && _focusNode.hasFocus) {
+        _showOverlay();
+      } else {
+        _removeOverlay();
+      }
+    } else {
+      setState(() {
+        suggestions = [];
+      });
+      _removeOverlay();
+    }
   }
 
   void _showOverlay() {
@@ -2278,19 +2422,20 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
                     hintText: 'Medicine',
                     border: OutlineInputBorder(),
                   ),
-                  // onTap: () {
-                  //   print('_isSelecting ${_isSelecting}');
-                  //   // Only show overlay if not selecting and has suggestions
-                  //   if (suggestions.isNotEmpty && !_isSelecting) {
-                  //     _showOverlay();
-                  //   }
-                  // },
+                  onTap: () {
+                    print('_isSelecting ${_isSelecting}');
+                    // Only show overlay if not selecting and has suggestions
+                    if (suggestions.isNotEmpty && !_isSelecting) {
+                      _showOverlay();
+                    }
+                  },
                 ),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: DropdownButtonFormField<String>(
+                value: selectedType,
                 decoration: InputDecoration(
                   enabled: isMedicationNameAdded,
                   hintText: 'Select Type',
@@ -2352,12 +2497,13 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<String>(
+          value: selectedFood,
           decoration: InputDecoration(
             enabled: isMedicationNameAdded,
             hintText: 'Select Food option',
             border: OutlineInputBorder(),
           ),
-          items: ["Before food", "After Food", "NA"]
+          items: ["Before Food", "After Food", "NA"]
               .map((option) => DropdownMenuItem(
                     value: option,
                     child: Text(option),
@@ -2565,12 +2711,23 @@ class VitalsFieldSet extends StatefulWidget {
 class _VitalsFieldSetState extends State<VitalsFieldSet> {
   bool isValueEnabled = false;
 
- @override
-  void initState() {
-    super.initState();
-    // Listen to changes in name field
-    widget.controllers.nameController.addListener(_checkNameField);
-  }
+//  @override
+//   void initState() {
+//     super.initState();
+//     // Listen to changes in name field
+//     widget.controllers.nameController.addListener(_checkNameField);
+//   }
+
+@override
+void initState() {
+  super.initState();
+  // ✅ Seed initial state from whatever the controller already holds
+  // (e.g. autofilled via voice transcription)
+  isValueEnabled = widget.controllers.nameController.text.trim().isNotEmpty;   // ← ADD THIS
+
+  // Listen to changes in name field
+  widget.controllers.nameController.addListener(_checkNameField);
+}
 
    void _checkNameField() {
     final isNotEmpty = widget.controllers.nameController.text.trim().isNotEmpty;

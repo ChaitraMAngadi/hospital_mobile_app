@@ -238,194 +238,191 @@ void initState() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: RefreshIndicator(
-      onRefresh: _handleRefresh,
-      child: Consumer<Doctorprovider>(
-        builder: (context, doctorprovider, child) {
-          return SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // Padding(
-                //   padding:
-                //       const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       context.router.push(RegisterPatientRoute());
-                //     },
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: Color(0xFF0857C0),
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(12),
-                //       ),
-                //       padding:
-                //           EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                //     ),
-                //     child: const Row(
-                //       mainAxisSize: MainAxisSize.min,
-                //       children: [
-                //         Icon(Icons.person_add_alt_1_outlined,
-                //             color: Colors.white),
-                //         SizedBox(
-                //           width: 6,
-                //         ),
-                //         Text("Register Patient",
-                //             style: TextStyle(
-                //               fontSize: 16,
-                //               color: Colors.white,
-                //             )),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search Patient by id or name...',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _handleRefresh,
-                    child: FutureBuilder(
-                      future: fetchtodaysoutvisits,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.76,
-                              child: _buildShimmerList());
-                        } else {
-                          return SafeArea(
-                                child: doctorprovider.filteredvisits.isEmpty
-                    ? SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.76,
-                        child: _searchController.text.isNotEmpty
-                              ? _buildNoSearchResults() // <-- show no results UI if searching
-                              : const Center(
-                  child: Text(
-                    "No Out Visits to show",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                                ),
-                      )
-                    : SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.76,
-                        child: ListView.builder(
-                          itemCount: doctorprovider.filteredvisits.length,
-                          itemBuilder: (context, index) {
-                              final item = doctorprovider.filteredvisits[index];
-                              return TodaysVisitModel(
-                                patientname: item['name'],
-                                patientId: item['patientId'],
-                                viewonTap: () {
-                  showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return VisitViewModel(
-                                                  Chiefcomplaint: item["chief_complaint"],
-                                                  height: item["height"] ?? "",
-                                                  weight: item["weight"] ?? "",
-                                                  bp: item["bp"] ?? "",
-                                                  temprature: item["temperature"] ?? "",
-                                                  heartrate: item["heart_rate"] ?? "",
-                                                  visitdate: formatDate(item["visit_date"]),
-                                                );
-                                              },
-                                            );
-                                },
-                                startdiagnosisonTap: () {
-                   context.router.push(
-                                              DiagnosisRoute(
-                                              patientId: item['patientId'],
-                                              complaintId:item['id'],
-                                            ));
-                                },
-                                supportingimagesonTap: () {
-                   showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return OutvisitSupportingFilesDialogBox(
-                                            patientId:item['patientId'],
-                                            complaintId: item["id"],
-                                          );
-                                        },
-                                      );
-                                },
-                                chiefcomplaint: item['chief_complaint'] ?? '',
-                                diagnosissummary: item['diagnosis_summary'] ?? '',
-                                complaintId: item['id'],
-                              );
-                          },
+        body: Consumer<Doctorprovider>(
+          builder: (context, doctorprovider, child) {
+            return SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Padding(
+                  //   padding:
+                  //       const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       context.router.push(RegisterPatientRoute());
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: Color(0xFF0857C0),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(12),
+                  //       ),
+                  //       padding:
+                  //           EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  //     ),
+                  //     child: const Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         Icon(Icons.person_add_alt_1_outlined,
+                  //             color: Colors.white),
+                  //         SizedBox(
+                  //           width: 6,
+                  //         ),
+                  //         Text("Register Patient",
+                  //             style: TextStyle(
+                  //               fontSize: 16,
+                  //               color: Colors.white,
+                  //             )),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search Patient by id or name...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                              );
-                              
-                          // return SafeArea(
-                          //     child: doctorprovider.gettodaysvisits.isEmpty
-                          //         ? SizedBox(
-                          //             height:
-                          //                 MediaQuery.of(context).size.height *
-                          //                     0.65,
-                          //             child: const Center(
-                          //                 child: Text(
-                          //               "No Out Visits to show",
-                          //               style: TextStyle(
-                          //                   fontWeight: FontWeight.bold),
-                          //             )))
-                          //         : SizedBox(
-                          //             height:
-                          //                 MediaQuery.of(context).size.height *
-                          //                     0.65,
-                          //             child: ListView.builder(
-                          //               itemCount: doctorprovider
-                          //                   .gettodaysvisits.length,
-                          //               // Patientpageprovider.allpatients.length,
-                          //               itemBuilder: (context, index) {
-                          //                 //                                         final sortedPatients = Patientpageprovider.filteredPatients
-                          //                 // ..sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
-                              
-                          //                 // final item = doctorprovider.gettodaysvisits[index];
-                              
-                          //                 final item = doctorprovider
-                          //                     .gettodaysvisits[index];
-                          //                 // Patientpageprovider
-                          //                 //     .allpatients[index];
-                              
-                          //                 return TodaysVisitModel(
-                          //                   patientname: item['name'],
-                          //                   patientId: item['patientId'],
-                          //                   viewonTap: () {},
-                          //                   startdiagnosisonTap: () {},
-                          //                   supportingimagesonTap: () {},
-                          //                   chiefcomplaint:
-                          //                       item['chief_complaint']??'',
-                          //                   diagnosissummary:
-                          //                       item['diagnosis_summary'] ?? '',
-                          //                   complaintId: item['id'],
-                          //                 );
-                          //               },
-                          //             ),
-                          //           ));
-                        }
-                      },
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    ));
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: _handleRefresh,
+                      child: FutureBuilder(
+                        future: fetchtodaysoutvisits,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.76,
+                                child: _buildShimmerList());
+                          } else {
+                            return SafeArea(
+                                  child: doctorprovider.filteredvisits.isEmpty
+                      ? SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.76,
+                          child: _searchController.text.isNotEmpty
+                                ? _buildNoSearchResults() // <-- show no results UI if searching
+                                : const Center(
+                    child: Text(
+                      "No Out Visits to show",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                                  ),
+                        )
+                      : SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.76,
+                          child: ListView.builder(
+                            itemCount: doctorprovider.filteredvisits.length,
+                            itemBuilder: (context, index) {
+                                final item = doctorprovider.filteredvisits[index];
+                                return TodaysVisitModel(
+                                  patientname: item['name'],
+                                  patientId: item['patientId'],
+                                  viewonTap: () {
+                    showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return VisitViewModel(
+                                                    Chiefcomplaint: item["chief_complaint"],
+                                                    height: item["height"] ?? "",
+                                                    weight: item["weight"] ?? "",
+                                                    bp: item["bp"] ?? "",
+                                                    temprature: item["temperature"] ?? "",
+                                                    heartrate: item["heart_rate"] ?? "",
+                                                    visitdate: formatDate(item["visit_date"]),
+                                                  );
+                                                },
+                                              );
+                                  },
+                                  startdiagnosisonTap: () {
+                     context.router.push(
+                                                DiagnosisRoute(
+                                                patientId: item['patientId'],
+                                                complaintId:item['id'],
+                                              ));
+                                  },
+                                  supportingimagesonTap: () {
+                     showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return OutvisitSupportingFilesDialogBox(
+                                              patientId:item['patientId'],
+                                              complaintId: item["id"],
+                                            );
+                                          },
+                                        );
+                                  },
+                                  chiefcomplaint: item['chief_complaint'] ?? '',
+                                  diagnosissummary: item['diagnosis_summary'] ?? '',
+                                  complaintId: item['id'],
+                                );
+                            },
+                          ),
+                        ),
+                                );
+                                
+                            // return SafeArea(
+                            //     child: doctorprovider.gettodaysvisits.isEmpty
+                            //         ? SizedBox(
+                            //             height:
+                            //                 MediaQuery.of(context).size.height *
+                            //                     0.65,
+                            //             child: const Center(
+                            //                 child: Text(
+                            //               "No Out Visits to show",
+                            //               style: TextStyle(
+                            //                   fontWeight: FontWeight.bold),
+                            //             )))
+                            //         : SizedBox(
+                            //             height:
+                            //                 MediaQuery.of(context).size.height *
+                            //                     0.65,
+                            //             child: ListView.builder(
+                            //               itemCount: doctorprovider
+                            //                   .gettodaysvisits.length,
+                            //               // Patientpageprovider.allpatients.length,
+                            //               itemBuilder: (context, index) {
+                            //                 //                                         final sortedPatients = Patientpageprovider.filteredPatients
+                            //                 // ..sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
+                                
+                            //                 // final item = doctorprovider.gettodaysvisits[index];
+                                
+                            //                 final item = doctorprovider
+                            //                     .gettodaysvisits[index];
+                            //                 // Patientpageprovider
+                            //                 //     .allpatients[index];
+                                
+                            //                 return TodaysVisitModel(
+                            //                   patientname: item['name'],
+                            //                   patientId: item['patientId'],
+                            //                   viewonTap: () {},
+                            //                   startdiagnosisonTap: () {},
+                            //                   supportingimagesonTap: () {},
+                            //                   chiefcomplaint:
+                            //                       item['chief_complaint']??'',
+                            //                   diagnosissummary:
+                            //                       item['diagnosis_summary'] ?? '',
+                            //                   complaintId: item['id'],
+                            //                 );
+                            //               },
+                            //             ),
+                            //           ));
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ));
   }
 
   Future<void> _handleRefresh() async {

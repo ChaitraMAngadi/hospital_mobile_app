@@ -179,58 +179,58 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
         child: Consumer<Adminprovider>(
           builder: (context, adminprovider, child) {
             return SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16, top: 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16, top: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Show the dialog
+                      
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return RegisterVisitModel(
+                                patientId: widget.patientId,
+                                alldoctors: adminprovider.alldoctors,
+                              );
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
                         ),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Show the dialog
-                        
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return RegisterVisitModel(
-                                  patientId: widget.patientId,
-                                  alldoctors: adminprovider.alldoctors,
-                                );
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.person_add_alt_1_outlined,
-                                  color: Colors.white),
-                              SizedBox(width: 6),
-                              Text("Add New OPD Visit",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  )),
-                            ],
-                          ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.person_add_alt_1_outlined,
+                                color: Colors.white),
+                            SizedBox(width: 6),
+                            Text("Add New OPD Visit",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                )),
+                          ],
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    FutureBuilder(
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: FutureBuilder(
                       future: fetchoutvisits,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -257,21 +257,21 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                     child: Builder(
                                       builder: (context) {
                                         final sortedVisits = List<Map<String, dynamic>>.from(
-            adminprovider.patientoutvisits)
-          ..sort((a, b) {
-            DateTime getDate(Map<String, dynamic> item) {
-              final raw = item['created_at'] ??
-                  item['createdAt'] ??
-                  item['visit_date'];
-              try {
-                return DateTime.parse(raw.toString());
-              } catch (_) {
-                return DateTime.fromMillisecondsSinceEpoch(0);
-              }
-            }
-
-            return getDate(b).compareTo(getDate(a)); // descending
-          });
+                            adminprovider.patientoutvisits)
+                          ..sort((a, b) {
+                            DateTime getDate(Map<String, dynamic> item) {
+                              final raw = item['created_at'] ??
+                                    item['createdAt'] ??
+                                    item['visit_date'];
+                              try {
+                                  return DateTime.parse(raw.toString());
+                              } catch (_) {
+                                  return DateTime.fromMillisecondsSinceEpoch(0);
+                              }
+                            }
+                                  
+                            return getDate(b).compareTo(getDate(a)); // descending
+                          });
                                         return ListView.builder(
                                           itemCount: sortedVisits.length,
                                           itemBuilder: (context, index) {
@@ -299,6 +299,7 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                                       heartrate: item["heart_rate"] ?? "",
                                                       visitdate: formatDate(item["visit_date"]),
                                                       associateddoctor: '${item['associatedDoctor']['name']}(${item['associatedDoctor']['userid']})',
+                                                      otherVitals: item["other_vitals"] ?? [],
                                                     );
                                                   },
                                                 );
@@ -315,8 +316,8 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                         }
                       },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           },
@@ -805,7 +806,7 @@ class VisitViewModel extends StatelessWidget {
     required this.temprature,
     required this.heartrate,
     required this.visitdate,
-    required this.associateddoctor,
+    required this.associateddoctor, this.otherVitals,
   });
 
   final String Chiefcomplaint;
@@ -816,6 +817,7 @@ class VisitViewModel extends StatelessWidget {
   final String temprature;
   final String heartrate;
   final String visitdate;
+  final List<dynamic>? otherVitals;   // ← NEW
 
   Widget _infoTile({
     required IconData icon,
@@ -999,6 +1001,34 @@ class VisitViewModel extends StatelessWidget {
                   value: heartrate,
                 ),
               ],
+              if (otherVitals != null && otherVitals!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "OTHER VITALS",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...otherVitals!.map((v) {
+                  final name = v['name']?.toString() ?? '';
+                  final value = v['value']?.toString() ?? '';
+                  if (name.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _infoTile(
+                      icon: Icons.monitor_heart_outlined,
+                      label: name.toUpperCase(),
+                      value: value,
+                    ),
+                  );
+                }).toList(),
+              ],
             ],
           ),
         ),
@@ -1032,6 +1062,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
   final TextEditingController temperatureController = TextEditingController();
 
     Map<String, dynamic>? selectedConsultingDoctor;
+  List<VitalControllers> vitalsControllersList = [];
 
 
   final formkey = GlobalKey<FormState>();
@@ -1039,6 +1070,32 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
   DateTime today = DateTime.now();
 
   String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+ @override
+  void initState() {
+    super.initState();
+    vitalsControllersList.add(VitalControllers()); // ← ek empty row se start
+  }
+
+  void addVital() {
+    setState(() {
+      vitalsControllersList.add(VitalControllers());
+    });
+  }
+
+@override
+  void dispose() {
+    ChiefcomplaintController.dispose();
+    heightController.dispose();
+    weightController.dispose();
+    bpController.dispose();
+    heartrateController.dispose();
+    temperatureController.dispose();
+    for (var c in vitalsControllersList) {
+      c.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1275,7 +1332,49 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                     ),
                   ],
                 ),
-               SizedBox(height: 8,), 
+
+                                const SizedBox(height: 20),
+
+                const Text(
+                  "Vitals",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+
+                ...vitalsControllersList.asMap().entries.map((entry) {
+                  final controllers = entry.value;
+                  return VitalsFieldSet(
+                    key: ObjectKey(controllers),
+                    controllers: controllers,
+                  );
+                }).toList(),
+
+                const SizedBox(height: 6),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: addVital,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    ),
+                    child: const Text(
+                      "Add Vital",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+              //  SizedBox(height: 8,), 
                 const Text("Consulting Doctor*",
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
@@ -1326,6 +1425,17 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                          setState(() {
                                   adminprovider.addingoutvisit = true;
                                 });
+
+                                 // ✅ vitals list build karo (jaise diagnosis page me hota hai)
+            List<Map<String, dynamic>> vitalsList = vitalsControllersList
+                .where((c) => c.nameController.text.trim().isNotEmpty)
+                .map((c) {
+              return {
+                'name': c.nameController.text,
+                'value': c.valueController.text,
+              };
+            }).toList();
+
                         adminprovider.addoutvisit(
                           widget.patientId,
                           ChiefcomplaintController.text,
@@ -1335,6 +1445,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                           temperatureController.text,
                           heartrateController.text,
                           selectedConsultingDoctor?['userid'],
+                          vitalsList,
                           context,
                         );
 
@@ -1367,6 +1478,94 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class VitalControllers {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController valueController = TextEditingController();
+
+  void dispose() {
+    nameController.dispose();
+    valueController.dispose();
+  }
+}
+class VitalsFieldSet extends StatefulWidget {
+  final VitalControllers controllers;
+
+  const VitalsFieldSet({
+    Key? key,
+    required this.controllers,
+  }) : super(key: key);
+
+  @override
+  State<VitalsFieldSet> createState() => _VitalsFieldSetState();
+}
+class _VitalsFieldSetState extends State<VitalsFieldSet> {
+  bool isValueEnabled = false;
+
+//  @override
+//   void initState() {
+//     super.initState();
+//     // Listen to changes in name field
+//     widget.controllers.nameController.addListener(_checkNameField);
+//   }
+
+@override
+void initState() {
+  super.initState();
+  // ✅ Seed initial state from whatever the controller already holds
+  // (e.g. autofilled via voice transcription)
+  isValueEnabled = widget.controllers.nameController.text.trim().isNotEmpty;   // ← ADD THIS
+
+  // Listen to changes in name field
+  widget.controllers.nameController.addListener(_checkNameField);
+}
+
+   void _checkNameField() {
+    final isNotEmpty = widget.controllers.nameController.text.trim().isNotEmpty;
+    if (isNotEmpty != isValueEnabled) {
+      setState(() {
+        isValueEnabled = isNotEmpty;
+      });
+    }
+  }
+
+    @override
+  void dispose() {
+    widget.controllers.nameController.removeListener(_checkNameField);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: widget.controllers.nameController,
+              decoration: const InputDecoration(
+                hintText: 'Name (e.g. Temperature)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: widget.controllers.valueController,
+              enabled: isValueEnabled,
+              decoration: const InputDecoration(
+                hintText: 'Value (e.g. 101°F)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

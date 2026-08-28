@@ -3174,7 +3174,7 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
   Future<void> refreshtoken() async {
     try {
       Constants.doctorrefreshtoken =
-          await secureStorage.readSecureData('refreshtoken') ?? '';
+          await secureStorage.readSecureData('doctorrefreshtoken') ?? '';
       final resp = await http.post(
         Uri.parse(
             '${Constants.baseUrl}/api/v1/hospitaldoctor/refreshtokendoctoradminmobile'),
@@ -3224,15 +3224,38 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
 
   Future<List<Map<String, dynamic>>> fetchMedicineSuggestions(String query) async {
     if (query.isEmpty) return [];
+
+     Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
     
     try {
+      print("Called the fecthsuggestions function");
       final response = await http.get(
         Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
         
         ),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.token}',
+          'Authorization': 'Bearer ${Constants.doctortoken}',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+      else if(response.statusCode == 401){
+        refreshtoken();
+        try {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
+        
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.doctortoken}',
         },
       );
       
@@ -3272,7 +3295,46 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
     }
     
     return [];
+      }
+      else{
+        refreshtoken();
+        try {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/api/v1/hospitaldoctor/suggestion-medicine?search=$query',
+        
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${Constants.token}',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        if (data['success'] == true && data['medicines'] != null) {
+          return List<Map<String, dynamic>>.from(data['medicines']);
+        }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
+      }
+    } catch (e) {
+      print('Error fetching medicine suggestions: $e');
+    }
+    
+    return [];
   }
+
+  String _normalizeFoodOption(String value) {
+  const apiFoodMap = {
+    'Before Food': 'Before food',   // dropdown shows capital F, API wants small f
+    'After Food': 'After Food',
+    'NA': 'NA',
+  };
+  return apiFoodMap[value] ?? value;
+}
 
   Future<void> _warmupModal() async {
   try {
@@ -4105,7 +4167,7 @@ Future<void> pickFiles() async {
                           return {
                             'medicine': controllers.medicineController.text,
                             'type': controllers.typeController.text,
-                            'food': controllers.foodOptionController.text,
+                            'food': _normalizeFoodOption(controllers.foodOptionController.text),
                             'time': controllers.selectedTimes,
                             'power': controllers.powerController.text,
                             'count': controllers.countController.text,
@@ -4209,19 +4271,70 @@ class MedicationFieldSet extends StatefulWidget {
 
 class _MedicationFieldSetState extends State<MedicationFieldSet> {
   bool isMedicationNameAdded = false;
+  String? selectedType;       // ← NEW
+  String? selectedFood;       // ← NEW
   List<Map<String, dynamic>> suggestions = [];
   bool showSuggestions = false;
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   final FocusNode _focusNode = FocusNode();
-  bool _isSelecting = false; // Flag to prevent showing suggestions during selection
-  
+  bool _isSelecting = false;
+
+  // Keep these in sync with the actual dropdown items lists below
+  static const _typeOptions = [
+    "Tablet", "Ointment", "Injection", "IV",
+    "Supporter", "Drops", "Bandage", "Syrup", "Others",
+  ];
+  static const _foodOptions = ["Before Food", "After Food", "NA"];
+
   @override
   void initState() {
     super.initState();
+    isMedicationNameAdded =
+        widget.controllers.medicineController.text.trim().isNotEmpty;
+
+    // ✅ Seed dropdown display state from whatever the controller already
+    // holds (e.g. autofilled via voice transcription). Only accept a value
+    // that's actually in the dropdown's item list, otherwise
+    // DropdownButtonFormField throws/asserts.
+    final typeText = widget.controllers.typeController.text.trim();
+    selectedType = _typeOptions.contains(typeText) ? typeText : null;
+
+    final foodText = widget.controllers.foodOptionController.text.trim();
+    selectedFood = _foodOptions.contains(foodText) ? foodText : null;
+
     widget.controllers.medicineController.addListener(_onMedicineTextChanged);
     _focusNode.addListener(_onFocusChanged);
   }
+//   bool isMedicationNameAdded = false;
+//   List<Map<String, dynamic>> suggestions = [];
+//   bool showSuggestions = false;
+//   final LayerLink _layerLink = LayerLink();
+//   OverlayEntry? _overlayEntry;
+//   final FocusNode _focusNode = FocusNode();
+//   bool _isSelecting = false; // Flag to prevent showing suggestions during selection
+  
+//   // @override
+//   // void initState() {
+//   //   super.initState();
+//   //   widget.controllers.medicineController.addListener(_onMedicineTextChanged);
+//   //   _focusNode.addListener(_onFocusChanged);
+//   // }
+
+//   @override
+// void initState() {
+//   super.initState();
+//   // ✅ Initialize from any text that was already set on the controller
+//   // (e.g. autofilled via voice transcription) BEFORE this widget/listener
+//   // existed. Without this, fields stay disabled after autofill because
+//   // the listener below only fires on *future* text changes, not on text
+//   // that was already there when the listener was attached.
+//   isMedicationNameAdded =
+//       widget.controllers.medicineController.text.trim().isNotEmpty;
+
+//   widget.controllers.medicineController.addListener(_onMedicineTextChanged);
+//   _focusNode.addListener(_onFocusChanged);
+// }
 
   @override
   void dispose() {
@@ -4400,6 +4513,7 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
             const SizedBox(width: 10),
             Expanded(
               child: DropdownButtonFormField<String>(
+                value: selectedType, 
                 decoration: InputDecoration(
                   enabled: isMedicationNameAdded,
                   hintText: 'Select Type',
@@ -4461,12 +4575,13 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<String>(
+          value: selectedFood,
           decoration: InputDecoration(
             enabled: isMedicationNameAdded,
             hintText: 'Select Food option',
             border: OutlineInputBorder(),
           ),
-          items: ["Before food", "After Food", "NA"]
+          items: ["Before Food", "After Food", "NA"]
               .map((option) => DropdownMenuItem(
                     value: option,
                     child: Text(option),
