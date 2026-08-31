@@ -2486,6 +2486,10 @@ static const _typeOptions = [
             Expanded(
               child: TextField(
                 controller: widget.controllers.countController,
+                keyboardType: TextInputType.number,
+                 inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                ],
                 decoration: InputDecoration(
                   enabled: isMedicationNameAdded,
                   hintText: 'Count',

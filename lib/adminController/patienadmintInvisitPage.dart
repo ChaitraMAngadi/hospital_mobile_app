@@ -226,7 +226,7 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 16),
                                         child: Text(
-                                          "No IPD Visits for this pateint \n Please add IPD visits",
+                                          "No IPD Visits for this Patient \n Please add IPD visits",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,

@@ -223,7 +223,7 @@ class _PatientInvisitsPageState extends State<PatientInvisitsPage> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 16),
                                         child: Text(
-                                          "No Invisits for this pateint \n Please add Invisit",
+                                          "No Invisits for this Patient \n Please add Invisit",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,

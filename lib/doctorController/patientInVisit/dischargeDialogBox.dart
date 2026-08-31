@@ -16,88 +16,277 @@ class DischargeDialogBox extends StatefulWidget {
   State<DischargeDialogBox> createState() => _DischargeDialogBoxState();
 }
 
+// class _DischargeDialogBoxState extends State<DischargeDialogBox> {
+
+  
+//   final TextEditingController dischargesummaryController = TextEditingController();
+//   final formkey = GlobalKey<FormState>();
+//     final TextEditingController dateController = TextEditingController();
+
+
+//   String formatedJoiDate = "";
+
+//     String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+//   bool _isDischarging = false; 
+
+
+//   @override
+//   Widget build(BuildContext context) {
+//     Doctorprovider doctorprovider = context.watch<Doctorprovider>();
+//     return Dialog(
+//                                            insetPadding:
+//                                               const EdgeInsets.all(16),
+//                                           shape: RoundedRectangleBorder(
+//                                               borderRadius:
+//                                                   BorderRadius.circular(16)),
+//                                                   child: SingleChildScrollView(
+//                                                     padding: EdgeInsets.all(16),
+//                                                     child: Form(
+//                                                       key: formkey,
+//                                                       child: Column(
+//                                                         crossAxisAlignment: CrossAxisAlignment.start,
+//                                                       children: [
+
+//                                                         Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     const Text(
+//                       "Discharge Inpatient",
+//                       style: TextStyle(
+//                         fontSize: 20,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                     IconButton(
+//                         onPressed: () {
+//                           Navigator.of(context).pop();
+//                         },
+//                         icon: const Icon(Icons.close))
+//                   ],
+//                 ),
+//                 SizedBox(
+//                   height: 16,
+//                 ),
+
+//                 /// Visit Date
+//                 Text(
+//                   "Discharge Date: $formattedDate",
+//                   style: const TextStyle(fontWeight: FontWeight.w600),
+//                 ),
+//                 const SizedBox(height: 8),
+
+//                 /// Chief complaint
+//                 const Text("Discharge Summary *",
+//                     style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,)),
+//                 const SizedBox(height: 6),
+//                 TextFormField(
+//                   controller: dischargesummaryController,
+//                   maxLines: 3,
+//                   validator: (value) {
+//                     if (value == null || value.isEmpty) {
+//                       return 'Please enter Discharge Summary';
+//                     }
+//                     return null; // Return null if validation is successful
+//                   },
+//                   decoration: InputDecoration(
+//                     hintText: "Enter Discharge Summary",
+//                     border: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                 ),
+//                  SizedBox(height: 8,),
+//                 const Text(
+//                 "Next Visit Date",
+//                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//               ),
+//               const SizedBox(height: 6),
+//               TextFormField(
+//                 autovalidateMode: AutovalidateMode.onUserInteraction,
+//                 controller: dateController,
+//                 readOnly: true,
+//                 decoration: InputDecoration(
+//                   suffixIcon: Padding(
+//                     padding: const EdgeInsets.only(right: 16),
+//                     child: GestureDetector(
+//                         onTap: () async {
+//                           DateTime today = DateTime.now();
+//                           DateTime? pickedDate = await showDatePicker(
+//                             context: context,
+//                             initialDate: today,
+//                             firstDate: today,
+//                             lastDate: DateTime(2101),
+//                           );
+
+//                           if (pickedDate != null) {
+//                             String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
+//                             dateController.text = formattedDate;
+//                             formatedJoiDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+//                           }
+//                         },
+//                         child: const Icon(Icons.calendar_month_outlined)),
+//                   ),
+//                   border: const OutlineInputBorder(),
+//                   hintText: 'dd/MM/yyyy',
+//                 ),
+//               ),
+//                 SizedBox(height: 20,),
+//                 Container(
+//                   width: double.infinity,
+//                   decoration: BoxDecoration(
+//                     gradient: AppColors.primaryGradient,
+//                     borderRadius: BorderRadius.all(Radius.circular(12)),
+//                   ),
+//                   child: ElevatedButton(
+//                     onPressed: () async {
+//                       if (formkey.currentState!.validate()) {
+//                       print(dischargesummaryController.text);
+//                       await doctorprovider.dischargeInPatient(widget.patientId, widget.complaintId, dischargesummaryController.text,formatedJoiDate,widget.name,widget.visitingindex, context);
+//                       doctorprovider.invalidateCache();
+//                       await doctorprovider.getpatientinvisits(widget.patientId, context);
+                      
+                      
+//                       }
+
+//                       // context.router.pop();
+//                     },
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.transparent,
+//                       shadowColor: Colors.transparent,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(12),
+//                       ),
+//                       padding:
+//                           EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+//                     ),
+//                     child: Text("Discharge Inpatient",
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           fontWeight: FontWeight.bold,
+//                           color: Colors.white,
+//                         )),
+//                   ),
+//                 )
+
+//                                                       ],
+//                                                     )),
+//                                                   ),
+                                          
+//                                         );
+//   }
+// }
+
 class _DischargeDialogBoxState extends State<DischargeDialogBox> {
 
-  
   final TextEditingController dischargesummaryController = TextEditingController();
   final formkey = GlobalKey<FormState>();
-    final TextEditingController dateController = TextEditingController();
-
+  final TextEditingController dateController = TextEditingController();
 
   String formatedJoiDate = "";
+  String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
-    String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+  bool _isDischarging = false; // ✅ NEW — loading flag
 
-  
+  @override
+  void dispose() {
+    dischargesummaryController.dispose();
+    dateController.dispose();
+    super.dispose();
+  }
 
+  Future<void> _handleDischarge() async {
+    if (_isDischarging) return; // ✅ double-tap guard
+
+    if (!formkey.currentState!.validate()) return;
+
+    setState(() => _isDischarging = true);
+
+    final doctorprovider = context.read<Doctorprovider>();
+
+    try {
+      await doctorprovider.dischargeInPatient(
+        widget.patientId,
+        widget.complaintId,
+        dischargesummaryController.text,
+        formatedJoiDate,
+        widget.name,
+        widget.visitingindex,
+        context,
+      );
+      doctorprovider.invalidateCache();
+      await doctorprovider.getpatientinvisits(widget.patientId, context);
+
+      if (mounted) Navigator.of(context).pop(); // ✅ success ke baad dialog close
+    } catch (e) {
+      // agar error aaye toh spinner band karo, dialog open rehne do
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isDischarging = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    Doctorprovider doctorprovider = context.watch<Doctorprovider>();
+    // ❌ context.watch<Doctorprovider>() hata do yahan se — isse har notifyListeners()
+    // pe pura dialog rebuild hota hai jo blank-screen jaisa glitch de sakta hai
     return Dialog(
-                                           insetPadding:
-                                              const EdgeInsets.all(16),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16)),
-                                                  child: SingleChildScrollView(
-                                                    padding: EdgeInsets.all(16),
-                                                    child: Form(
-                                                      key: formkey,
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-
-                                                        Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Discharge Inpatient",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        icon: const Icon(Icons.close))
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-
-                /// Visit Date
-                Text(
-                  "Discharge Date: $formattedDate",
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 8),
-
-                /// Chief complaint
-                const Text("Discharge Summary *",
-                    style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,)),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: dischargesummaryController,
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter Discharge Summary';
-                    }
-                    return null; // Return null if validation is successful
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Enter Discharge Summary",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+      insetPadding: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Form(
+          key: formkey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Discharge Inpatient",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
+                  IconButton(
+                    onPressed: _isDischarging
+                        ? null // ✅ loading ke time close bhi disable
+                        : () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close),
+                  )
+                ],
+              ),
+              SizedBox(height: 16),
+
+              Text(
+                "Discharge Date: $formattedDate",
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+
+              const Text("Discharge Summary *",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: dischargesummaryController,
+                maxLines: 3,
+                enabled: !_isDischarging, // ✅ loading ke time disable
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Discharge Summary';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  hintText: "Enter Discharge Summary",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                 SizedBox(height: 8,),
-                const Text(
+              ),
+              SizedBox(height: 8),
+              const Text(
                 "Next Visit Date",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
@@ -106,73 +295,77 @@ class _DischargeDialogBoxState extends State<DischargeDialogBox> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 controller: dateController,
                 readOnly: true,
+                enabled: !_isDischarging, // ✅
                 decoration: InputDecoration(
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: GestureDetector(
-                        onTap: () async {
-                          DateTime today = DateTime.now();
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: today,
-                            firstDate: today,
-                            lastDate: DateTime(2101),
-                          );
+                      onTap: _isDischarging
+                          ? null
+                          : () async {
+                              DateTime today = DateTime.now();
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: today,
+                                firstDate: today,
+                                lastDate: DateTime(2101),
+                              );
 
-                          if (pickedDate != null) {
-                            String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
-                            dateController.text = formattedDate;
-                            formatedJoiDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-                          }
-                        },
-                        child: const Icon(Icons.calendar_month_outlined)),
+                              if (pickedDate != null) {
+                                String formattedDate =
+                                    DateFormat('dd/MM/yyyy').format(pickedDate);
+                                dateController.text = formattedDate;
+                                formatedJoiDate =
+                                    DateFormat('yyyy-MM-dd').format(pickedDate);
+                              }
+                            },
+                      child: const Icon(Icons.calendar_month_outlined),
+                    ),
                   ),
                   border: const OutlineInputBorder(),
                   hintText: 'dd/MM/yyyy',
                 ),
               ),
-                SizedBox(height: 20,),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+              SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: _isDischarging
+                      ? LinearGradient(colors: [Colors.grey, Colors.grey])
+                      : AppColors.primaryGradient,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                child: ElevatedButton(
+                  onPressed: _isDischarging ? null : _handleDischarge, // ✅ guard
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (formkey.currentState!.validate()) {
-                      print(dischargesummaryController.text);
-                      await doctorprovider.dischargeInPatient(widget.patientId, widget.complaintId, dischargesummaryController.text,formatedJoiDate,widget.name,widget.visitingindex, context);
-                      doctorprovider.invalidateCache();
-                      await doctorprovider.getpatientinvisits(widget.patientId, context);
-                      
-                      
-                      }
-
-                      // context.router.pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    ),
-                    child: Text("Discharge Inpatient",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        )),
-                  ),
-                )
-
-                                                      ],
-                                                    )),
-                                                  ),
-                                          
-                                        );
+                  child: _isDischarging
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
+                        )
+                      : Text(
+                          "Discharge Inpatient",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

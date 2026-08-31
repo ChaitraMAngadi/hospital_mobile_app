@@ -4194,6 +4194,7 @@ Future<void> pickFiles() async {
         
                         // doctorprovider todaysvisitprovider = context.read<Todayvisitprovider>();
                         await doctorprovider.getpatientoutvisits(widget.patientId, context);
+                        await doctorprovider.gettodaysoutvisits(context);
                         doctorprovider.notify();
                       },
                       style: ElevatedButton.styleFrom(
@@ -4564,6 +4565,10 @@ class _MedicationFieldSetState extends State<MedicationFieldSet> {
             Expanded(
               child: TextField(
                 controller: widget.controllers.countController,
+                keyboardType: TextInputType.number,
+                 inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                ],
                 decoration: InputDecoration(
                   enabled: isMedicationNameAdded,
                   hintText: 'Count',

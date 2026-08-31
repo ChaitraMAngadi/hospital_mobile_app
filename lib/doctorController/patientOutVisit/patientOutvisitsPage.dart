@@ -299,7 +299,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                         0.81,
                                     child: const Center(
                                       child: Text(
-                                        "No OPD Visits for this pateint \nPlease add OPD Visit",
+                                        "No OPD Visits for this Patient \nPlease add OPD Visit",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -1195,7 +1195,8 @@ class VisitViewModel extends StatelessWidget {
     required this.bp,
     required this.temprature,
     required this.heartrate,
-    required this.visitdate, this.otherVitals,
+    required this.visitdate,
+    this.otherVitals,
   });
 
   final String Chiefcomplaint;

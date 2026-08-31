@@ -310,7 +310,7 @@ class _TodaysAppointmentsPageState extends State<TodaysAppointmentsPage> {
                                         ? _buildNoSearchResults() // <-- show no results UI if searching
                                         : const Center(
                                             child: Text(
-                                              "No Appoiments to show",
+                                              "No appointment to show",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),

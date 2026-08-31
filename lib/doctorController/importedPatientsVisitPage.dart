@@ -371,6 +371,7 @@ String generateComplaintIdFromString(String createdAt) {
                                                           heartrate: visit["heart_rate"] ?? "",
                                                           visitdate: formatDate(visit["visit_date"])??'',
                                                           diagnosedby: visit['associatedDoctor'][0]['name']??"",
+                                                          otherVitals: visit["other_vitals"]?? [],
                                                         );
                                                       },
                                                     );
@@ -1316,7 +1317,7 @@ class VisitViewModel extends StatelessWidget {
     required this.bp,
     required this.temprature,
     required this.heartrate,
-    required this.visitdate, required this.diagnosedby,
+    required this.visitdate, required this.diagnosedby, this.otherVitals,
   });
 
   final String Chiefcomplaint;
@@ -1327,6 +1328,7 @@ class VisitViewModel extends StatelessWidget {
   final String heartrate;
   final String visitdate;
   final String diagnosedby;
+  final List<dynamic>? otherVitals;
 
   @override
   Widget build(BuildContext context) {
@@ -1386,7 +1388,11 @@ class VisitViewModel extends StatelessWidget {
                         
                   const SizedBox(height: 16),
                   _divider(),
-                        
+                  
+                  Text("VITALS",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),),
                   /// VITALS GRID
                   Wrap(
                     spacing: 12,
@@ -1407,6 +1413,36 @@ class VisitViewModel extends StatelessWidget {
                             "HEART RATE", heartrate, Icons.monitor_heart),
                     ],
                   ),
+
+
+                 if (otherVitals != null && otherVitals!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "OTHER VITALS",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...otherVitals!.map((v) {
+                  final name = v['name']?.toString() ?? '';
+                  final value = v['value']?.toString() ?? '';
+                  if (name.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _smallCard(
+                      name.toUpperCase(),
+                       value,
+                       Icons.monitor_heart_outlined,
+                    ),
+                  );
+                }).toList(),
+              ],
                         
                   const SizedBox(height: 16),
                         
@@ -1482,11 +1518,12 @@ class VisitViewModel extends StatelessWidget {
   /// Small vitals card
   Widget _smallCard(String label, String value, IconData icon) {
     return Container(
-      width: 160,
+      width: 150,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
+        color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Colors.grey),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1495,10 +1532,18 @@ class VisitViewModel extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: Colors.red),
               const SizedBox(width: 6),
-              Text(
+              Expanded(                      // ✅ ADD THIS
+              child: Text(
                 label,
                 style: const TextStyle(fontSize: 11, color: Colors.grey),
+                overflow: TextOverflow.ellipsis,  // ✅ ADD THIS
+                maxLines: 2,                       // ✅ ADD THIS
               ),
+            ),
+              // Text(
+              //   label,
+              //   style: const TextStyle(fontSize: 11, color: Colors.grey),
+              // ),
             ],
           ),
           const SizedBox(height: 6),

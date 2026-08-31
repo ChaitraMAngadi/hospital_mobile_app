@@ -62,13 +62,30 @@ class _TodaysOutvisitsPageState extends State<TodaysOutvisitsPage> {
   //   });
   // }
 
+List<Map<String, dynamic>> _sortByRecent(List<dynamic> visits) {
+  final list = List<Map<String, dynamic>>.from(visits);
+  list.sort((a, b) {
+    // Priority: updatedAt > createdAt > visit_date
+    final aDate = DateTime.tryParse(
+          a['updatedAt'] ?? a['createdAt'] ?? a['visit_date'] ?? '',
+        ) ??
+        DateTime.fromMillisecondsSinceEpoch(0);
+    final bDate = DateTime.tryParse(
+          b['updatedAt'] ?? b['createdAt'] ?? b['visit_date'] ?? '',
+        ) ??
+        DateTime.fromMillisecondsSinceEpoch(0);
+    return bDate.compareTo(aDate); // descending → recent first
+  });
+  return list;
+}
+
   @override
 void initState() {
   super.initState();
   Doctorprovider doctorprovider = context.read<Doctorprovider>();
   fetchtodaysoutvisits = doctorprovider.gettodaysoutvisits(context).then((_) {
     setState(() {
-      doctorprovider.filteredvisits = doctorprovider.gettodaysvisits;
+      doctorprovider.filteredvisits = _sortByRecent(doctorprovider.gettodaysvisits);
     });
   });
 
@@ -77,7 +94,7 @@ void initState() {
     setState(() {
       if (query.isEmpty) {
         // Reset to full list when search is cleared
-        doctorprovider.filteredvisits = doctorprovider.gettodaysvisits;
+        doctorprovider.filteredvisits = _sortByRecent(doctorprovider.gettodaysvisits);
       } else {
         doctorprovider.filteredvisits =
             doctorprovider.gettodaysvisits.where((visit) {
@@ -336,16 +353,22 @@ void initState() {
                                                     temprature: item["temperature"] ?? "",
                                                     heartrate: item["heart_rate"] ?? "",
                                                     visitdate: formatDate(item["visit_date"]),
+                                                    otherVitals:item["other_vitals"]?? [],
+
                                                   );
                                                 },
                                               );
                                   },
-                                  startdiagnosisonTap: () {
-                     context.router.push(
+                                  startdiagnosisonTap: () async{
+                    await context.router.push(
                                                 DiagnosisRoute(
                                                 patientId: item['patientId'],
                                                 complaintId:item['id'],
                                               ));
+
+                                              if (mounted) {
+    await _handleRefresh();
+  }
                                   },
                                   supportingimagesonTap: () {
                      showDialog(
@@ -425,17 +448,34 @@ void initState() {
         ));
   }
 
-  Future<void> _handleRefresh() async {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
-doctorprovider.invalidateCache(key: doctorprovider.Outvisits);
-    await Future.delayed(Duration(seconds: 2));
-    Constants.doctortoken =
-        await secureStorage.readSecureData('doctortoken') ?? '';
+//   Future<void> _handleRefresh() async {
+//     Doctorprovider doctorprovider = context.read<Doctorprovider>();
+// doctorprovider.invalidateCache(key: doctorprovider.Outvisits);
+//     // await Future.delayed(Duration(seconds: 2));
+//     Constants.doctortoken =
+//         await secureStorage.readSecureData('doctortoken') ?? '';
+//     setState(() {
+//       fetchtodaysoutvisits = doctorprovider.gettodaysoutvisits(context);
+//       doctorprovider.filteredvisits = doctorprovider.gettodaysvisits;
+//     });
+//   }
+
+Future<void> _handleRefresh() async {
+  Doctorprovider doctorprovider = context.read<Doctorprovider>();
+  doctorprovider.invalidateCache(key: doctorprovider.Outvisits);
+  Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+  // ✅ Fetch complete hone tak wait karo
+  await doctorprovider.gettodaysoutvisits(context);
+
+  // ✅ Ab hi filteredvisits assign karo — updated data ke saath
+  if (mounted) {
     setState(() {
-      fetchtodaysoutvisits = doctorprovider.gettodaysoutvisits(context);
-      doctorprovider.filteredvisits = doctorprovider.gettodaysvisits;
+      fetchtodaysoutvisits = Future.value(); // sirf FutureBuilder ko satisfy karne ke liye
+      doctorprovider.filteredvisits = _sortByRecent(doctorprovider.gettodaysvisits);
     });
   }
+}
 }
 
 // class TodaysVisitModel extends StatelessWidget {

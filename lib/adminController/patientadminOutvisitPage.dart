@@ -245,7 +245,7 @@ class _PatientAdminOutvisitsPageState extends State<PatientAdminOutvisitsPage> {
                                 ? SizedBox(
                                     height: MediaQuery.of(context).size.height * 0.81,
                                     child: const Center(child: Text(
-                                          "No Outvisits for this pateint \n Please add Outvisit",
+                                          "No Outvisits for this Patient \n Please add Outvisit",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -1336,7 +1336,7 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                                 const SizedBox(height: 20),
 
                 const Text(
-                  "Vitals",
+                  "Other Vitals",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 6),
@@ -1492,7 +1492,7 @@ class VitalControllers {
     valueController.dispose();
   }
 }
-class VitalsFieldSet extends StatefulWidget {
+ class VitalsFieldSet extends StatefulWidget {
   final VitalControllers controllers;
 
   const VitalsFieldSet({

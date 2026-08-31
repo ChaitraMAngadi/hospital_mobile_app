@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
@@ -31,6 +34,8 @@ class _ImportHospitalPdfViewerPageState extends State<ImportHospitalPdfViewerPag
   bool isDownloading = false;
   Uint8List? pdfBytes;
   String? errorMessage;
+    final SecureStorage secureStorage = SecureStorage();
+
 
   // Define available languages
   // final Map<String, String> languages = {
@@ -50,6 +55,59 @@ class _ImportHospitalPdfViewerPageState extends State<ImportHospitalPdfViewerPag
   void initState() {
     super.initState();
     _loadPdfData();
+  }
+
+  /// Refreshes the access token using the stored refresh token.
+  /// Returns true if refresh succeeded, false otherwise.
+  Future<bool> _refreshToken() async {
+    try {
+      Constants.doctorrefreshtoken =
+          await secureStorage.readSecureData('doctorrefreshtoken') ?? '';
+
+      final response = await http.post(
+        Uri.parse(
+            '${Constants.baseUrl}/api/v1/hospitaldoctor/refreshtokendoctoradminmobile'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${Constants.doctorrefreshtoken}',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        await secureStorage.writeSecureData(
+            'doctortoken', responseData['token']);
+        await secureStorage.writeSecureData(
+            'doctorrefreshtoken', responseData['refreshToken']);
+
+        Constants.doctortoken =
+            await secureStorage.readSecureData('doctortoken');
+        Constants.doctorrefreshtoken =
+            await secureStorage.readSecureData('doctorrefreshtoken');
+
+        return true;
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        await secureStorage.deleteSecureData('doctortoken');
+        await secureStorage.deleteSecureData('doctorrefreshtoken');
+
+        Constants.doctortoken = '';
+        Constants.doctorrefreshtoken = '';
+
+        // Guard BuildContext usage after the await above.
+        if (mounted) {
+          context.router.popAndPush(SplashRoute());
+        }
+        return false;
+      } else {
+        debugPrint(
+            "Refresh failed with status: ${response.statusCode} — ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Refresh token error: $e");
+      return false;
+    }
   }
 
   Future<void> _loadPdfData() async {
@@ -81,7 +139,8 @@ class _ImportHospitalPdfViewerPageState extends State<ImportHospitalPdfViewerPag
          print(pdfBytes);
           isLoading = false;
         });
-      } else {
+      } 
+      else {
         setState(() {
           errorMessage = "Failed to load PDF: ${response.statusCode}";
           isLoading = false;

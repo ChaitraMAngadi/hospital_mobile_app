@@ -394,17 +394,33 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
         ));
   }
 
+//   Future<void> _handleRefresh() async {
+//     Doctorprovider doctorprovider = context.read<Doctorprovider>();
+// doctorprovider.invalidateCache(key: doctorprovider.Invisits);
+//     // await Future.delayed(Duration(seconds: 2));
+//     Constants.doctortoken =
+//         await secureStorage.readSecureData('doctortoken') ?? '';
+//     setState(() {
+//       fetchactiveallinvisits = doctorprovider.getactiveinvisits(context);
+//       doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
+//     });
+//   }
   Future<void> _handleRefresh() async {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
+  Doctorprovider doctorprovider = context.read<Doctorprovider>();
 doctorprovider.invalidateCache(key: doctorprovider.Invisits);
-    // await Future.delayed(Duration(seconds: 2));
-    Constants.doctortoken =
-        await secureStorage.readSecureData('doctortoken') ?? '';
+  Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+  // ✅ Fetch complete hone tak wait karo
+  await  doctorprovider.getactiveinvisits(context);
+
+  // ✅ Ab hi filteredvisits assign karo — updated data ke saath
+  if (mounted) {
     setState(() {
-      fetchactiveallinvisits = doctorprovider.getactiveinvisits(context);
+      fetchactiveallinvisits = Future.value(); // sirf FutureBuilder ko satisfy karne ke liye
       doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
     });
   }
+}
 }
 
 // class ActiveInvisitModel extends StatelessWidget {

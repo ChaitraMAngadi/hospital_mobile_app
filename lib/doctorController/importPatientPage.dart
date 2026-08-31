@@ -866,7 +866,7 @@ String calculateAge(String dob) {
                                                   age: calculateAge(item['DOB'])??'',
                                                   dob: formatDate(item['DOB']),
                                                   createdbydoctor:
-                                                     item['doctorDetails']
+                                                     item['doctorDetails']?
                                                           ['name']??'',
                                               
                                                  
@@ -875,7 +875,7 @@ String calculateAge(String dob) {
                                                   visitdate: formatDate(
                                                       item['createdAt']),
                                                   consultingdoctor:
-                                                      item['doctorDetails']
+                                                      item['doctorDetails']?
                                                           ['name']??'',
                                                   // consultingdocid:
                                                   //     item['doctorDetails']
