@@ -27,13 +27,7 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
   
     const ProfilePage(),
   ];
-  // [
-  //   const Center(child: Text("Doctor Patients")),
-  //   const Center(child: Text("Doctor todays out visits")),
-  //   const Center(child: Text("Doctor active in visits")),
-  //   const Center(child: Text("Profile")),
-
-  // ];
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -80,25 +74,7 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
               // selectedItemColor: const Color(0xFF0857C0),
               onTap: (index) => setState(() => _selectedIndex = index),
             )
-      
-      // BottomNavigationBar(
-      //   currentIndex: _selectedIndex,
-      //   onTap: (index) => setState(() => _selectedIndex = index),
-      //   items: const [
-      //     BottomNavigationBarItem(icon: Icon(Icons.group), label: "Patients"),
-      //     BottomNavigationBarItem(icon: Icon(Icons.description), label: "Todays Out Visits"),
-      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: "Active In Visits"),
-      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-      //   ],
-      //   backgroundColor: const Color(0xFF0857C0),
-           
-      //         iconSize: 30,
-      //         selectedLabelStyle: const TextStyle(fontSize: 16),
-      //         unselectedLabelStyle: const TextStyle(fontSize: 16),
-      //         showUnselectedLabels: true,
-      //         selectedItemColor: Colors.white,
-      //         unselectedItemColor: Colors.white54,
-      // ),
+     
     );
   }
 }

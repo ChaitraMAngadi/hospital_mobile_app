@@ -177,6 +177,9 @@ class _LoginPageState extends State<LoginPage> {
                                  if (value.contains(' ')) {
                     return 'Spaces are not allowed';
                   }
+                  if (value.length < 5) {
+                    return "Password can't be less than 5 digits";
+                  }
                                 return null; 
                               },
                       decoration: InputDecoration(

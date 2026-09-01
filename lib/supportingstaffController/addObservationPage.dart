@@ -308,31 +308,38 @@ class _VitalsFieldSetState extends State<VitalsFieldSet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: widget.controllers.nameController,
-              decoration: const InputDecoration(
-                hintText: 'Name (e.g. Temperature)',
-                border: OutlineInputBorder(),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.grey.shade300,
+        )
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: widget.controllers.nameController,
+                decoration: const InputDecoration(
+                  hintText: 'Name (e.g. Temperature)',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: widget.controllers.valueController,
-              enabled: isValueEnabled,
-              decoration: const InputDecoration(
-                hintText: 'Value (e.g. 101°F)',
-                border: OutlineInputBorder(),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextField(
+                controller: widget.controllers.valueController,
+                enabled: isValueEnabled,
+                decoration: const InputDecoration(
+                  hintText: 'Value (e.g. 101°F)',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

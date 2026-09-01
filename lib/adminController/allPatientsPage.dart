@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
@@ -8,6 +7,7 @@ import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 
 class AllPatientsPage extends StatefulWidget {
   const AllPatientsPage({super.key});
@@ -29,7 +29,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
   Timer? _debounceTimer;
   String _currentSearchQuery = '';
   bool _isSearching = false; 
-
+bool _isInitialLoading = true;   // NEW
   @override
   void initState() {
     super.initState();
@@ -61,6 +61,12 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
 
   Future<void> _fetchInitialData() async {
     await adminprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
+
+    if (mounted) {
+    setState(() {
+      _isInitialLoading = false;   // NEW
+    });
+  }
     // await homePageProvider.getdoctordetails();
   }
 
@@ -101,6 +107,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
     setState(() {
       _currentPage = 1;
       _hasMore = true;
+      _isInitialLoading = true; 
       _isSearching = false; // Reset searching flag
       adminprovider.allpatients.clear();
       adminprovider.filteredPatients.clear();
@@ -335,7 +342,57 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
     );
   }
 
+  String calculateAge(String dob) {
+  DateTime birthDate;
+
+  try {
+    // Handle dd/MM/yyyy format
+    if (dob.contains('/')) {
+      birthDate = DateFormat('dd/MM/yyyy').parseStrict(dob);
+    } else {
+      // Handle yyyy-MM-dd / ISO format
+      birthDate = DateTime.parse(dob);
+    }
+  } catch (e) {
+    return '';
+  }
+
+  final today = DateTime.now();
+
+  int years = today.year - birthDate.year;
+  int months = today.month - birthDate.month;
+  int days = today.day - birthDate.day;
+
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(today.year, today.month, 0);
+    days += prevMonth.day;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years >= 5) {
+    return '$years ${years == 1 ? 'year' : 'years'}';
+  }
+
+  if (years == 0 && months == 0) {
+    return '0 month $days ${days == 1 ? 'day' : 'days'}';
+  }
+
+  return '$years ${years == 1 ? 'year' : 'years'} '
+      '$months ${months == 1 ? 'month' : 'months'}';
+}
+
+
   Widget _buildMainContent(Adminprovider adminprovider) {
+
+    if (_isInitialLoading) {
+    return _buildShimmerList();
+  }
+  
     // Show shimmer while searching or initial load
     if (_isSearching || (_currentPage == 1 && adminprovider.allpatients.isEmpty && _isLoadingMore)) {
       return _buildShimmerList();
@@ -348,7 +405,9 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
     
     // Show shimmer for initial load (when no search query)
     if (adminprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
-      return _buildShimmerList();
+      return Center(
+        child: Text("No Patients to show Please Register"),
+      );
     }
     
     // Show the actual list
@@ -378,7 +437,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
                           email: item['email'] ?? "",
                           phonenumber: item['phone'] ?? 0,
                           dob: formatDate(item['DOB'] ?? ""),
-                          age: item['age'] ?? "",
+                          age: calculateAge(item['DOB'])??'',
                           gender: item['gender'] ?? "",
                           createdbyadmin: "",
                           adminame: "",
@@ -394,7 +453,7 @@ class _AllPatientsPageState extends State<AllPatientsPage> {
                           email: item['email'] ?? "",
                           phonenumber: item['phone'] ?? 0,
                           dob: formatDate(item['DOB'] ?? ""),
-                          age: item['age'] ?? "",
+                          age: calculateAge(item['DOB']) ?? "",
                           gender: item['gender'] ?? "",
                           createdbyadmin: item["adminDetails"]['name'] ?? "",
                           adminame: item["adminDetails"]["name"],

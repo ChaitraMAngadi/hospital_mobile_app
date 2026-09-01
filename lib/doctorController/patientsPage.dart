@@ -1,7 +1,4 @@
-
-
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
@@ -10,6 +7,7 @@ import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 
 class PatientsPage extends StatefulWidget {
   const PatientsPage({super.key});
@@ -32,6 +30,7 @@ class _PatientsPageState extends State<PatientsPage> {
   Timer? _debounceTimer;
   String _currentSearchQuery = '';
   bool _isSearching = false; // Add this flag to track search state
+bool _isInitialLoading = true;   // NEW
 
   @override
   void initState() {
@@ -63,10 +62,92 @@ class _PatientsPageState extends State<PatientsPage> {
     });
   }
 
-  Future<void> _fetchInitialData() async {
-    await doctorprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
-    // await homePageProvider.getdoctordetails();
+  // Future<void> _fetchInitialData() async {
+  //   await doctorprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
+  //   // await homePageProvider.getdoctordetails();
+  // }
+Future<void> _fetchInitialData() async {
+  await doctorprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
+  if (mounted) {
+    setState(() {
+      _isInitialLoading = false;   // NEW
+    });
   }
+}
+
+String calculateAge(String dob) {
+  DateTime birthDate;
+
+  try {
+    // Handle dd/MM/yyyy format
+    if (dob.contains('/')) {
+      birthDate = DateFormat('dd/MM/yyyy').parseStrict(dob);
+    } else {
+      // Handle yyyy-MM-dd / ISO format
+      birthDate = DateTime.parse(dob);
+    }
+  } catch (e) {
+    return '';
+  }
+
+  final today = DateTime.now();
+
+  int years = today.year - birthDate.year;
+  int months = today.month - birthDate.month;
+  int days = today.day - birthDate.day;
+
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(today.year, today.month, 0);
+    days += prevMonth.day;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years >= 5) {
+    return '$years ${years == 1 ? 'year' : 'years'}';
+  }
+
+  if (years == 0 && months == 0) {
+    return '0 month $days ${days == 1 ? 'day' : 'days'}';
+  }
+
+  return '$years ${years == 1 ? 'year' : 'years'} '
+      '$months ${months == 1 ? 'month' : 'months'}';
+}
+
+
+//   String calculateAge(String dob) {
+//   final birthDate = DateTime.parse(dob);
+//   final today = DateTime.now();
+//   int years = today.year - birthDate.year;
+//   int months = today.month - birthDate.month;
+//   int days = today.day - birthDate.day;
+
+//   if (days < 0) {
+//     months--;
+//     // Days in the month before 'today's month
+//     final prevMonth = DateTime(today.year, today.month, 0);
+//     days += prevMonth.day;
+//   }
+//   if (months < 0) {
+//     years--;
+//     months += 12;
+//   }
+
+//   if (years >= 5) {
+//     return '$years ${years == 1 ? 'year' : 'years'}';
+//   }
+
+//   if (years == 0 && months == 0) {
+//     return '0 month $days ${days == 1 ? 'day' : 'days'}';
+//   }
+
+//   return '$years ${years == 1 ? 'year' : 'years'} $months ${months == 1 ? 'month' : 'months'}';
+// }
 
   Future<void> _performSearch(String query) async {
     setState(() {
@@ -101,16 +182,28 @@ class _PatientsPageState extends State<PatientsPage> {
     setState(() => _isLoadingMore = false);
   }
 
+  // Future<void> _handleRefresh() async {
+  //   setState(() {
+  //     _currentPage = 1;
+  //     _hasMore = true;
+  //     _isSearching = false; // Reset searching flag
+  //     doctorprovider.allpatients.clear();
+  //     doctorprovider.filteredPatients.clear();
+  //   });
+  //   await _fetchInitialData();
+  // }
+
   Future<void> _handleRefresh() async {
-    setState(() {
-      _currentPage = 1;
-      _hasMore = true;
-      _isSearching = false; // Reset searching flag
-      doctorprovider.allpatients.clear();
-      doctorprovider.filteredPatients.clear();
-    });
-    await _fetchInitialData();
-  }
+  setState(() {
+    _currentPage = 1;
+    _hasMore = true;
+    _isSearching = false;
+    _isInitialLoading = true;   // NEW
+    doctorprovider.allpatients.clear();
+    doctorprovider.filteredPatients.clear();
+  });
+  await _fetchInitialData();
+}
 
   String formatDate(String date) {
     final parsedDate = DateTime.tryParse(date);
@@ -262,131 +355,133 @@ class _PatientsPageState extends State<PatientsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: _handleRefresh,
-        child: Consumer<Doctorprovider>(
-          builder: (context, doctorprovider, child) {
-            return SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Register Patient Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          //  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 10,
-              offset: Offset(0, 6),
-              color: Colors.black12,
-            )
-          ],
-        ),
-                          child: ElevatedButton(
-                            // onPressed: (){},
-                            onPressed: () => context.router.push(ImportPatientsRoute()),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      body: Consumer<Doctorprovider>(
+        builder: (context, doctorprovider, child) {
+          return SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Register Patient Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        //  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 10,
+            offset: Offset(0, 6),
+            color: Colors.black12,
+          )
+        ],
+      ),
+                        child: ElevatedButton(
+                          // onPressed: (){},
+                          onPressed: () => context.router.push(ImportPatientsRoute()),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.medical_services, color: Colors.white),
-                                SizedBox(width: 4),
-                                Text("Import Patient", style: TextStyle(fontSize: 15, color: Colors.white)),
-                              ],
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.medical_services, color: Colors.white),
+                              SizedBox(width: 4),
+                              Text("Import Patient", style: TextStyle(fontSize: 15, color: Colors.white)),
+                            ],
                           ),
                         ),
-                        Container(
-                          //  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 10,
-              offset: Offset(0, 6),
-              color: Colors.black12,
-            )
-          ],
-        ),
-                          child: ElevatedButton(
-                            // onPressed: (){},
-                            onPressed: () => context.router.push(RegisterPatientRoute()),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      ),
+                      Container(
+                        //  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 10,
+            offset: Offset(0, 6),
+            color: Colors.black12,
+          )
+        ],
+      ),
+                        child: ElevatedButton(
+                          // onPressed: (){},
+                          onPressed: () => context.router.push(RegisterPatientRoute()),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.person_add_alt_1_outlined, color: Colors.white),
-                                SizedBox(width: 4),
-                                Text("Register Patient", style: TextStyle(fontSize: 15, color: Colors.white)),
-                              ],
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.person_add_alt_1_outlined, color: Colors.white),
+                              SizedBox(width: 4),
+                              Text("Register Patient", style: TextStyle(fontSize: 15, color: Colors.white)),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  // Search Box
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search Patient by id or name...',
-                        prefixIcon: Icon(Icons.search),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(Icons.clear),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  _currentSearchQuery = '';
-                                  _performSearch('');
-                                },
-                              )
-                            : null,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                ),
+                // Search Box
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search Patient by id or name...',
+                      prefixIcon: Icon(Icons.search),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                _currentSearchQuery = '';
+                                _performSearch('');
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                  // Main content area
-                  Expanded(
-                    child: _buildMainContent(doctorprovider),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+                // Main content area
+                Expanded(
+                  child: _buildMainContent(doctorprovider),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildMainContent(Doctorprovider doctorprovider) {
+
+     if (_isInitialLoading) {
+    return _buildShimmerList();
+  }
+
     // Show shimmer while searching or initial load
-    if (_isSearching || (_currentPage == 1 && doctorprovider.allpatients.isEmpty && _isLoadingMore)) {
+    if (_isSearching || (_currentPage == 1 && _isLoadingMore)) {
       return _buildShimmerList();
     }
     
@@ -396,80 +491,93 @@ class _PatientsPageState extends State<PatientsPage> {
     }
     
     // Show shimmer for initial load (when no search query)
-    if (doctorprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
-      return _buildShimmerList();
-    }
+    // if (doctorprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
+    //   return Center(
+    //     child: Text("No Patients to show Please Register"),
+    //   );
+    // }
+
+if(doctorprovider.allpatients.isEmpty){
+  return Center(
+    child: Text("No Patients to show Please Register"),
+  );
+}
+    
     
     // Show the actual list
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: doctorprovider.allpatients.length + (_hasMore && _isLoadingMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index < doctorprovider.allpatients.length) {
-          final sorted = doctorprovider.allpatients
-            ..sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
-          final item = sorted[index];
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: doctorprovider.allpatients.length + (_hasMore && _isLoadingMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index < doctorprovider.allpatients.length) {
+            final sorted = doctorprovider.allpatients
+              ..sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
+            final item = sorted[index];
+      
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ListTileModel(patientname: item['name'], patientId: item['patientId'], 
+              viewonTap: (){
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return item["adminDetails"] == null
+                        ? ViewModel(
+                            name: item['name'],
+                            patientid: item['patientId'],
+                            email: item['email'] ?? "",
+                            phonenumber: item['phone'] ?? 0,
+                            dob: formatDate(item['DOB'] ?? ""),
+                            age: calculateAge(formatDate(item['DOB'] ?? "")),
+                            gender: item['gender'] ?? "",
+                            createdbyadmin: "",
+                            adminame: "",
+                            // createdbydoctor: "",
+                            createdbydoctor: item['doctorDetails']['name'] ,
+                            doctoruserid:item['doctorDetails']['userid'] ,
+                            adminuserid: '',
+                            createdat: formatDate(item['createdAt']),
+                          )
+                        : ViewModel(
+                            name: item['name'],
+                            patientid: item['patientId'],
+                            email: item['email'] ?? "",
+                            phonenumber: item['phone'] ?? 0,
+                            dob: formatDate(item['DOB'] ?? ""),
+                            age: calculateAge(formatDate(item['DOB'] ?? "")),
+                            gender: item['gender'] ?? "",
+                            createdbyadmin: item["adminDetails"]['name'] ?? "",
+                            adminame: item["adminDetails"]["name"],
+                            adminuserid:item["adminDetails"]["userid"] ,
+                            doctoruserid: '',
+                            createdbydoctor: "",
+                            // createdbydoctor: "${homePageProvider.doctordetails.first["name"]} - ${homePageProvider.doctordetails.first["userid"]}",
+                            createdat: formatDate(item['createdAt']),
+                          );
+                  },
+                );
+                
+              }, editonTap: (){
+                context.router.push(EditPatientRoute(patientId:item['patientId'] ));
+              }, outvisitonTap: (){
+                context.router.push(PatientOutvisitsRoute(patientId: item['patientId']));
+              }, invisitonTap: (){
+                context.router.push(PatientInvisitsRoute(patientId: item['patientId'], name: item['name']));
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTileModel(patientname: item['name'], patientId: item['patientId'], 
-            viewonTap: (){
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return item["adminDetails"] == null
-                      ? ViewModel(
-                          name: item['name'],
-                          patientid: item['patientId'],
-                          email: item['email'] ?? "",
-                          phonenumber: item['phone'] ?? 0,
-                          dob: formatDate(item['DOB'] ?? ""),
-                          age: item['age'] ?? "",
-                          gender: item['gender'] ?? "",
-                          createdbyadmin: "",
-                          adminame: "",
-                          // createdbydoctor: "",
-                          createdbydoctor: item['doctorDetails']['name'] ,
-                          doctoruserid:item['doctorDetails']['userid'] ,
-                          adminuserid: '',
-                          createdat: formatDate(item['createdAt']),
-                        )
-                      : ViewModel(
-                          name: item['name'],
-                          patientid: item['patientId'],
-                          email: item['email'] ?? "",
-                          phonenumber: item['phone'] ?? 0,
-                          dob: formatDate(item['DOB'] ?? ""),
-                          age: item['age'] ?? "",
-                          gender: item['gender'] ?? "",
-                          createdbyadmin: item["adminDetails"]['name'] ?? "",
-                          adminame: item["adminDetails"]["name"],
-                          adminuserid:item["adminDetails"]["userid"] ,
-                          doctoruserid: '',
-                          createdbydoctor: "",
-                          // createdbydoctor: "${homePageProvider.doctordetails.first["name"]} - ${homePageProvider.doctordetails.first["userid"]}",
-                          createdat: formatDate(item['createdAt']),
-                        );
-                },
-              );
-              
-            }, editonTap: (){
-              context.router.push(EditPatientRoute(patientId:item['patientId'] ));
-            }, outvisitonTap: (){
-              context.router.push(PatientOutvisitsRoute(patientId: item['patientId']));
-            }, invisitonTap: (){
-              context.router.push(PatientInvisitsRoute(patientId: item['patientId'], name: item['name']));
-            },),
-          );
-        } else if (_hasMore && _isLoadingMore) {
-          return const Padding(
-            padding: EdgeInsets.all(12),
-            child: Center(child: CircularProgressIndicator()),
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
+              },),
+            );
+          } else if (_hasMore && _isLoadingMore) {
+            return const Padding(
+              padding: EdgeInsets.all(12),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
     );
   }
 }

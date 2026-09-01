@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hospital_mobile_app/doctorController/importHospitalViewReportButton.dart';
 import 'package:hospital_mobile_app/doctorController/importSupportingFilesDialogBox.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosisPage.dart';
@@ -230,7 +231,7 @@ String generateComplaintIdFromString(String createdAt) {
   //                                             context: context,
   //                                             builder: (context) {
   //                                               return VisitViewModel(
-  //                                                 cheifcomplaint: visit["complaint"],
+  //                                                 Chiefcomplaint: visit["complaint"],
   //                                                 height: visit["height"] ?? "",
   //                                                 weight: visit["weight"] ?? "",
   //                                                 bp: visit["bp"] ?? "",
@@ -362,13 +363,15 @@ String generateComplaintIdFromString(String createdAt) {
                                                       context: context,
                                                       builder: (context) {
                                                         return VisitViewModel(
-                                                          cheifcomplaint: visit["complaint"],
+                                                          Chiefcomplaint: visit["complaint"],
                                                           height: visit["height"] ?? "",
                                                           weight: visit["weight"] ?? "",
                                                           bp: visit["bp"] ?? "",
                                                           temprature: visit["temperature"] ?? "",
                                                           heartrate: visit["heart_rate"] ?? "",
-                                                          visitdate: formatDate(visit["visit_date"]),
+                                                          visitdate: formatDate(visit["visit_date"])??'',
+                                                          diagnosedby: visit['associatedDoctor'][0]['name']??"",
+                                                          otherVitals: visit["other_vitals"]?? [],
                                                         );
                                                       },
                                                     );
@@ -409,7 +412,7 @@ String generateComplaintIdFromString(String createdAt) {
  const SizedBox(height: 6),
 
                         const Text(
-                      "Cheif Complaint",
+                      "Chief Complaint",
                       style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 15,
                       ),
@@ -559,7 +562,7 @@ String generateComplaintIdFromString(String createdAt) {
   //                                             context: context,
   //                                             builder: (context) {
   //                                               return InVisitViewModel(
-  //                                                       cheifcomplaint: visit[
+  //                                                       Chiefcomplaint: visit[
   //                                                           'chief_complaint'],
   //                                                       visitdate: formatDate(
   //                                                           visit['visit_date']),
@@ -778,7 +781,7 @@ String generateComplaintIdFromString(String createdAt) {
                                                   context: context,
                                                   builder: (context) {
                                                     return InVisitViewModel(
-                                                            cheifcomplaint: visit[
+                                                            Chiefcomplaint: visit[
                                                                 'chief_complaint'],
                                                             visitdate: formatDate(
                                                                 visit['visit_date']),
@@ -829,7 +832,7 @@ String generateComplaintIdFromString(String createdAt) {
  const SizedBox(height: 6),
 
                         const Text(
-                      "Cheif Complaint",
+                      "Chief Complaint",
                       style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 15,
                       ),
@@ -1042,7 +1045,7 @@ String generateComplaintIdFromString(String createdAt) {
     //                                           context: context,
     //                                           builder: (context) {
     //                                             return InVisitViewModel(
-    //                                                     cheifcomplaint: visit[
+    //                                                     Chiefcomplaint: visit[
     //                                                         'chief_complaint'],
     //                                                     visitdate: formatDate(
     //                                                         visit['visit_date']),
@@ -1134,7 +1137,7 @@ String generateComplaintIdFromString(String createdAt) {
 // class VisitViewModel extends StatelessWidget {
 //   const VisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.height,
 //     required this.weight,
 //     required this.bp,
@@ -1143,7 +1146,7 @@ String generateComplaintIdFromString(String createdAt) {
 //     required this.visitdate,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String height;
 //   final String weight;
 //   final String bp;
@@ -1189,13 +1192,13 @@ String generateComplaintIdFromString(String createdAt) {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1308,114 +1311,160 @@ String generateComplaintIdFromString(String createdAt) {
 class VisitViewModel extends StatelessWidget {
   const VisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.height,
     required this.weight,
     required this.bp,
     required this.temprature,
     required this.heartrate,
-    required this.visitdate,
+    required this.visitdate, required this.diagnosedby, this.otherVitals,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String height;
   final String weight;
   final String bp;
   final String temprature;
   final String heartrate;
   final String visitdate;
+  final String diagnosedby;
+  final List<dynamic>? otherVitals;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10),bottom: Radius.circular(22))),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            height: 4,
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// HEADER
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(12),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// HEADER
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.monitor_heart, color: Colors.red),
                       ),
-                      child: const Icon(Icons.monitor_heart, color: Colors.red),
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Text(
-                        "Complaint Details",
-                        style:
-                            TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Text(
+                          "Complaint Details",
+                          style:
+                              TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        ),
                       ),
+                      IconButton(
+                        onPressed: () => context.router.pop(),
+                        icon: const Icon(Icons.close, color: Colors.red),
+                      ),
+                    ],
+                  ),
+                        
+                  const SizedBox(height: 16),
+                        
+                  /// CHIEF COMPLAINT
+                  _highlightCard(
+                    label: "CHIEF COMPLAINT",
+                    value: Chiefcomplaint,
+                  ),
+                        
+                  const SizedBox(height: 16),
+                  _divider(),
+                  
+                  Text("VITALS",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),),
+                  /// VITALS GRID
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      if (height.isNotEmpty)
+                        _smallCard("HEIGHT", height, Icons.height),
+                      if (weight.isNotEmpty)
+                        _smallCard("WEIGHT", weight, Icons.monitor_weight),
+                      if (temprature.isNotEmpty)
+                        _smallCard(
+                            "TEMPERATURE", temprature, Icons.thermostat),
+                      if (bp.isNotEmpty)
+                        _smallCard(
+                            "BLOOD PRESSURE", bp, Icons.favorite),
+                      if (heartrate.isNotEmpty)
+                        _smallCard(
+                            "HEART RATE", heartrate, Icons.monitor_heart),
+                    ],
+                  ),
+
+
+                 if (otherVitals != null && otherVitals!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "OTHER VITALS",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
                     ),
-                    IconButton(
-                      onPressed: () => context.router.pop(),
-                      icon: const Icon(Icons.close, color: Colors.red),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...otherVitals!.map((v) {
+                  final name = v['name']?.toString() ?? '';
+                  final value = v['value']?.toString() ?? '';
+                  if (name.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _smallCard(
+                      name.toUpperCase(),
+                       value,
+                       Icons.monitor_heart_outlined,
                     ),
-                  ],
-                ),
-          
-                const SizedBox(height: 16),
-          
-                /// CHIEF COMPLAINT
-                _highlightCard(
-                  label: "CHIEF COMPLAINT",
-                  value: cheifcomplaint,
-                ),
-          
-                const SizedBox(height: 16),
-                _divider(),
-          
-                /// VITALS GRID
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    if (height.isNotEmpty)
-                      _smallCard("HEIGHT", height, Icons.height),
-                    if (weight.isNotEmpty)
-                      _smallCard("WEIGHT", weight, Icons.monitor_weight),
-                    if (temprature.isNotEmpty)
-                      _smallCard(
-                          "TEMPERATURE", temprature, Icons.thermostat),
-                    if (bp.isNotEmpty)
-                      _smallCard(
-                          "BLOOD PRESSURE", bp, Icons.favorite),
-                    if (heartrate.isNotEmpty)
-                      _smallCard(
-                          "HEART RATE", heartrate, Icons.monitor_heart),
-                  ],
-                ),
-          
-                const SizedBox(height: 16),
-          
-                /// VISIT DATE
-                _infoCard(
-                  icon: Icons.calendar_today,
-                  label: "VISIT DATE",
-                  value: visitdate,
-                ),
+                  );
+                }).toList(),
               ],
+                        
+                  const SizedBox(height: 16),
+                        
+                  /// VISIT DATE
+                  _infoCard(
+                    icon: Icons.calendar_today,
+                    label: "VISIT DATE",
+                    value: visitdate,
+                  ),
+                   const SizedBox(height: 16),
+                        
+                  /// VISIT DATE
+                  _infoCard(
+                    icon: FontAwesomeIcons.userDoctor,
+                    label: "DIAGNOSED BY",
+                    value: diagnosedby,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1469,11 +1518,12 @@ class VisitViewModel extends StatelessWidget {
   /// Small vitals card
   Widget _smallCard(String label, String value, IconData icon) {
     return Container(
-      width: 160,
+      width: 150,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
+        color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Colors.grey),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1482,10 +1532,18 @@ class VisitViewModel extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: Colors.red),
               const SizedBox(width: 6),
-              Text(
+              Expanded(                      // ✅ ADD THIS
+              child: Text(
                 label,
                 style: const TextStyle(fontSize: 11, color: Colors.grey),
+                overflow: TextOverflow.ellipsis,  // ✅ ADD THIS
+                maxLines: 2,                       // ✅ ADD THIS
               ),
+            ),
+              // Text(
+              //   label,
+              //   style: const TextStyle(fontSize: 11, color: Colors.grey),
+              // ),
             ],
           ),
           const SizedBox(height: 6),
@@ -1543,7 +1601,7 @@ class VisitViewModel extends StatelessWidget {
 // class InVisitViewModel extends StatelessWidget {
 //   const InVisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     required this.consultingdoctor,
 //     required this.dutydoctor,
@@ -1551,7 +1609,7 @@ class VisitViewModel extends StatelessWidget {
 //     required this.associatedstaff,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String consultingdoctor;
 //   final String dutydoctor;
 //   final String visitingdoctor;
@@ -1596,13 +1654,13 @@ class VisitViewModel extends StatelessWidget {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1719,7 +1777,7 @@ class VisitViewModel extends StatelessWidget {
 class InVisitViewModel extends StatelessWidget {
   const InVisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.consultingdoctor,
     required this.dutydoctor,
@@ -1727,7 +1785,7 @@ class InVisitViewModel extends StatelessWidget {
     required this.associatedstaff,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String consultingdoctor;
   final String dutydoctor;
   final String visitingdoctor;
@@ -1740,93 +1798,95 @@ class InVisitViewModel extends StatelessWidget {
       insetPadding: const EdgeInsets.all(16),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// HEADER
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(12),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// HEADER
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.monitor_heart, color: Colors.red),
                   ),
-                  child: const Icon(Icons.monitor_heart, color: Colors.red),
-                ),
-                const SizedBox(width: 10),
-                const Expanded(
-                  child: Text(
-                    "Complaint Details",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Text(
+                      "Complaint Details",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => context.router.pop(),
-                  icon: const Icon(Icons.close, color: Colors.red),
+                  IconButton(
+                    onPressed: () => context.router.pop(),
+                    icon: const Icon(Icons.close, color: Colors.red),
+                  ),
+                ],
+              ),
+          
+              const SizedBox(height: 16),
+          
+              /// CHIEF COMPLAINT
+              _highlightCard(
+                label: "CHIEF COMPLAINT",
+                value: Chiefcomplaint,
+              ),
+          
+              const SizedBox(height: 16),
+              _divider(),
+          
+              /// DOCTORS / STAFF
+              _infoRow(
+                icon: Icons.person,
+                label: "CONSULTING DOCTOR",
+                value: consultingdoctor,
+              ),
+          
+              if (visitingdoctor.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _infoRow(
+                  icon: Icons.medical_services_outlined,
+                  label: "VISITING DOCTOR",
+                  value: visitingdoctor,
                 ),
               ],
-            ),
-
-            const SizedBox(height: 16),
-
-            /// CHIEF COMPLAINT
-            _highlightCard(
-              label: "CHIEF COMPLAINT",
-              value: cheifcomplaint,
-            ),
-
-            const SizedBox(height: 16),
-            _divider(),
-
-            /// DOCTORS / STAFF
-            _infoRow(
-              icon: Icons.person,
-              label: "CONSULTING DOCTOR",
-              value: consultingdoctor,
-            ),
-
-            if (visitingdoctor.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _infoRow(
-                icon: Icons.medical_services_outlined,
-                label: "VISITING DOCTOR",
-                value: visitingdoctor,
+          
+              if (dutydoctor.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _infoRow(
+                  icon: Icons.local_hospital_outlined,
+                  label: "DUTY DOCTOR",
+                  value: dutydoctor,
+                ),
+              ],
+          
+              if (associatedstaff.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _infoRow(
+                  icon: Icons.groups_outlined,
+                  label: "ASSOCIATED STAFF",
+                  value: associatedstaff,
+                ),
+              ],
+          
+              const SizedBox(height: 16),
+              _divider(),
+          
+              /// VISIT DATE
+              _dateCard(
+                icon: Icons.calendar_today,
+                label: "VISIT DATE",
+                value: visitdate,
               ),
             ],
-
-            if (dutydoctor.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _infoRow(
-                icon: Icons.local_hospital_outlined,
-                label: "DUTY DOCTOR",
-                value: dutydoctor,
-              ),
-            ],
-
-            if (associatedstaff.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _infoRow(
-                icon: Icons.groups_outlined,
-                label: "ASSOCIATED STAFF",
-                value: associatedstaff,
-              ),
-            ],
-
-            const SizedBox(height: 16),
-            _divider(),
-
-            /// VISIT DATE
-            _dateCard(
-              icon: Icons.calendar_today,
-              label: "VISIT DATE",
-              value: visitdate,
-            ),
-          ],
+          ),
         ),
       ),
     );

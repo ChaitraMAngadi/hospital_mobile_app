@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
+import 'package:hospital_mobile_app/service/cacheManager.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
@@ -19,6 +20,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late Future fetchdoctorprofile;
   final SecureStorage secureStorage = SecureStorage();
+  CacheManager cache = CacheManager();
 
   @override
   void initState() {
@@ -83,14 +85,14 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  infoRow("Doctor ID", item['userid']),
-                  infoRow("Full Name", item['name']),
-                  infoRow("Email Address", item['email']),
+                  infoRow("Doctor ID", item['userid']??''),
+                  infoRow("Full Name", item['name']??''),
+                  infoRow("Email Address", item['email']??''),
                   infoRow("Phone Number", item['phone'].toString()),
-                  infoRow("Gender", item['gender']),
+                  infoRow("Gender", item['gender']??''),
                   infoRow(
                     "Registration Number",
-                    item['doctorRegistrationNumber'],
+                    item['doctorRegistrationNumber']??'',
                   ),
                 ],
               ),
@@ -115,17 +117,24 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  if(item['board_of_registration'] != null)
                   infoRow(
                     "Board of Registration",
-                    item['board_of_registration'],
+                    item['board_of_registration']??'',
                   ),
+                  if(item['year_of_registration'] != null)
                   infoRow(
                     "Year of Registration",
-                    item['year_of_registration'].toString(),
+                    item['year_of_registration'].toString()??"",
                   ),
-                  infoRow("Qualification", item['qualification']),
-                  infoRow("Specialization", item['specialization']),
-                  infoRow("Address", item['address']),
+                  // if(item['Qualification'] != null)
+                  infoRow("Qualification", item['qualification']??''),
+
+                  // if(item['Specialization'] != null)
+                  infoRow("Specialization", item['specialization']??''),
+
+                  if(item['address'] != null)
+                  infoRow("Address", item['address']??""),
                 ],
               ),
             ),
@@ -149,13 +158,14 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  infoRow("Branch ID", hospitalbranch['userid']),
-                  infoRow("Branch Name", hospitalbranch['name']),
-                  infoRow("Address", hospitalbranch['address']),
-                  infoRow("Email", hospitalbranch['email']),
+                  infoRow("Branch ID", hospitalbranch['userid']??""),
+                  infoRow("Branch Name", hospitalbranch['name']??''),
+                  
+                  infoRow("Address", hospitalbranch['address']??''),
+                  infoRow("Email", hospitalbranch['email']??''),
                   infoRow(
                     "Phone",
-                    hospitalbranch['phone'].toString(),
+                    hospitalbranch['phone'].toString()??"",
                   ),
                 ],
               ),
@@ -180,9 +190,11 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  infoRow("Hospital ID", hospital['userid']),
-                  infoRow("Hospital Name", hospital['name']),
-                  infoRow("Email", hospital['email']),
+                  _logoInfoRow(hospital['logo'], "Hospital Logo"),
+                  infoRow("Hospital ID", hospital['userid']??""),
+                  infoRow("Hospital Name", hospital['name']??""),
+                  infoRow("Email", hospital['email']??''),
+                  
                 ],
               ),
             ),
@@ -740,8 +752,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       secureStorage.deleteSecureData('doctortoken');
                       secureStorage.deleteSecureData('admintoken');
                       secureStorage.deleteSecureData('nursetoken');
+                      secureStorage.deleteSecureData('doctorrefreshtoken');
+                      secureStorage.deleteSecureData('adminrefreshtoken');
+                      secureStorage.deleteSecureData('nurserefreshtoken');
+                      
                       doctorprovider.logout();
-                
+                      cache.invalidateAll();
                       setState(() {});
                       Constants.token =
                           await secureStorage.readSecureData('token') ?? '';
@@ -885,6 +901,92 @@ Widget sectionHeader({
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _logoInfoRow(String? logoUrl, String label) {
+  final bool hasNetworkLogo = logoUrl != null && logoUrl.trim().isNotEmpty;
+
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          // decoration: BoxDecoration(
+          //   color: AppColors.primary,
+          //   borderRadius: BorderRadius.circular(8),
+          // ),
+          child: hasNetworkLogo
+                ? Image.network(
+                    logoUrl,
+                    width: 30,
+                    height: 34,
+                    fit: BoxFit.cover,
+                    // If the network image fails to load, fall back to asset
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/default_hospital_logo.png',
+                        width: 30,
+                        height: 34,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const SizedBox(
+                        width: 30,
+                        height: 34,
+                        child: Center(
+                          child: SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                // No URL from backend -> use asset directly
+                : Image.asset(
+                    'assets/images/doclogo.png',
+                    width: 30,
+                    height: 34,
+                    fit: BoxFit.cover,
+                  ),
+        ),
+        Expanded(child: const SizedBox(width: 12)),
+        Expanded(
+          flex: 2,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                hasNetworkLogo ? "Custom logo" : "Default logo",
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
       ],

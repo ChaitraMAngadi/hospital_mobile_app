@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hospital_mobile_app/provider/doctorProvider.dart';
 import 'package:hospital_mobile_app/routes/app_router.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
@@ -193,16 +194,56 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
       },
     );
   }
+  String calculateAge(String dob) {
+  DateTime birthDate;
+
+  try {
+    // Handle dd/MM/yyyy format
+    if (dob.contains('/')) {
+      birthDate = DateFormat('dd/MM/yyyy').parseStrict(dob);
+    } else {
+      // Handle yyyy-MM-dd / ISO format
+      birthDate = DateTime.parse(dob);
+    }
+  } catch (e) {
+    return '';
+  }
+
+  final today = DateTime.now();
+
+  int years = today.year - birthDate.year;
+  int months = today.month - birthDate.month;
+  int days = today.day - birthDate.day;
+
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(today.year, today.month, 0);
+    days += prevMonth.day;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years >= 5) {
+    return '$years ${years == 1 ? 'year' : 'years'}';
+  }
+
+  if (years == 0 && months == 0) {
+    return '0 month $days ${days == 1 ? 'day' : 'days'}';
+  }
+
+  return '$years ${years == 1 ? 'year' : 'years'} '
+      '$months ${months == 1 ? 'month' : 'months'}';
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: RefreshIndicator(
-      onRefresh: _handleRefresh,
-      child: Consumer<Doctorprovider>(
-        builder: (context, doctorprovider, child) {
-          return SafeArea(
-            child: SingleChildScrollView(
+        body: Consumer<Doctorprovider>(
+          builder: (context, doctorprovider, child) {
+            return SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -220,139 +261,166 @@ class _ActiveInvisitsPageState extends State<ActiveInvisitsPage> {
                       ),
                     ),
                   ),
-                  RefreshIndicator(
-                    onRefresh: _handleRefresh,
-                    child: FutureBuilder(
-                      future: fetchactiveallinvisits,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.76,
-                              child: _buildShimmerList());
-                        } else {
-                          return SafeArea(
-                            child: doctorprovider.filteredactiveinvisits.isEmpty
-                                ? SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.76,
-                                    child: _searchController.text.isNotEmpty
-                                        ? _buildNoSearchResults() // <-- show no results UI if searching
-                                        : const Center(
-                                            child: Text(
-                                              "No Out Visits to show",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: _handleRefresh,
+                      child: FutureBuilder(
+                        future: fetchactiveallinvisits,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.76,
+                                child: _buildShimmerList());
+                          } else {
+                            return SafeArea(
+                              child: doctorprovider.filteredactiveinvisits.isEmpty
+                                  ? SizedBox(
+                                      height: MediaQuery.of(context).size.height *
+                                          0.76,
+                                      child: _searchController.text.isNotEmpty
+                                          ? _buildNoSearchResults() // <-- show no results UI if searching
+                                          : const Center(
+                                              child: Text(
+                                                "No In Visits to show",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold),
+                                              ),
                                             ),
-                                          ),
-                                  )
-                                : SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.76,
-                                    child: ListView.builder(
-                                      itemCount: doctorprovider
-                                          .filteredactiveinvisits.length,
-                                      itemBuilder: (context, index) {
-                                        final item = doctorprovider
-                                            .filteredactiveinvisits[index];
-                                        return ActiveInvisitModel(
-                                          patientname: item['name'],
-                                          patientId: item['patientId'],
-                                          viewonTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return ActiveInVisitViewModel(
-                                                  name: item['name'],
-                                                  id: item['patientId'],
-                                                  gender: item['gender'],
-                                                  phone:
-                                                      item['phone'].toString(),
-                                                  email: item['email'] ?? '',
-                                                  age: item['age'],
-                                                  dob: formatDate(item['DOB']),
-                                                  createdbydoctor:
-                                                      item['createdByDoctor']?
-                                                              ['name'] ??
-                                                          '',
-                                                  createdbydoctorid:
-                                                      item['createdByDoctor']?
-                                                              ['userid'] ??
-                                                          '',
-                                                  createdbyadmin:
-                                                      item['createdByAdmin']
-                                                              ?['name'] ??
-                                                          '',
-                                                  createdbyadminid:
-                                                      item['createdByAdmin']
-                                                              ?['userid'] ??
-                                                          '',
-                                                  cheifcomplaint:
-                                                      item['chief_complaint'],
-                                                  visitdate: formatDate(
-                                                      item['visit_date']),
-                                                  consultingdoctor:
-                                                      item['consultingDoctor']
-                                                          ['name'],
-                                                  consultingdocid:
-                                                      item['consultingDoctor']
-                                                          ['userid'],
-                                                  dutydoctor: item['dutyDoctor']?
-                                                      ['name']??'',
-                                                  dutydocid: item['dutyDoctor']?
-                                                      ['userid']??'',
-                                                  visitingdoctor:
-                                                      item['visitingDoctor']?
-                                                          ['name']??'',
-                                                  visitingdocid:
-                                                      item['visitingDoctor']?
-                                                          ['userid']??'',
-                                                  associatedstaff:
-                                                      item['associatedNurse']?
-                                                          ['name']??'',
-                                                  supportingstaffid:
-                                                      item['associatedNurse']?
-                                                          ['userid']??'',
-                                                );
-                                              },
-                                            );
-                                          },
-                                          startdiagnosisonTap: () {
-                                            context.router.push(ViewDiagnosisRoute(name: item['name'], id: item['patientId'], visitingIndex: item['invisitIndex'],dischargeddate: ''));
-                                          },
-                                          chiefcomplaint:
-                                              item['chief_complaint'] ?? '',
-                                          diagnosissummary:
-                                              item['diagnosis_summary'] ?? '',
-                                        );
-                                      },
+                                    )
+                                  : SizedBox(
+                                      height: MediaQuery.of(context).size.height *
+                                          0.76,
+                                      child: ListView.builder(
+                                        itemCount: doctorprovider
+                                            .filteredactiveinvisits.length,
+                                        itemBuilder: (context, index) {
+                                          final item = doctorprovider
+                                              .filteredactiveinvisits[index];
+                                          return ActiveInvisitModel(
+                                            patientname: item['name'],
+                                            patientId: item['patientId'],
+                                            viewonTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return ActiveInVisitViewModel(
+                                                    name: item['name'],
+                                                    id: item['patientId'],
+                                                    gender: item['gender'],
+                                                    phone:
+                                                        item['phone'].toString(),
+                                                    email: item['email'] ?? '',
+                                                    age: calculateAge(item['DOB'])??'',
+                                                    dob: formatDate(item['DOB']),
+                                                    createdbydoctor:
+                                                        item['createdByDoctor']?
+                                                                ['name'] ??
+                                                            '',
+                                                    createdbydoctorid:
+                                                        item['createdByDoctor']?
+                                                                ['userid'] ??
+                                                            '',
+                                                    createdbyadmin:
+                                                        item['createdByAdmin']
+                                                                ?['name'] ??
+                                                            '',
+                                                    createdbyadminid:
+                                                        item['createdByAdmin']
+                                                                ?['userid'] ??
+                                                            '',
+                                                    Chiefcomplaint:
+                                                        item['chief_complaint'],
+                                                    visitdate: formatDate(
+                                                        item['visit_date']),
+                                                    consultingdoctor:
+                                                        item['consultingDoctor']
+                                                            ['name'],
+                                                    consultingdocid:
+                                                        item['consultingDoctor']
+                                                            ['userid'],
+                                                    dutydoctor: item['dutyDoctor']?
+                                                        ['name']??'',
+                                                    dutydocid: item['dutyDoctor']?
+                                                        ['userid']??'',
+                                                    visitingdoctor:
+                                                        item['visitingDoctor']?
+                                                            ['name']??'',
+                                                    visitingdocid:
+                                                        item['visitingDoctor']?
+                                                            ['userid']??'',
+                                                    associatedstaff:
+                                                        item['associatedNurse']?
+                                                            ['name']??'',
+                                                    supportingstaffid:
+                                                        item['associatedNurse']?
+                                                            ['userid']??'',
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            startdiagnosisonTap: () async {
+                                               await context.router.push(ViewDiagnosisRoute(
+    name: item['name'],
+    id: item['patientId'],
+    visitingIndex: item['invisitIndex'],
+    dischargeddate: '',
+  ));
+
+  // ✅ Diagnosis page se back aane ke baad list refresh karo
+  if (mounted) {
+    _handleRefresh();
+  }
+                                              // context.router.popAndPush(ViewDiagnosisRoute(name: item['name'], id: item['patientId'], visitingIndex: item['invisitIndex'],dischargeddate: ''));
+                                            },
+                                            chiefcomplaint:
+                                                item['chief_complaint'] ?? '',
+                                            diagnosissummary:
+                                                item['diagnosis_summary'] ?? '',
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                          );
-                        }
-                      },
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-          );
-        },
-      ),
-    ));
+            );
+          },
+        ));
   }
 
+//   Future<void> _handleRefresh() async {
+//     Doctorprovider doctorprovider = context.read<Doctorprovider>();
+// doctorprovider.invalidateCache(key: doctorprovider.Invisits);
+//     // await Future.delayed(Duration(seconds: 2));
+//     Constants.doctortoken =
+//         await secureStorage.readSecureData('doctortoken') ?? '';
+//     setState(() {
+//       fetchactiveallinvisits = doctorprovider.getactiveinvisits(context);
+//       doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
+//     });
+//   }
   Future<void> _handleRefresh() async {
-    Doctorprovider doctorprovider = context.read<Doctorprovider>();
+  Doctorprovider doctorprovider = context.read<Doctorprovider>();
 doctorprovider.invalidateCache(key: doctorprovider.Invisits);
-    await Future.delayed(Duration(seconds: 2));
-    Constants.doctortoken =
-        await secureStorage.readSecureData('doctortoken') ?? '';
+  Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+
+  // ✅ Fetch complete hone tak wait karo
+  await  doctorprovider.getactiveinvisits(context);
+
+  // ✅ Ab hi filteredvisits assign karo — updated data ke saath
+  if (mounted) {
     setState(() {
-      fetchactiveallinvisits = doctorprovider.getactiveinvisits(context);
+      fetchactiveallinvisits = Future.value(); // sirf FutureBuilder ko satisfy karne ke liye
       doctorprovider.filteredactiveinvisits = doctorprovider.activeinvisits;
     });
   }
+}
 }
 
 // class ActiveInvisitModel extends StatelessWidget {
@@ -675,7 +743,7 @@ class ActiveInvisitModel extends StatelessWidget {
 class ActiveInVisitViewModel extends StatelessWidget {
   const ActiveInVisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.consultingdoctor,
     required this.dutydoctor,
@@ -713,7 +781,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
   final String dutydocid;
   final String visitingdocid;
   final String supportingstaffid;
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String consultingdoctor;
   final String dutydoctor;
   final String visitingdoctor;
@@ -849,7 +917,7 @@ class ActiveInVisitViewModel extends StatelessWidget {
 //           children: [
 //             const Text("Chief Complaint: ",
 //                 style: TextStyle(fontWeight: FontWeight.bold)),
-//             Flexible(child: Text(cheifcomplaint)),
+//             Flexible(child: Text(Chiefcomplaint)),
 //           ],
 //         ),
 //          SizedBox(height: 4,),
@@ -1029,6 +1097,11 @@ Widget build(BuildContext context) {
               label: "DOB",
               value: dob,
             ),
+            infoTile(
+              icon: Icons.cake,
+              label: "Age",
+              value: age,
+            ),
             if (email.isNotEmpty)
               infoTile(
                 icon: Icons.email,
@@ -1038,13 +1111,33 @@ Widget build(BuildContext context) {
             infoTile(
               icon: Icons.report_problem,
               label: "Chief Complaint",
-              value: cheifcomplaint,
+              value: Chiefcomplaint,
             ),
+            if(consultingdoctor != '')
             infoTile(
-              icon: Icons.medical_services,
+              icon: FontAwesomeIcons.stethoscope,
               label: "Consulting Doctor",
               value: "$consultingdoctor , $consultingdocid",
             ),
+            if(dutydoctor != '')
+            infoTile(
+              icon: FontAwesomeIcons.userDoctor,
+              label: "Duty Doctor",
+              value: "$dutydoctor , $dutydocid",
+            ),
+            if(visitingdoctor != '')
+            infoTile(
+              icon: FontAwesomeIcons.stethoscope,
+              label: "Visiting Doctor",
+              value: "$visitingdoctor , $visitingdocid",
+            ),
+            if(associatedstaff != '')
+            infoTile(
+              icon: Icons.medical_services,
+              label: "Associated Staff",
+              value: "$associatedstaff , $supportingstaffid",
+            ),
+
           ],
         ),
       ),

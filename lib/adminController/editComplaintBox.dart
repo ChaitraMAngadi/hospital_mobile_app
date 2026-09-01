@@ -218,6 +218,10 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
                           itemAsString: (doc) =>
                               "${doc['name']} | ${doc['userid']}",
                           selectedItem: selectedConsultingDoctor,
+                          clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
                           popupProps: PopupProps.menu(
                             showSearchBox: true,
                             showSelectedItems: false,
@@ -259,6 +263,10 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
                           itemAsString: (doc) =>
                               "${doc['name']} | ${doc['userid']}",
                           selectedItem: selectedDutyDoctor,
+                          clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
                           popupProps: PopupProps.menu(
                             showSearchBox: true,
                             showSelectedItems: false,
@@ -295,6 +303,10 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
                           itemAsString: (doc) =>
                               "${doc['name']} | ${doc['userid']}",
                           selectedItem: selectedVisitingDoctor,
+                          clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
                           popupProps: PopupProps.menu(
                             showSearchBox: true,
                             showSelectedItems: false,
@@ -331,6 +343,10 @@ class _EditComplaintDialogBoxState extends State<EditComplaintDialogBox> {
                           itemAsString: (nurse) =>
                               "${nurse['name']} | ${nurse['userid']}",
                           selectedItem: selectedNurse,
+                          clearButtonProps: const ClearButtonProps(
+    isVisible: true,
+    icon: Icon(Icons.clear, size: 20),
+  ),
                           popupProps: PopupProps.menu(
                             showSearchBox: true,
                             showSelectedItems: false,

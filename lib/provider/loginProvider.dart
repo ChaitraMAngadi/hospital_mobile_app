@@ -177,7 +177,7 @@ class Loginprovider extends ChangeNotifier {
     } catch (e) {
       print(e);
       final error = SnackBar(
-          backgroundColor: Colors.red[400], content: Text(e.toString()));
+          backgroundColor: Colors.red[400], content: Text("Error Logingin Please Try again"));
       ScaffoldMessenger.of(context).showSnackBar(error);
       return false;
     }
@@ -245,7 +245,7 @@ class Loginprovider extends ChangeNotifier {
     } catch (e) {
       print(e);
       final error = SnackBar(
-          backgroundColor: Colors.red[400], content: Text(e.toString()));
+          backgroundColor: Colors.red[400], content: Text("Error Logingin Please Try again"));
       ScaffoldMessenger.of(context).showSnackBar(error);
       return false;
     }
@@ -310,7 +310,7 @@ final headers = await DeviceHeaders.getDeviceHeaders();
     } catch (e) {
       print(e);
       final error = SnackBar(
-          backgroundColor: Colors.red[400], content: Text(e.toString()));
+          backgroundColor: Colors.red[400], content: Text("Error Logingin Please Try again"));
       ScaffoldMessenger.of(context).showSnackBar(error);
       return false;
     }

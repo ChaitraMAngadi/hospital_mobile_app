@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/complaintDialogBox.dart';
 import 'package:hospital_mobile_app/doctorController/patientInVisit/viewDiagnosisPage.dart';
 import 'package:hospital_mobile_app/doctorController/patientOutVisit/downloadPdfButton.dart';
@@ -36,6 +37,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
     super.initState();
     Doctorprovider doctorprovider = context.read<Doctorprovider>();
     fetchoutvisits = doctorprovider.getpatientoutvisits(widget.patientId, context);
+    
   }
 
   String formatDate(String date) {
@@ -297,7 +299,7 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                         0.81,
                                     child: const Center(
                                       child: Text(
-                                        "No OPD Visits for this pateint \nPlaese add OPD Visit",
+                                        "No OPD Visits for this Patient \nPlease add OPD Visit",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -306,123 +308,240 @@ class _PatientOutvisitsPageState extends State<PatientOutvisitsPage> {
                                       ),
                                     ))
                                 : SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.81,
-                                    child: ListView.builder(
-                                      itemCount: doctorprovider
-                                          .patientoutvisits.length,
-                                      itemBuilder: (context, index) {
-                                        final item = doctorprovider
-                                            .patientoutvisits[index];
+    height: MediaQuery.of(context).size.height * 0.81,
+    child: Builder(
+      builder: (context) {
+        // 🔽 Recent visit ko sabse pehle dikhane ke liye sort karo
+        final sortedVisits = List<Map<String, dynamic>>.from(
+            doctorprovider.patientoutvisits)
+          ..sort((a, b) {
+            // agar API se 'created_at' field aata hai to usse use karo (zyada accurate)
+            if (a['created_at'] != null && b['created_at'] != null) {
+              return DateTime.parse(b['created_at'])
+                  .compareTo(DateTime.parse(a['created_at']));
+            }
+            // warna visit_date se sort kar lo (descending)
+            return DateTime.parse(b['visit_date'])
+                .compareTo(DateTime.parse(a['visit_date']));
+          });
 
-                                        return VisitModel(
-                                          visitnumber: index + 1,
-                                          cheifcomplaint:
-                                              item['chief_complaint'],
-                                          visitdate:
-                                              formatDate(item['visit_date']),
-                                          complaintId: item['id'],
-                                          patientId: widget.patientId,
-                                          // createdtime: 'formatDate(complaint["createdAt"])',
-                                          supportingimagesontap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return OutvisitSupportingFilesDialogBox(
-                                                  patientId: widget.patientId,
-                                                  complaintId: item["id"],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          editontap:() {
-                                          showDialog(
-                          context: context,
-                          builder: (context) {
-                            return EditVisitModel(
-                              patientId: widget.patientId, 
-                              complaintId:item["id"] ,
-                              chief_complaint:item["chief_complaint"],
-                                                height: item["height"] ?? "",
-                                                weight: item["weight"] ?? "",
-                                                bp: item["bp"] ?? "",
-                                                temperature: item["temperature"] ?? "",
-                                                heartrate: item["heart_rate"] ?? "",
-                                                 );
-                          },
-                        );
-                                        },
-                                          viewontap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return VisitViewModel(
-                                                  cheifcomplaint:
-                                                      item["chief_complaint"],
-                                                  height: item["height"] ?? "",
-                                                  weight: item["weight"] ?? "",
-                                                  bp: item["bp"] ?? "",
-                                                  temprature:
-                                                      item["temperature"] ?? "",
-                                                  heartrate:
-                                                      item["heart_rate"] ?? "",
-                                                  visitdate: formatDate(
-                                                      item["visit_date"]),
-                                                );
-                                              },
-                                            );
-                                          },
+        return ListView.builder(
+          itemCount: sortedVisits.length,
+          itemBuilder: (context, index) {
+            final item = sortedVisits[index];
+
+            return VisitModel(
+              visitnumber: index + 1,
+              Chiefcomplaint: item['chief_complaint'],
+              visitdate: formatDate(item['visit_date']),
+              complaintId: item['id'],
+              patientId: widget.patientId,
+              supportingimagesontap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return OutvisitSupportingFilesDialogBox(
+                      patientId: widget.patientId,
+                      complaintId: item["id"],
+                    );
+                  },
+                );
+              },
+              editontap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return EditVisitModel(
+                      patientId: widget.patientId,
+                      complaintId: item["id"],
+                      chief_complaint: item["chief_complaint"],
+                      height: item["height"] ?? "",
+                      weight: item["weight"] ?? "",
+                      bp: item["bp"] ?? "",
+                      temperature: item["temperature"] ?? "",
+                      heartrate: item["heart_rate"] ?? "",
+                      otherVitals: item["other_vitals"] ?? [],
+                    );
+                  },
+                );
+              },
+              viewontap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return VisitViewModel(
+                      Chiefcomplaint: item["chief_complaint"],
+                      height: item["height"] ?? "",
+                      weight: item["weight"] ?? "",
+                      bp: item["bp"] ?? "",
+                      temprature: item["temperature"] ?? "",
+                      heartrate: item["heart_rate"] ?? "",
+                      otherVitals:item["other_vitals"]?? [],
+
+                      visitdate: formatDate(item["visit_date"]),
+                    );
+                  },
+                );
+              },
+              startdiagnosisontap: () {
+                context.router.push(DiagnosisRoute(
+                  patientId: widget.patientId,
+                  complaintId: item['id'],
+                ));
+              },
+              buttonText: item['diagnosis_summary'] ?? '',
+              remarkontap: () async {
+                final remark = await doctorprovider.getdoctorremark(
+                    widget.patientId, item['id'], context);
+                if (remark != null && remark.isNotEmpty) {
+                  showDoctorRemarkDialog(
+                      context: context, htmlContent: remark);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const Dialog(
+                        insetPadding: EdgeInsets.all(16),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("There is no doctor remarks to show"),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            );
+          },
+        );
+      },
+    ),
+  ),
+                                
+                        //         SizedBox(
+                        //             height: MediaQuery.of(context).size.height *
+                        //                 0.81,
+                        //             child: ListView.builder(
+                        //               itemCount: doctorprovider
+                        //                   .patientoutvisits.length,
+                        //               itemBuilder: (context, index) {
+                        //                 final item = doctorprovider
+                        //                     .patientoutvisits[index];
+
+                        //                 return VisitModel(
+                        //                   visitnumber: index + 1,
+                        //                   Chiefcomplaint:
+                        //                       item['chief_complaint'],
+                        //                   visitdate:
+                        //                       formatDate(item['visit_date']),
+                        //                   complaintId: item['id'],
+                        //                   patientId: widget.patientId,
+                        //                   // createdtime: 'formatDate(complaint["createdAt"])',
+                        //                   supportingimagesontap: () {
+                        //                     showDialog(
+                        //                       context: context,
+                        //                       builder: (context) {
+                        //                         return OutvisitSupportingFilesDialogBox(
+                        //                           patientId: widget.patientId,
+                        //                           complaintId: item["id"],
+                        //                         );
+                        //                       },
+                        //                     );
+                        //                   },
+                        //                   editontap:() {
+                        //                   showDialog(
+                        //   context: context,
+                        //   builder: (context) {
+                        //     return EditVisitModel(
+                        //       patientId: widget.patientId, 
+                        //       complaintId:item["id"] ,
+                        //       chief_complaint:item["chief_complaint"],
+                        //                         height: item["height"] ?? "",
+                        //                         weight: item["weight"] ?? "",
+                        //                         bp: item["bp"] ?? "",
+                        //                         temperature: item["temperature"] ?? "",
+                        //                         heartrate: item["heart_rate"] ?? "",
+                        //                          );
+                        //   },
+                        // );
+                        //                 },
+                        //                   viewontap: () {
+                        //                     showDialog(
+                        //                       context: context,
+                        //                       builder: (context) {
+                        //                         return VisitViewModel(
+                        //                           Chiefcomplaint:
+                        //                               item["chief_complaint"],
+                        //                           height: item["height"] ?? "",
+                        //                           weight: item["weight"] ?? "",
+                        //                           bp: item["bp"] ?? "",
+                        //                           temprature:
+                        //                               item["temperature"] ?? "",
+                        //                           heartrate:
+                        //                               item["heart_rate"] ?? "",
+                        //                           visitdate: formatDate(
+                        //                               item["visit_date"]),
+                        //                         );
+                        //                       },
+                        //                     );
+                        //                   },
                                           
-                                          startdiagnosisontap: () {
-                                            context.router.push(DiagnosisRoute(
-                                              patientId: widget.patientId,
-                                              complaintId: item['id'],
-                                            ));
-                                          },
-                                          buttonText:
-                                              item['diagnosis_summary'] ?? '',
-                                          remarkontap: () async {
-                                            final remark = await doctorprovider
-                                                .getdoctorremark(
-                                                    widget.patientId,
-                                                    item['id'], context);
-                                            if (remark != null &&
-                                                remark.isNotEmpty) {
-                                              showDoctorRemarkDialog(
-                                                context: context,
-                                                htmlContent: remark,
-                                              );
-                                            } else {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return const Dialog(
-                                                    insetPadding:
-                                                        EdgeInsets.all(16),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16,
-                                                              vertical: 30),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Text(
-                                                              "There is no doctor remarks to show"),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
+                        //                   startdiagnosisontap: () {
+                        //                     context.router.push(DiagnosisRoute(
+                        //                       patientId: widget.patientId,
+                        //                       complaintId: item['id'],
+                        //                     ));
+                        //                   },
+                        //                   buttonText:
+                        //                       item['diagnosis_summary'] ?? '',
+                        //                   remarkontap: () async {
+                        //                     final remark = await doctorprovider
+                        //                         .getdoctorremark(
+                        //                             widget.patientId,
+                        //                             item['id'], context);
+                        //                     if (remark != null &&
+                        //                         remark.isNotEmpty) {
+                        //                       showDoctorRemarkDialog(
+                        //                         context: context,
+                        //                         htmlContent: remark,
+                        //                       );
+                        //                     } else {
+                        //                       showDialog(
+                        //                         context: context,
+                        //                         builder: (context) {
+                        //                           return const Dialog(
+                        //                             insetPadding:
+                        //                                 EdgeInsets.all(16),
+                        //                             child: Padding(
+                        //                               padding:
+                        //                                   EdgeInsets.symmetric(
+                        //                                       horizontal: 16,
+                        //                                       vertical: 30),
+                        //                               child: Row(
+                        //                                 mainAxisAlignment:
+                        //                                     MainAxisAlignment
+                        //                                         .center,
+                        //                                 children: [
+                        //                                   Text(
+                        //                                       "There is no doctor remarks to show"),
+                        //                                 ],
+                        //                               ),
+                        //                             ),
+                        //                           );
+                        //                         },
+                        //                       );
+                        //                     }
+                        //                   },
+                        //                 );
+                        //               },
+                        //             ),
+                        //           ),
                           );
                         }
                       },
@@ -452,7 +571,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 // class VisitModel extends StatelessWidget {
 //   const VisitModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     // required this.supportingimages,
 //     // required this.createdtime,
@@ -464,7 +583,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 //     required this.patientId, required this.supportingimagesontap, required this.remarkontap,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String visitdate;
 //   // final List<dynamic> supportingimages;
 //   final String complaintId;
@@ -538,7 +657,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 //                 height: 4,
 //               ),
 //               const Text(
-//                 "Cheif-Complaint :",
+//                 "Chief-Complaint :",
 //                 style: TextStyle(
 //                   fontSize: 16,
 //                   fontWeight: FontWeight.bold,
@@ -550,7 +669,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 //                 height: 4,
 //               ),
 //               Text(
-//                 cheifcomplaint,
+//                 Chiefcomplaint,
 //                 style: const TextStyle(fontSize: 16),
 //                 overflow: TextOverflow.ellipsis,
 //               ),
@@ -610,7 +729,7 @@ doctorprovider.invalidateCache(key: doctorprovider.PatientOutvisits);
 class VisitModel extends StatelessWidget {
   const VisitModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.viewontap,
     required this.buttonText,
@@ -623,7 +742,7 @@ class VisitModel extends StatelessWidget {
     
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String visitdate;
   final String complaintId;
   final String patientId;
@@ -705,7 +824,7 @@ class VisitModel extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  cheifcomplaint,
+                  Chiefcomplaint,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -896,7 +1015,7 @@ class VisitModel extends StatelessWidget {
 // class VisitViewModel extends StatelessWidget {
 //   const VisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.height,
 //     required this.weight,
 //     required this.bp,
@@ -905,7 +1024,7 @@ class VisitModel extends StatelessWidget {
 //     required this.visitdate,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String height;
 //   final String weight;
 //   final String bp;
@@ -951,13 +1070,13 @@ class VisitModel extends StatelessWidget {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1070,25 +1189,33 @@ class VisitModel extends StatelessWidget {
 class VisitViewModel extends StatelessWidget {
   const VisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.height,
     required this.weight,
     required this.bp,
     required this.temprature,
     required this.heartrate,
     required this.visitdate,
+    this.otherVitals,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String height;
   final String weight;
   final String bp;
   final String temprature;
   final String heartrate;
   final String visitdate;
+  final List<dynamic>? otherVitals;   // ← NEW
 
   @override
   Widget build(BuildContext context) {
+    print(Chiefcomplaint);
+    print(height);
+    print(weight);
+    print(bp);
+    print(temprature);
+    print(heartrate);
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -1098,76 +1225,158 @@ class VisitViewModel extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// CLOSE BUTTON
-            Align(
-              alignment: Alignment.topRight,
-              child: InkWell(
-                onTap: () => context.router.pop(),
-                child: const CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.close, size: 18, color: Colors.red),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// CLOSE BUTTON
+              Align(
+                alignment: Alignment.topRight,
+                child: InkWell(
+                  onTap: () => context.router.pop(),
+                  child: const CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.close, size: 18, color: Colors.red),
+                  ),
                 ),
               ),
-            ),
-
-            const SizedBox(height: 6),
-
-            /// TOP ICON
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(14),
+          
+              const SizedBox(height: 6),
+          
+              /// TOP ICON
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.medical_services_outlined,
+                  color: Colors.white,
+                  size: 28,
+                ),
               ),
-              child: const Icon(
-                Icons.medical_services_outlined,
-                color: Colors.white,
-                size: 28,
+          
+              const SizedBox(height: 10),
+          
+              /// TITLE
+              const Text(
+                "Out-Visit Details",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
               ),
-            ),
-
-            const SizedBox(height: 10),
-
-            /// TITLE
-            const Text(
-              "Out-Visit Details",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+          
+              const SizedBox(height: 20),
+          
+              /// CHIEF COMPLAINT CARD
+              _infoTile(
+                icon: Icons.description_outlined,
+                title: "CHIEF COMPLAINT",
+                value: Chiefcomplaint,
               ),
-            ),
+          
+              const SizedBox(height: 12),
+          
+              /// VISIT DATE CARD
+              _infoTile(
+                icon: Icons.calendar_today_outlined,
+                title: "VISIT DATE",
+                value: visitdate,
+              ),
 
-            const SizedBox(height: 20),
+               if(height.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(height.isNotEmpty)
+              _infoTile(
+                icon: Icons.height,
+                title: "Height",
+                value: height,
+              ),
 
-            /// CHIEF COMPLAINT CARD
-            _infoTile(
-              icon: Icons.description_outlined,
-              title: "CHIEF COMPLAINT",
-              value: cheifcomplaint,
-            ),
+               if(weight.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(weight.isNotEmpty)
+              _infoTile(
+                icon: FontAwesomeIcons.weightScale,
+                title: "WEIGHT",
+                value: weight,
+              ),
 
-            const SizedBox(height: 12),
+               if(bp.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(bp.isNotEmpty)
+              _infoTile(
+                icon: FontAwesomeIcons.heartCirclePlus,
+                title: "BP",
+                value: bp,
+              ),
 
-            /// VISIT DATE CARD
-            _infoTile(
-              icon: Icons.calendar_today_outlined,
-              title: "VISIT DATE",
-              value: visitdate,
-            ),
+               if(temprature.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(temprature.isNotEmpty)
+              _infoTile(
+                icon: Icons.thermostat,
+                title: "Temperature",
+                value: temprature,
+              ),
 
-            /// ⚠️ VITALS LOGIC KEPT (NOT REMOVED)
-            if (height.isNotEmpty ||
-                weight.isNotEmpty ||
-                bp.isNotEmpty ||
-                temprature.isNotEmpty ||
-                heartrate.isNotEmpty)
-              const SizedBox(height: 0),
-          ],
+               if(heartrate.isNotEmpty)
+               const SizedBox(height: 12),
+          
+             if(heartrate.isNotEmpty)
+              _infoTile(
+                icon: FontAwesomeIcons.heartPulse,
+                title: "Heart Rate",
+                value: heartrate,
+              ),
+
+              if (otherVitals != null && otherVitals!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "OTHER VITALS",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...otherVitals!.map((v) {
+                  final name = v['name']?.toString() ?? '';
+                  final value = v['value']?.toString() ?? '';
+                  if (name.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _infoTile(
+                      icon: Icons.monitor_heart_outlined,
+                      title: name.toUpperCase(),
+                      value: value,
+                    ),
+                  );
+                }).toList(),
+              ],
+
+          
+              /// ⚠️ VITALS LOGIC KEPT (NOT REMOVED)
+              if (height.isNotEmpty ||
+                  weight.isNotEmpty ||
+                  bp.isNotEmpty ||
+                  temprature.isNotEmpty ||
+                  heartrate.isNotEmpty)
+                const SizedBox(height: 0),
+            ],
+          ),
         ),
       ),
     );
@@ -1187,6 +1396,7 @@ class VisitViewModel extends StatelessWidget {
         border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
@@ -1238,7 +1448,7 @@ class RegisterVisitModel extends StatefulWidget {
 }
 
 class _RegisterVisitModelState extends State<RegisterVisitModel> {
-  final TextEditingController cheifcomplaintController =
+  final TextEditingController ChiefcomplaintController =
       TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
@@ -1247,10 +1457,38 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
   final TextEditingController temperatureController = TextEditingController();
 
   final formkey = GlobalKey<FormState>();
+  List<VitalControllers> vitalsControllersList = [];
 
   DateTime today = DateTime.now();
 
   String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+
+ @override
+  void initState() {
+    super.initState();
+    vitalsControllersList.add(VitalControllers()); // ← ek empty row se start
+  }
+
+  void addVital() {
+    setState(() {
+      vitalsControllersList.add(VitalControllers());
+    });
+  }
+
+   @override
+  void dispose() {
+    ChiefcomplaintController.dispose();
+    heightController.dispose();
+    weightController.dispose();
+    bpController.dispose();
+    heartrateController.dispose();
+    temperatureController.dispose();
+    for (var c in vitalsControllersList) {
+      c.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1301,14 +1539,14 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                   height: 8,
                 ),
                 const Text(
-                  " Cheif Complaint* ",
+                  " Chief Complaint* ",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 6,
                 ),
                 TextFormField(
-                  controller: cheifcomplaintController,
+                  controller: ChiefcomplaintController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   // controller: _nameController,
                   // inputFormatters: [
@@ -1320,13 +1558,13 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                   maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter cheif complaint';
+                      return 'Please enter Chief complaint';
                     }
                     return null; // Return null if validation is successful
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: 'Enter Cheif Complaint',
+                    hintText: 'Enter Chief Complaint',
                   ),
                 ),
                 const SizedBox(
@@ -1487,6 +1725,48 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                     ),
                   ],
                 ),
+
+                                const SizedBox(height: 20),
+
+                const Text(
+                  "Other Vitals",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+
+                ...vitalsControllersList.asMap().entries.map((entry) {
+                  final controllers = entry.value;
+                  return VitalsFieldSet(
+                    key: ObjectKey(controllers),
+                    controllers: controllers,
+                  );
+                }).toList(),
+
+                const SizedBox(height: 6),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: addVital,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    ),
+                    child: const Text(
+                      "Add Vital",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
                 const SizedBox(
                   height: 20,
                 ),
@@ -1507,16 +1787,25 @@ class _RegisterVisitModelState extends State<RegisterVisitModel> {
                                 doctorprovider.addingoutvisit = true;
                               });
                               
-                             
+                              // ✅ vitals list build karo (jaise diagnosis page me hota hai)
+            List<Map<String, dynamic>> vitalsList = vitalsControllersList
+                .where((c) => c.nameController.text.trim().isNotEmpty)
+                .map((c) {
+              return {
+                'name': c.nameController.text,
+                'value': c.valueController.text,
+              };
+            }).toList();
 
                               doctorprovider.addoutvisit(
                                 widget.patientId,
-                                cheifcomplaintController.text,
-                                heartrateController.text,
+                                ChiefcomplaintController.text,
+                                heightController.text,
                                 weightController.text,
                                 bpController.text,
                                 temperatureController.text,
                                 heartrateController.text,
+                                vitalsList,
                                 context,
                               );
 
@@ -1571,7 +1860,8 @@ class EditVisitModel extends StatefulWidget {
     this.weight,
     this.bp,
     this.temperature,
-    this.heartrate, required this.complaintId,
+    this.heartrate, required this.complaintId, this.otherVitals,
+    
   });
 
   final String patientId;
@@ -1582,12 +1872,14 @@ class EditVisitModel extends StatefulWidget {
   final String? bp;
   final String? temperature;
   final String? heartrate;
+  final List<dynamic>? otherVitals;   // ← NEW
+
 
   @override
   State<EditVisitModel> createState() => _EditVisitModelState();
 }
 class _EditVisitModelState extends State<EditVisitModel> {
-  final TextEditingController cheifcomplaintController = TextEditingController();
+  final TextEditingController ChiefcomplaintController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   final TextEditingController bpController = TextEditingController();
@@ -1597,34 +1889,65 @@ class _EditVisitModelState extends State<EditVisitModel> {
   final formkey = GlobalKey<FormState>();
   late String formattedDate;
 
+  List<VitalControllers> vitalsControllersList = [];   // ← NEW
+
+
   @override
   void initState() {
     super.initState();
     formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
     // Prefill controllers with widget data
-    cheifcomplaintController.text = widget.chief_complaint;
+    ChiefcomplaintController.text = widget.chief_complaint;
     heightController.text = widget.height ?? '';
     weightController.text = widget.weight ?? '';
     bpController.text = widget.bp ?? '';
     heartrateController.text = widget.heartrate ?? '';
     temperatureController.text = widget.temperature ?? '';
+   // ✅ Prefill other vitals from existing data
+    if (widget.otherVitals != null && widget.otherVitals!.isNotEmpty) {
+      for (final v in widget.otherVitals!) {
+        final c = VitalControllers();
+        c.nameController.text = v['name']?.toString() ?? '';
+        c.valueController.text = v['value']?.toString() ?? '';
+        vitalsControllersList.add(c);
+      }
+    } else {
+      vitalsControllersList.add(VitalControllers());
+    }
+  
+  }
+
+   void addVital() {
+    setState(() {
+      vitalsControllersList.add(VitalControllers());
+    });
+  }
+
+   void removeVital(int index) {
+    setState(() {
+      vitalsControllersList[index].dispose();
+      vitalsControllersList.removeAt(index);
+    });
   }
 
   @override
   void dispose() {
-    cheifcomplaintController.dispose();
+    ChiefcomplaintController.dispose();
     heightController.dispose();
     weightController.dispose();
     bpController.dispose();
     heartrateController.dispose();
     temperatureController.dispose();
+    for (var c in vitalsControllersList) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final patientpageprovider = context.read<Doctorprovider>();
+    final patientpageprovider = context.watch<Doctorprovider>();
 
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1688,7 +2011,7 @@ shape: RoundedRectangleBorder(
                     ),
                     const SizedBox(height: 6),
                     TextFormField(
-                      controller: cheifcomplaintController,
+                      controller: ChiefcomplaintController,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       maxLines: 3,
                       validator: (value) {
@@ -1740,6 +2063,64 @@ shape: RoundedRectangleBorder(
                         const Expanded(child: SizedBox()), // spacing balance
                       ],
                     ),
+
+                    const SizedBox(height: 20),
+
+                    // ✅ NEW: Other Vitals (editable)
+                    const Text(
+                      "Other Vitals",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+
+                    ...vitalsControllersList.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final controllers = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: VitalsFieldSet(
+                                key: ObjectKey(controllers),
+                                controllers: controllers,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: vitalsControllersList.length > 1
+                                  ? () => removeVital(index)
+                                  : null,
+                              icon: const Icon(Icons.remove_circle_outline,
+                                  color: Colors.redAccent),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+
+                    const SizedBox(height: 6),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: addVital,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        ),
+                        child: const Text(
+                          "Add Vital",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ),
+
                     const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
@@ -1753,15 +2134,27 @@ shape: RoundedRectangleBorder(
                               setState(() {
                                       patientpageprovider.iseditingvisit = true;
                                     });
+
+                                    List<Map<String, dynamic>> vitalsList = vitalsControllersList
+                                  .where((c) => c.nameController.text.trim().isNotEmpty)
+                                  .map((c) {
+                                return {
+                                  'name': c.nameController.text,
+                                  'value': c.valueController.text,
+                                };
+                              }).toList();
+
+
                             await patientpageprovider.editvisit(
                               widget.patientId,
                               widget.complaintId,
-                              cheifcomplaintController.text,
+                              ChiefcomplaintController.text,
                               heightController.text,
                               weightController.text,
                               bpController.text,
                               temperatureController.text,
                               heartrateController.text,
+                              vitalsList,
                               context,
                             );
             
@@ -1812,6 +2205,95 @@ shape: RoundedRectangleBorder(
           ),
         ),
       ],
+    );
+  }
+}
+class VitalControllers {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController valueController = TextEditingController();
+
+  void dispose() {
+    nameController.dispose();
+    valueController.dispose();
+  }
+}
+
+class VitalsFieldSet extends StatefulWidget {
+  final VitalControllers controllers;
+
+  const VitalsFieldSet({
+    Key? key,
+    required this.controllers,
+  }) : super(key: key);
+
+  @override
+  State<VitalsFieldSet> createState() => _VitalsFieldSetState();
+}
+
+class _VitalsFieldSetState extends State<VitalsFieldSet> {
+  bool isValueEnabled = false;
+
+//  @override
+//   void initState() {
+//     super.initState();
+//     // Listen to changes in name field
+//     widget.controllers.nameController.addListener(_checkNameField);
+//   }
+
+@override
+void initState() {
+  super.initState();
+  // ✅ Seed initial state from whatever the controller already holds
+  // (e.g. autofilled via voice transcription)
+  isValueEnabled = widget.controllers.nameController.text.trim().isNotEmpty;   // ← ADD THIS
+
+  // Listen to changes in name field
+  widget.controllers.nameController.addListener(_checkNameField);
+}
+
+   void _checkNameField() {
+    final isNotEmpty = widget.controllers.nameController.text.trim().isNotEmpty;
+    if (isNotEmpty != isValueEnabled) {
+      setState(() {
+        isValueEnabled = isNotEmpty;
+      });
+    }
+  }
+
+    @override
+  void dispose() {
+    widget.controllers.nameController.removeListener(_checkNameField);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: widget.controllers.nameController,
+              decoration: const InputDecoration(
+                hintText: 'Name (e.g. Temperature)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: widget.controllers.valueController,
+              enabled: isValueEnabled,
+              decoration: const InputDecoration(
+                hintText: 'Value (e.g. 101°F)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

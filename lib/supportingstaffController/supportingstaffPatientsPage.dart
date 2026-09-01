@@ -28,7 +28,9 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
   bool _hasMore = true;
   Timer? _debounceTimer;
   String _currentSearchQuery = '';
-  bool _isSearching = false; 
+  bool _isSearching = false;
+  bool _isInitialLoading = true;   // NEW
+ 
  
   @override
   void initState() {
@@ -62,6 +64,12 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
   Future<void> _fetchInitialData() async {
     await supportingstaffprovider.getPatientsByPageWithSearch(_currentPage, _currentSearchQuery, context);
     // await homePageProvider.getdoctordetails();
+
+    if (mounted) {
+    setState(() {
+      _isInitialLoading = false;   // NEW
+    });
+  }
   }
 
   Future<void> _performSearch(String query) async {
@@ -102,6 +110,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
       _currentPage = 1;
       _hasMore = true;
       _isSearching = false; // Reset searching flag
+          _isInitialLoading = true;   // NEW
       supportingstaffprovider.allpatients.clear();
       supportingstaffprovider.filteredPatients.clear();
     });
@@ -303,7 +312,56 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
     );
   }
 
+  String calculateAge(String dob) {
+  DateTime birthDate;
+
+  try {
+    // Handle dd/MM/yyyy format
+    if (dob.contains('/')) {
+      birthDate = DateFormat('dd/MM/yyyy').parseStrict(dob);
+    } else {
+      // Handle yyyy-MM-dd / ISO format
+      birthDate = DateTime.parse(dob);
+    }
+  } catch (e) {
+    return '';
+  }
+
+  final today = DateTime.now();
+
+  int years = today.year - birthDate.year;
+  int months = today.month - birthDate.month;
+  int days = today.day - birthDate.day;
+
+  if (days < 0) {
+    months--;
+    final prevMonth = DateTime(today.year, today.month, 0);
+    days += prevMonth.day;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (years >= 5) {
+    return '$years ${years == 1 ? 'year' : 'years'}';
+  }
+
+  if (years == 0 && months == 0) {
+    return '0 month $days ${days == 1 ? 'day' : 'days'}';
+  }
+
+  return '$years ${years == 1 ? 'year' : 'years'} '
+      '$months ${months == 1 ? 'month' : 'months'}';
+}
+
   Widget _buildMainContent(Supportingstaffprovider supportingstaffprovider) {
+    
+     if (_isInitialLoading) {
+    return _buildShimmerList();
+  }
+    
     // Show shimmer while searching or initial load
     if (_isSearching || (_currentPage == 1 && supportingstaffprovider.allpatients.isEmpty && _isLoadingMore)) {
       return _buildShimmerList();
@@ -316,7 +374,9 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
     
     // Show shimmer for initial load (when no search query)
     if (supportingstaffprovider.allpatients.isEmpty && _currentSearchQuery.isEmpty) {
-      return _buildShimmerList();
+     return Center(
+        child: Text("No Patients to show Please Register"),
+      );
     }
     
     // Show the actual list
@@ -346,7 +406,7 @@ class _SupportingstaffPatientsPageState extends State<SupportingstaffPatientsPag
                           email: item['email'] ?? "",
                           phonenumber: item['phone'] ?? 0,
                           dob: formatDate(item['DOB'] ?? ""),
-                          age: item['age'] ?? "",
+                          age: calculateAge(item['DOB']) ?? "",
                           gender: item['gender'] ?? "",
                         )
                       ;

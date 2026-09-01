@@ -205,30 +205,67 @@ class _OutvisitSupportingFilesDialogBoxState extends State<OutvisitSupportingFil
   }
 }
 
+  // void shareImage(String url, String filename) async {
+  //   try {
+  //     log('url: $url');
+
+  //     final bytes = (await get(Uri.parse(url))).bodyBytes;
+  //     final dir = await getTemporaryDirectory();
+  //     final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+
+  //     log('filePath: ${file.path}');
+
+  //     await Share.shareXFiles([XFile(file.path)], text: filename);
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       backgroundColor: Colors.green.shade300,
+  //       content: const Text('Image sharing done successfully'),
+  //     ));
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       backgroundColor: Colors.red.shade300,
+  //       content: const Text('Something Went Wrong (Try again in sometime)!'),
+  //     ));
+  //     print('Something Went Wrong (Try again in sometime)!');
+  //     log('downloadImageE: $e');
+  //   }
+  // }
+
   void shareImage(String url, String filename) async {
-    try {
-      log('url: $url');
+  try {
+    log('url: $url');
 
-      final bytes = (await get(Uri.parse(url))).bodyBytes;
-      final dir = await getTemporaryDirectory();
-      final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+    final bytes = (await get(Uri.parse(url))).bodyBytes;
+    final dir = await getTemporaryDirectory();
+    final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
 
-      log('filePath: ${file.path}');
+    log('filePath: ${file.path}');
 
-      await Share.shareXFiles([XFile(file.path)], text: filename);
+    final result = await Share.shareXFiles([XFile(file.path)], text: filename);
+
+    if (!mounted) return;
+
+    if (result.status == ShareResultStatus.success) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.green.shade300,
-        content: const Text('Image sharing done successfully'),
+        content: const Text('Image shared successfully'),
       ));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red.shade300,
-        content: const Text('Something Went Wrong (Try again in sometime)!'),
-      ));
-      print('Something Went Wrong (Try again in sometime)!');
-      log('downloadImageE: $e');
+    } else if (result.status == ShareResultStatus.dismissed) {
+      // User cancelled the share sheet — show nothing, or a neutral message
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   content: const Text('Sharing cancelled'),
+      // ));
     }
+    // ShareResultStatus.unavailable: platform doesn't support result reporting
+    // (mainly older/desktop platforms) — you may choose to skip feedback there too.
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.red.shade300,
+      content: const Text('Something Went Wrong (Try again in sometime)!'),
+    ));
+    log('downloadImageE: $e');
   }
+}
 
   void _viewImage(String imageUrl, String filename) {
     Navigator.push(

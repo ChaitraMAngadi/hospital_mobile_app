@@ -247,7 +247,8 @@ class _ViewDiagnosisPageState extends State<ViewDiagnosisPage> {
                                       context: context,
                                       builder: (context) {
                                         print(doctorprovider.invisitId);
-                                        return DischargeDialogBox(patientId: widget.id, complaintId: doctorprovider.invisitId);
+                                        return DischargeDialogBox(patientId: widget.id, complaintId: doctorprovider.invisitId, name: widget.name,visitingindex: widget.visitingIndex,);
+                                      
                                       },
                                     );
                                 // context.router.push(RegisterPatientRoute());
@@ -1025,30 +1026,67 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
   }
 }
 
+  // void shareImage(String url, String filename) async {
+  //   try {
+  //     log('url: $url');
+
+  //     final bytes = (await get(Uri.parse(url))).bodyBytes;
+  //     final dir = await getTemporaryDirectory();
+  //     final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+
+  //     log('filePath: ${file.path}');
+
+  //     await Share.shareXFiles([XFile(file.path)], text: filename);
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       backgroundColor: Colors.green.shade300,
+  //       content: const Text('Image sharing done successfully'),
+  //     ));
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       backgroundColor: Colors.red.shade300,
+  //       content: const Text('Something Went Wrong (Try again in sometime)!'),
+  //     ));
+  //     print('Something Went Wrong (Try again in sometime)!');
+  //     log('downloadImageE: $e');
+  //   }
+  // }
+
   void shareImage(String url, String filename) async {
-    try {
-      log('url: $url');
+  try {
+    log('url: $url');
 
-      final bytes = (await get(Uri.parse(url))).bodyBytes;
-      final dir = await getTemporaryDirectory();
-      final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+    final bytes = (await get(Uri.parse(url))).bodyBytes;
+    final dir = await getTemporaryDirectory();
+    final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
 
-      log('filePath: ${file.path}');
+    log('filePath: ${file.path}');
 
-      await Share.shareXFiles([XFile(file.path)], text: filename);
+    final result = await Share.shareXFiles([XFile(file.path)], text: filename);
+
+    if (!mounted) return;
+
+    if (result.status == ShareResultStatus.success) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.green.shade300,
-        content: const Text('Image sharing done successfully'),
+        content: const Text('Image shared successfully'),
       ));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red.shade300,
-        content: const Text('Something Went Wrong (Try again in sometime)!'),
-      ));
-      print('Something Went Wrong (Try again in sometime)!');
-      log('downloadImageE: $e');
+    } else if (result.status == ShareResultStatus.dismissed) {
+      // User cancelled the share sheet — show nothing, or a neutral message
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   content: const Text('Sharing cancelled'),
+      // ));
     }
+    // ShareResultStatus.unavailable: platform doesn't support result reporting
+    // (mainly older/desktop platforms) — you may choose to skip feedback there too.
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.red.shade300,
+      content: const Text('Something Went Wrong (Try again in sometime)!'),
+    ));
+    log('downloadImageE: $e');
   }
+}
 
   void _viewImage(String imageUrl, String filename) {
     Navigator.push(
@@ -1100,307 +1138,16 @@ class _DiagnosisDialogState extends State<DiagnosisDialog> {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Dialog(
-  //     insetPadding: const EdgeInsets.all(16),
-  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-  //     child: SingleChildScrollView(
-  //       padding: const EdgeInsets.all(16),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           // Header
-  //           Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               const Text(
-  //                 "Patient Diagnoses",
-  //                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //               ),
-  //               IconButton(
-  //                 icon: const Icon(Icons.close),
-  //                 onPressed: () => Navigator.pop(context),
-  //               ),
-  //             ],
-  //           ),
-  //           const SizedBox(height: 12),
-
-  //           // Loop through diagnoses
-  //           ...widget.diagnoses.asMap().entries.map((entry) {
-  //             final index = entry.key;
-  //             final d = entry.value;
-
-  //                           final docname = d["doneBy"]?["name"] ?? "Unknown";
-  //                           final docuserid = d["doneBy"]?["userid"] ?? "Unknown";
-  //                           final role = d['doneByType'];
-
-  //             return Container(
-  //               width: double.infinity,
-  //               margin: const EdgeInsets.only(bottom: 20),
-  //               padding: const EdgeInsets.all(12),
-  //               decoration: BoxDecoration(
-  //                 border: Border.all(color: Colors.grey.shade300),
-  //                 borderRadius: BorderRadius.circular(12),
-  //               ),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Text(
-  //                     "Diagnosis ${index + 1}",
-  //                     style: const TextStyle(
-  //                         fontSize: 16, fontWeight: FontWeight.w600),
-  //                   ),
-  //                   const SizedBox(height: 8),
-
-  //                   if (d["complaint"] != null)
-  //                     Text("Chief complaint: ${d["complaint"]}"),
-
-  //                   const SizedBox(height: 12),
-
-  //                   // Vitals
-  //                   if (d["vitals"] != null &&
-  //                       d["vitals"] is List &&
-  //                       d["vitals"].isNotEmpty)
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         const Text("Vitals",
-  //                             style: TextStyle(
-  //                                 fontSize: 15, fontWeight: FontWeight.w600)),
-  //                         const SizedBox(height: 8),
-  //                         Wrap(
-  //                           spacing: 8,
-  //                           runSpacing: 8,
-  //                           children:
-  //                               (d["vitals"] as List).map<Widget>((vital) {
-  //                             return Card(
-  //                               child: Padding(
-  //                                 padding: const EdgeInsets.all(8.0),
-  //                                 child: Column(
-  //                                   mainAxisSize: MainAxisSize.min,
-  //                                   children: [
-  //                                     Text(vital["name"] ?? "",
-  //                                         style: const TextStyle(
-  //                                             fontWeight: FontWeight.w600)),
-  //                                     Text(vital["value"] ?? ""),
-  //                                   ],
-  //                                 ),
-  //                               ),
-  //                             );
-  //                           }).toList(),
-  //                         ),
-  //                       ],
-  //                     ),
-
-  //                   const SizedBox(height: 12),
-  //                    Row(
-  //                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Text("Done by: $docname - ",
-  //                           style: const TextStyle(fontSize: 14)),
-  //                       Text(docuserid,
-  //                           style: const TextStyle(
-  //                               fontSize: 12, color: Colors.grey)),
-  //                     ],
-  //                   ),
-  //                   const SizedBox(height: 12, ),
-  //                    Card(
-  //                     color: Colors.green.shade100,
-                      
-  //                         child: Padding(
-  //                           padding: const EdgeInsets.all(8.0),
-  //                           child: Text("Role: $role",
-  //                               style: const TextStyle(fontSize: 14)),
-  //                         ),
-  //                       ),
-
-  //                       const SizedBox( height: 12,),
-  //                   // Diagnosis Summary
-  //                   if (d["diagnosis_summary"] != null)
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         const Text("Diagnosis Summary",
-  //                             style: TextStyle(
-  //                                 fontSize: 15, fontWeight: FontWeight.w600)),
-  //                         Html(data: d["diagnosis_summary"]),
-  //                       ],
-  //                     ),
-
-  //                   if (d["diagnosis_summary"] != null)
-  //                   const SizedBox(height: 12),
-
-  //                   // Medical Advice
-  //                   if (d["medical_advice"] != null)
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         const Text("Medical Advice",
-  //                             style: TextStyle(
-  //                                 fontSize: 15, fontWeight: FontWeight.w600)),
-  //                         Html(data: d["medical_advice"]),
-  //                       ],
-  //                     ),
-
-  //                   if (d["medical_advice"] != null)
-  //                   const SizedBox(height: 12),
-
-  //                   // Lab Tests
-  //                   if (d["lab_test"] != null)
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         const Text("Lab Tests",
-  //                             style: TextStyle(
-  //                                 fontSize: 15, fontWeight: FontWeight.w600)),
-  //                         Html(data: d["lab_test"]),
-  //                       ],
-  //                     ),
-
-  //                   if (d["lab_test"] != null)
-  //                   const SizedBox(height: 12),
-
-  //                   // Doctor's Remark
-  //                   if (d["doctors_remark"] != null)
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         const Text("Doctor's Remark",
-  //                             style: TextStyle(
-  //                                 fontSize: 15, fontWeight: FontWeight.w600)),
-  //                         Html(data: d["doctors_remark"]),
-  //                       ],
-  //                     ),
-
-
-  //                   if (d["doctors_remark"] != null)
-  //                   const SizedBox(height: 12),
-
-  //                   // Medication
-  //                   if (d["medication"] != null &&
-  //                       d["medication"] is List &&
-  //                       d["medication"].isNotEmpty)
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         const Text("Medication",
-  //                             style: TextStyle(
-  //                                 fontSize: 15, fontWeight: FontWeight.w600)),
-  //                         Column(
-  //                           children:
-  //                               (d["medication"] as List).map<Widget>((med) {
-  //                             return ListTile(
-  //                               contentPadding: EdgeInsets.zero,
-  //                               title: Text(med["name"] ?? "",
-  //                                   style: const TextStyle(
-  //                                       fontWeight: FontWeight.w600)),
-  //                               subtitle: Text(
-  //                                   "${med["type"] ?? ""}, ${med["power"] ?? ""}, ${med["time"]?.join(", ")}"),
-  //                             );
-  //                           }).toList(),
-  //                         ),
-  //                       ],
-  //                     ),
-
-  //                   if (d["medication"] != null &&
-  //                       d["medication"] is List &&
-  //                       d["medication"].isNotEmpty)
-  //                   const SizedBox(height: 12),
-
-  //                   // Supporting Documents / Images
-  //                   if (d["supporting_images"] != null &&
-  //                       d["supporting_images"] is List &&
-  //                       d["supporting_images"].isNotEmpty)
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         const Text("Supporting Documents",
-  //                             style: TextStyle(
-  //                                 fontSize: 15, fontWeight: FontWeight.w600)),
-  //                         const SizedBox(height: 8),
-  //                         Wrap(
-  //                           spacing: 8,
-  //                           runSpacing: 8,
-  //                           children: (d["supporting_images"] as List)
-  //                               .map<Widget>((url) {
-  //                             final Uri uri = Uri.parse(url.toString());
-  //                             bool isPdf =
-  //                                 url.toString().toLowerCase().endsWith(".pdf");
-
-  //                             return GestureDetector(
-  //                               onTap: () => !isPdf
-  //                                   ? _viewImage(url, 'filename')
-  //                                   : Navigator.push(
-  //                                       context,
-  //                                       MaterialPageRoute(
-  //                                         builder: (context) => PdfViewerPage(
-  //                                           url: url,
-  //                                           filename: 'fileName',
-  //                                         ),
-  //                                       ),
-  //                                     ),
-
-  //                               // onTap: () async {
-  //                               //   if (!await launchUrl(
-  //                               //     uri,
-  //                               //     mode: LaunchMode.externalApplication,
-  //                               //   )) {
-  //                               //     throw Exception('Could not launch $uri');
-  //                               //   }
-  //                               // },
-  //                               child: Container(
-  //                                 width: 120,
-  //                                 height: 100,
-  //                                 decoration: BoxDecoration(
-  //                                   border:
-  //                                       Border.all(color: Colors.grey.shade300),
-  //                                   borderRadius: BorderRadius.circular(8),
-  //                                 ),
-  //                                 child: isPdf
-  //                                     ? const Center(
-  //                                         child: Text(
-  //                                           "PDF Document",
-  //                                           textAlign: TextAlign.center,
-  //                                           style: TextStyle(
-  //                                               fontWeight: FontWeight.w600),
-  //                                         ),
-  //                                       )
-  //                                     : ClipRRect(
-  //                                         borderRadius:
-  //                                             BorderRadius.circular(8),
-  //                                         child: Image.network(
-  //                                           url,
-  //                                           fit: BoxFit.cover,
-  //                                           errorBuilder:
-  //                                               (context, error, stackTrace) {
-  //                                             return const Center(
-  //                                                 child: Icon(Icons.image));
-  //                                           },
-  //                                         ),
-  //                                       ),
-  //                               ),
-  //                             );
-  //                           }).toList(),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                 ],
-  //               ),
-  //             );
-  //           }).toList(),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-
 String formatDate(String date) {
     final parsedDate = DateTime.parse(date);
     final formattedDate = DateFormat('dd/MM/yyyy').format(parsedDate);
     return formattedDate;
   }
+String formatCreatedAt(String createdAt) {
+  DateTime dateTime = DateTime.parse(createdAt).toLocal(); // UTC ko local time mein convert
+  return DateFormat('dd/MM/yyyy hh:mm a').format(dateTime);
+}
+
   @override
 Widget build(BuildContext context) {
   return Dialog(
@@ -1454,6 +1201,7 @@ Widget build(BuildContext context) {
             ...widget.diagnoses.asMap().entries.map((entry) {
               final index = entry.key;
               final d = entry.value;
+              print('diagnosis summary: ${d["diagnosis_summary"]}');
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -1489,7 +1237,7 @@ Widget build(BuildContext context) {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _pill("Diagnosis #${index + 1}", Colors.blue),
-                              Text(formatDate(d["createdAt"]) ?? "",
+                              Text(formatCreatedAt(d["createdAt"]) ?? "",
                                   style: const TextStyle(
                                       fontSize: 12, color: Colors.grey)),
                             ],
@@ -1549,30 +1297,53 @@ Widget build(BuildContext context) {
                           ),
                     
                           const SizedBox(height: 12),
+                          
                     
                           /// DIAGNOSIS SUMMARY
-                          if (d["diagnosis_summary"] != null) ...[
-                            _section("Diagnosis Summary", Icons.description),
-                            _htmlCard(d["diagnosis_summary"]),
-                          ],
+                          // if (d["diagnosis_summary"] != null ) ...[
+                            
+                          //   _section("Diagnosis Summary", Icons.description),
+                          //   _htmlCard(d["diagnosis_summary"]),
+                          // ],
+                          if (d["diagnosis_summary"] != null &&
+    d["diagnosis_summary"].toString().trim().isNotEmpty) ...[
+  _section("Diagnosis Summary", Icons.description),
+  _htmlCard(d["diagnosis_summary"]),
+],
                     
                           /// MEDICAL ADVICE
-                          if (d["medical_advice"] != null) ...[
-                            _section("Medical Advice", Icons.medical_services),
-                            _htmlCard(d["medical_advice"]),
-                          ],
+                          // if (d["medical_advice"] != null) ...[
+                          //   _section("Medical Advice", Icons.medical_services),
+                          //   _htmlCard(d["medical_advice"]),
+                          // ],
+                          if (d["medical_advice"] != null &&
+    d["medical_advice"].toString().trim().isNotEmpty) ...[
+  _section("Medical Advice", Icons.medical_services),
+  _htmlCard(d["medical_advice"]),
+],
                     
                           /// LAB TESTS
-                          if (d["lab_test"] != null) ...[
-                            _section("Lab Tests", Icons.science),
-                            _htmlCard(d["lab_test"]),
-                          ],
+                          // if (d["lab_test"] != null) ...[
+                          //   _section("Lab Tests", Icons.science),
+                          //   _htmlCard(d["lab_test"]),
+                          // ],
+                          if (d["lab_test"] != null &&
+    d["lab_test"].toString().trim().isNotEmpty) ...[
+  _section("Lab Tests", Icons.science),
+  _htmlCard(d["lab_test"]),
+],
                     
                           /// DOCTOR REMARK
-                          if (d["doctors_remark"] != null) ...[
-                            _section("Doctor's Remark", Icons.chat),
-                            _htmlCard(d["doctors_remark"]),
-                          ],
+                          // if (d["doctors_remark"] != null) ...[
+                          //   _section("Doctor's Remark", Icons.chat),
+                          //   _htmlCard(d["doctors_remark"]),
+                          // ],
+                          if (d["doctors_remark"] != null &&
+    d["doctors_remark"].toString().trim().isNotEmpty) ...[
+  _section("Doctor's Remark", Icons.chat),
+  _htmlCard(d["doctors_remark"]),
+],
+                          
                     
                           /// MEDICATION
                           if (d["medication"] != null &&
@@ -1604,6 +1375,9 @@ Widget build(BuildContext context) {
                                               "Dose: ${med["power"]} • ${med["duration"]} days"),
                                           Text(
                                               "When: ${med["time"]?.join(", ")}"),
+                                              
+                                              Text(
+                                              "Special Instruction: ${med["special_instruction"]}"),
                                         ],
                                       ),
                                     ),
@@ -1613,13 +1387,83 @@ Widget build(BuildContext context) {
                               );
                             }).toList(),
                           ],
+
+                          /// SUPPORTING DOCS
+const SizedBox(height: 8),
+_section("Supporting Documents", Icons.attach_file),
+if (d["supporting_images"] != null &&
+    d["supporting_images"] is List &&
+    (d["supporting_images"] as List).isNotEmpty)
+  Wrap(
+    spacing: 8,
+    runSpacing: 8,
+    children: (d["supporting_images"] as List).map<Widget>((url) {
+      final urlStr = url.toString();
+      final isPdf = urlStr.toLowerCase().endsWith(".pdf");
+      final filename = urlStr.split('/').last;
+
+      return GestureDetector(
+        onTap: () {
+          if (isPdf) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PdfViewerPage(
+                  url: urlStr,
+                  filename: filename,
+                ),
+              ),
+            );
+          } else {
+            _viewImage(urlStr, filename);
+          }
+        },
+        child: Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.accent),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: isPdf
+              ? const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.picture_as_pdf, color: Colors.red, size: 28),
+                      SizedBox(height: 4),
+                      Text(
+                        "PDF Document",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    urlStr,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Center(child: Icon(Icons.broken_image));
+                    },
+                  ),
+                ),
+        ),
+      );
+    }).toList(),
+  )
+else
+  const Text("No supporting documents",
+      style: TextStyle(color: Colors.grey)),
                     
                           /// SUPPORTING DOCS
-                          const SizedBox(height: 8),
-                          _section(
-                              "Supporting Documents", Icons.attach_file),
-                          const Text("No supporting documents",
-                              style: TextStyle(color: Colors.grey)),
+                          // const SizedBox(height: 8),
+                          // _section(
+                          //     "Supporting Documents", Icons.attach_file),
+                          // const Text("No supporting documents",
+                          //     style: TextStyle(color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -1654,20 +1498,23 @@ Widget _section(String title, IconData icon) {
 
 Widget _pill(String text, Color color) {
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(20),
     ),
     child: Text(text,
         style:
-            TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            TextStyle(
+              fontSize: 13,
+              color: Colors.white, fontWeight: FontWeight.bold)),
   );
 }
 
 Widget _vitalCard(String name, String value) {
   return Container(
-    width: 90,
+    width: 140, 
+    height: 85,
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
       border: Border.all(color: AppColors.accent),
@@ -1680,8 +1527,14 @@ Widget _vitalCard(String name, String value) {
             style: const TextStyle(
                 fontSize: 12, fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: AppColors.primary,
-        fontWeight: FontWeight.bold)),
+        Text(value,
+        maxLines: 2, style: const TextStyle(color: AppColors.primary,
+        fontWeight: FontWeight.bold,
+        overflow: TextOverflow.ellipsis,
+        ),
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        ),
       ],
     ),
   );
@@ -1780,30 +1633,67 @@ Future<void> downloadImage(BuildContext context, String url, String filename) as
   }
 }
 
+  // void shareImage(String url, String filename) async {
+  //   try {
+  //     log('url: $url');
+
+  //     final bytes = (await get(Uri.parse(url))).bodyBytes;
+  //     final dir = await getTemporaryDirectory();
+  //     final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+
+  //     log('filePath: ${file.path}');
+
+  //     await Share.shareXFiles([XFile(file.path)], text: filename);
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       backgroundColor: Colors.green.shade300,
+  //       content: const Text('Image sharing done successfully'),
+  //     ));
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       backgroundColor: Colors.red.shade300,
+  //       content: const Text('Something Went Wrong (Try again in sometime)!'),
+  //     ));
+  //     print('Something Went Wrong (Try again in sometime)!');
+  //     log('downloadImageE: $e');
+  //   }
+  // }
+
   void shareImage(String url, String filename) async {
-    try {
-      log('url: $url');
+  try {
+    log('url: $url');
 
-      final bytes = (await get(Uri.parse(url))).bodyBytes;
-      final dir = await getTemporaryDirectory();
-      final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
+    final bytes = (await get(Uri.parse(url))).bodyBytes;
+    final dir = await getTemporaryDirectory();
+    final file = await File('${dir.path}/$filename').writeAsBytes(bytes);
 
-      log('filePath: ${file.path}');
+    log('filePath: ${file.path}');
 
-      await Share.shareXFiles([XFile(file.path)], text: filename);
+    final result = await Share.shareXFiles([XFile(file.path)], text: filename);
+
+    if (!mounted) return;
+
+    if (result.status == ShareResultStatus.success) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.green.shade300,
-        content: const Text('Image sharing done successfully'),
+        content: const Text('Image shared successfully'),
       ));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red.shade300,
-        content: const Text('Something Went Wrong (Try again in sometime)!'),
-      ));
-      print('Something Went Wrong (Try again in sometime)!');
-      log('downloadImageE: $e');
+    } else if (result.status == ShareResultStatus.dismissed) {
+      // User cancelled the share sheet — show nothing, or a neutral message
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   content: const Text('Sharing cancelled'),
+      // ));
     }
+    // ShareResultStatus.unavailable: platform doesn't support result reporting
+    // (mainly older/desktop platforms) — you may choose to skip feedback there too.
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.red.shade300,
+      content: const Text('Something Went Wrong (Try again in sometime)!'),
+    ));
+    log('downloadImageE: $e');
   }
+}
 
 String formatToIST(String dateTime) {
   final utcTime = DateTime.parse(dateTime).toUtc();

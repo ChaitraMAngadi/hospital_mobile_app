@@ -66,6 +66,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+<<<<<<< HEAD
 	<key>NSPhotoLibraryUsageDescription</key>
 <string>This app requires access to the photo library.</string>
 
@@ -77,6 +78,10 @@
 
 <key>NSMicrophoneUsageDescription</key>
 <string>This app requires access to the microphone.</string>
+=======
+	<key>NSFaceIDUsageDescription</key>
+    <string>We use Face ID to securely unlock the app.</string>
+>>>>>>> 9f064bf02e52b37f73ce824fe8b5555418562479
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

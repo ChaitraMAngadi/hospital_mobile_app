@@ -226,7 +226,7 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 16),
                                         child: Text(
-                                          "No IPD Visits for this pateint \nPlaese add IPD visits",
+                                          "No IPD Visits for this Patient \n Please add IPD visits",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -238,73 +238,93 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.8,
-                                      child: ListView.builder(
-                                        itemCount: adminprovider
-                                            .patientinvisits.length,
-                                        itemBuilder: (context, index) {
-                                          final item = adminprovider
-                                              .patientinvisits[index];
+                                      child: Builder(
+                                        builder: (context) {
+                                            final sortedVisits = List<Map<String, dynamic>>.from(
+            adminprovider.patientinvisits)
+          ..sort((a, b) {
+            DateTime getDate(Map<String, dynamic> item) {
+              final raw = item['created_at'] ??
+                  item['createdAt'] ??
+                  item['visit_date'];
+              try {
+                return DateTime.parse(raw.toString());
+              } catch (_) {
+                return DateTime.fromMillisecondsSinceEpoch(0);
+              }
+            }
 
-                                          return InVisitModel(
-                                            visitnum: index+1,
-                                              cheifcomplaint:
-                                                  item['chief_complaint'],
-                                              visitdate: formatDate(
-                                                  item['visit_date']),
-                                              viewontap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return InVisitViewModel(
-                                                        cheifcomplaint: item[
-                                                            'chief_complaint'],
-                                                        visitdate: formatDate(
-                                                            item['visit_date']),
-                                                        consultingdoctor: item[
-                                                                'consultingDoctor']
-                                                            ['name'],
-                                                        dutydoctor:
-                                                            item['dutyDoctor']
-                                                                    ?['name'] ??
-                                                                '',
-                                                        visitingdoctor:
-                                                            item['visitingDoctor']
-                                                                    ?['name'] ??
-                                                                '',
-                                                        associatedstaff:
-                                                            item['associatedNurse']
-                                                                    ?['name'] ??
-                                                                '');
+            return getDate(b).compareTo(getDate(a)); // descending
+          });
+
+                                          return ListView.builder(
+                                            itemCount: sortedVisits.length,
+                                            itemBuilder: (context, index) {
+                                              
+                                              final item = sortedVisits[index];
+                                          
+                                              return InVisitModel(
+                                                visitnum: index+1,
+                                                  Chiefcomplaint:
+                                                      item['chief_complaint'],
+                                                  visitdate: formatDate(
+                                                      item['visit_date']),
+                                                  viewontap: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return InVisitViewModel(
+                                                            Chiefcomplaint: item[
+                                                                'chief_complaint'],
+                                                            visitdate: formatDate(
+                                                                item['visit_date']),
+                                                            consultingdoctor: item[
+                                                                    'consultingDoctor']
+                                                                ['name'],
+                                                            dutydoctor:
+                                                                item['dutyDoctor']
+                                                                        ?['name'] ??
+                                                                    '',
+                                                            visitingdoctor:
+                                                                item['visitingDoctor']
+                                                                        ?['name'] ??
+                                                                    '',
+                                                            associatedstaff:
+                                                                item['associatedNurse']
+                                                                        ?['name'] ??
+                                                                    '');
+                                                      },
+                                                    );
                                                   },
-                                                );
-                                              },
-                                              editontap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      EditComplaintDialogBox(
-                                                    alldoctors: adminprovider
-                                                        .alldoctors,
-                                                    allnurses:
-                                                        adminprovider.allnurses,
-                                                    patientId: widget.patientId,
-                                                    complaintId: item['id'],
-                                                  ),
-                                                );
-                                              },
-                                              // diagnosisontap: () {
-                                              //   context.router.push(
-                                              //     ViewDiagnosisRoute(name: widget.name,
-                                              //   id: widget.patientId, visitingIndex: item['visit_index'], dischargeddate: item['discharged_date']??'',
-                                              //   )
-
-                                              //   );
-                                              // },
-                                              // observationontap: () {},
-                                              dischargedate:
-                                                  item['discharged_date'] ??
-                                                      '');
-                                        },
+                                                  editontap: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          EditComplaintDialogBox(
+                                                        alldoctors: adminprovider
+                                                            .alldoctors,
+                                                        allnurses:
+                                                            adminprovider.allnurses,
+                                                        patientId: widget.patientId,
+                                                        complaintId: item['id'],
+                                                      ),
+                                                    );
+                                                  },
+                                                  // diagnosisontap: () {
+                                                  //   context.router.push(
+                                                  //     ViewDiagnosisRoute(name: widget.name,
+                                                  //   id: widget.patientId, visitingIndex: item['visit_index'], dischargeddate: item['discharged_date']??'',
+                                                  //   )
+                                          
+                                                  //   );
+                                                  // },
+                                                  // observationontap: () {},
+                                                  dischargedate:
+                                                      item['discharged_date'] ??
+                                                          '');
+                                            },
+                                          );
+                                        }
                                       ),
                                     ));
                         }
@@ -331,14 +351,14 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
 // class InVisitModel extends StatelessWidget {
 //   const InVisitModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     required this.viewontap,
 //     required this.dischargedate,
 //     required this.editontap,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String visitdate;
 //   final VoidCallback viewontap;
 //   final VoidCallback editontap;
@@ -385,7 +405,7 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
 //                 height: 4,
 //               ),
 //               const Text(
-//                 "Cheif-Complaint :",
+//                 "Chief-Complaint :",
 //                 style: TextStyle(
 //                   fontSize: 15,
 //                   fontWeight: FontWeight.bold,
@@ -397,7 +417,7 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
 //                 height: 4,
 //               ),
 //               Text(
-//                 cheifcomplaint,
+//                 Chiefcomplaint,
 //                 style: const TextStyle(
 //                   fontSize: 15,
 //                   color: Colors.black,
@@ -464,14 +484,14 @@ class _PatientAdminInvisitsPageState extends State<PatientAdminInvisitsPage> {
 class InVisitModel extends StatelessWidget {
   const InVisitModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.viewontap,
     required this.dischargedate,
     required this.editontap, required this.visitnum,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String visitdate;
   final VoidCallback viewontap;
   final VoidCallback editontap;
@@ -584,7 +604,7 @@ class InVisitModel extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    cheifcomplaint,
+                    Chiefcomplaint,
                     style: const TextStyle(fontSize: 14,
                     fontWeight: FontWeight.bold,),
                   ),
@@ -664,7 +684,7 @@ class TodaysVisitViewModel extends StatelessWidget {
   const TodaysVisitViewModel({
     super.key,
     required this.createdat,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.name,
     required this.patientId,
@@ -675,7 +695,7 @@ class TodaysVisitViewModel extends StatelessWidget {
     required this.email,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String name;
   final String patientId;
   final String age;
@@ -822,12 +842,12 @@ class TodaysVisitViewModel extends StatelessWidget {
                 ),
                 Flexible(
                   child: Text(
-                    "$cheifcomplaint",
+                    "$Chiefcomplaint",
                     style: const TextStyle(fontSize: 14),
                     softWrap: true,
                   ),
                 ),
-                // Text("${cheifcomplaint}", style: TextStyle(fontSize: 14)),
+                // Text("${Chiefcomplaint}", style: TextStyle(fontSize: 14)),
               ],
             ),
             const SizedBox(
@@ -852,7 +872,7 @@ class TodaysVisitViewModel extends StatelessWidget {
 // class InVisitViewModel extends StatelessWidget {
 //   const InVisitViewModel({
 //     super.key,
-//     required this.cheifcomplaint,
+//     required this.Chiefcomplaint,
 //     required this.visitdate,
 //     required this.consultingdoctor,
 //     required this.dutydoctor,
@@ -860,7 +880,7 @@ class TodaysVisitViewModel extends StatelessWidget {
 //     required this.associatedstaff,
 //   });
 
-//   final String cheifcomplaint;
+//   final String Chiefcomplaint;
 //   final String consultingdoctor;
 //   final String dutydoctor;
 //   final String visitingdoctor;
@@ -905,13 +925,13 @@ class TodaysVisitViewModel extends StatelessWidget {
 //                 ),
 //                 Flexible(
 //                   child: Text(
-//                     "$cheifcomplaint",
+//                     "$Chiefcomplaint",
 //                     style: const TextStyle(fontSize: 14),
 //                     softWrap: true,
 //                   ),
 //                 ),
 //                 // Text(
-//                 //   "${cheifcomplaint}",
+//                 //   "${Chiefcomplaint}",
 //                 //   style: TextStyle(fontSize: 14),
 
 //                 // ),
@@ -1028,7 +1048,7 @@ class TodaysVisitViewModel extends StatelessWidget {
 class InVisitViewModel extends StatelessWidget {
   const InVisitViewModel({
     super.key,
-    required this.cheifcomplaint,
+    required this.Chiefcomplaint,
     required this.visitdate,
     required this.consultingdoctor,
     required this.dutydoctor,
@@ -1036,7 +1056,7 @@ class InVisitViewModel extends StatelessWidget {
     required this.associatedstaff,
   });
 
-  final String cheifcomplaint;
+  final String Chiefcomplaint;
   final String consultingdoctor;
   final String dutydoctor;
   final String visitingdoctor;
@@ -1054,129 +1074,131 @@ class InVisitViewModel extends StatelessWidget {
           color: const Color(0xFFFFF6F6),
           borderRadius: BorderRadius.circular(24),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// Top icon
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(""),
-                Column(
-                  children: [
-                    Container(
-                      height: 56,
-                      width: 56,
-                      decoration: BoxDecoration(
-                        color:AppColors.primary,
-                        borderRadius: BorderRadius.circular(16),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Top icon
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(""),
+                  Column(
+                    children: [
+                      Container(
+                        height: 56,
+                        width: 56,
+                        decoration: BoxDecoration(
+                          color:AppColors.primary,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.assignment,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.assignment,
-                        color: Colors.white,
-                        size: 28,
+                      
+                      const SizedBox(height: 12),
+                      
+                      /// Title
+                      const Text(
+                        "In-Visit Details",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                       ),
-                    ),
-                    
-                    const SizedBox(height: 12),
-                    
-                    /// Title
-                    const Text(
-                      "In-Visit Details",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  
+          
+             
+              IconButton(onPressed: (){
+                Navigator.pop(context);
+              }, icon: Icon(Icons.close,
+              color: AppColors.primary,))
+                ],
+              ),
+          
+              const SizedBox(height: 20),
+          
+              _infoCard(
+                icon: Icons.medical_services,
+                title: "CHIEF COMPLAINT",
+                value: Chiefcomplaint,
+              ),
+          
+              const SizedBox(height: 14),
+          
+              _infoCard(
+                icon: Icons.person,
+                title: "CONSULTING DOCTOR",
+                value: consultingdoctor,
+              ),
+          
+              if (visitingdoctor.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _infoCard(
+                  icon: Icons.person_outline,
+                  title: "VISITING DOCTOR",
+                  value: visitingdoctor,
                 ),
-                
-
-           
-            IconButton(onPressed: (){
-              Navigator.pop(context);
-            }, icon: Icon(Icons.close,
-            color: AppColors.primary,))
               ],
-            ),
-
-            const SizedBox(height: 20),
-
-            _infoCard(
-              icon: Icons.medical_services,
-              title: "CHIEF COMPLAINT",
-              value: cheifcomplaint,
-            ),
-
-            const SizedBox(height: 14),
-
-            _infoCard(
-              icon: Icons.person,
-              title: "CONSULTING DOCTOR",
-              value: consultingdoctor,
-            ),
-
-            if (visitingdoctor.isNotEmpty) ...[
+          
+              if (dutydoctor.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _infoCard(
+                  icon: Icons.local_hospital,
+                  title: "DUTY DOCTOR",
+                  value: dutydoctor,
+                ),
+              ],
+          
+              if (associatedstaff.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _infoCard(
+                  icon: Icons.groups,
+                  title: "ASSOCIATED STAFF",
+                  value: associatedstaff,
+                ),
+              ],
+          
               const SizedBox(height: 14),
+          
               _infoCard(
-                icon: Icons.person_outline,
-                title: "VISITING DOCTOR",
-                value: visitingdoctor,
+                icon: Icons.calendar_month,
+                title: "VISIT DATE",
+                value: visitdate,
               ),
+          
+              const SizedBox(height: 18),
+          
+              /// Close button
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: InkWell(
+              //     onTap: () => context.router.pop(),
+              //     child: Container(
+              //       padding: const EdgeInsets.all(10),
+              //       decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         shape: BoxShape.circle,
+              //         boxShadow: [
+              //           BoxShadow(
+              //             color: Colors.black.withOpacity(0.1),
+              //             blurRadius: 6,
+              //           ),
+              //         ],
+              //       ),
+              //       child: const Icon(Icons.close, color: Colors.red),
+              //     ),
+              //   ),
+              // ),
             ],
-
-            if (dutydoctor.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              _infoCard(
-                icon: Icons.local_hospital,
-                title: "DUTY DOCTOR",
-                value: dutydoctor,
-              ),
-            ],
-
-            if (associatedstaff.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              _infoCard(
-                icon: Icons.groups,
-                title: "ASSOCIATED STAFF",
-                value: associatedstaff,
-              ),
-            ],
-
-            const SizedBox(height: 14),
-
-            _infoCard(
-              icon: Icons.calendar_month,
-              title: "VISIT DATE",
-              value: visitdate,
-            ),
-
-            const SizedBox(height: 18),
-
-            /// Close button
-            // Align(
-            //   alignment: Alignment.centerRight,
-            //   child: InkWell(
-            //     onTap: () => context.router.pop(),
-            //     child: Container(
-            //       padding: const EdgeInsets.all(10),
-            //       decoration: BoxDecoration(
-            //         color: Colors.white,
-            //         shape: BoxShape.circle,
-            //         boxShadow: [
-            //           BoxShadow(
-            //             color: Colors.black.withOpacity(0.1),
-            //             blurRadius: 6,
-            //           ),
-            //         ],
-            //       ),
-            //       child: const Icon(Icons.close, color: Colors.red),
-            //     ),
-            //   ),
-            // ),
-          ],
+          ),
         ),
       ),
     );
@@ -1196,6 +1218,7 @@ class InVisitViewModel extends StatelessWidget {
         border: Border.all(color: Colors.red.shade200),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 42,
@@ -1222,10 +1245,13 @@ class InVisitViewModel extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   value,
+                  maxLines: 3,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

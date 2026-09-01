@@ -1,3 +1,2788 @@
+// import 'dart:convert';
+// import 'dart:io';
+// import 'package:auto_route/auto_route.dart';
+// import 'package:flutter/material.dart';
+// import 'package:hospital_mobile_app/routes/app_router.dart';
+// import 'package:hospital_mobile_app/service/cacheManager.dart';
+// import 'package:hospital_mobile_app/service/constant.dart';
+// import 'package:hospital_mobile_app/service/deviceHeader.dart';
+// import 'package:hospital_mobile_app/service/secure_storage.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:intl/intl.dart';
+
+// class SlotModel {
+//   final String startTime;
+//   final String endTime;
+//   final String? patientname;
+//   final String? patientMobile;
+
+//   bool get isBooked => patientname != null;
+
+//   SlotModel({
+//     required this.startTime,
+//     required this.endTime,
+//     this.patientname,
+//     this.patientMobile,
+//   });
+
+
+//   factory SlotModel.fromJson(Map<String, dynamic> json) {
+//     return SlotModel(
+//       startTime: json["startTime"],
+//       endTime: json["endTime"],
+//       patientname: json["patientname"],
+//       patientMobile: json["patientMobile"]?.toString(),
+//     );
+//   }
+// }
+
+
+//  String formatDate(String date) {
+//     final parsedDate = DateTime.tryParse(date);
+//     if (parsedDate == null) return '';
+//     return DateFormat('dd-MM-yyyy').format(parsedDate);
+//   }
+
+// class Adminprovider extends ChangeNotifier {
+//     List<Map<String, dynamic>> admindetailedprofile = [];
+//     List<Map<String, dynamic>> adminprofile = [];
+
+//     List<Map<String, dynamic>> patients = [];
+//     List<Map<String, dynamic>> filteredPatients = [];
+//     List<Map<String, dynamic>> allpatients = [];
+//     List<Map<String, dynamic>> patientdetails = [];
+//     List<Map<String, dynamic>> patientinvisits = [];
+//     List<Map<String, dynamic>> patientoutvisits = [];
+//     List<Map<String, dynamic>> alldoctors = [];
+//     List<Map<String, dynamic>> allnurses = [];
+//     List<Map<String, dynamic>> gettodaysvisits = [];
+//     List<Map<String, dynamic>> filteredvisits = [];
+//     List<Map<String, dynamic>> activeinvisits = [];
+//     List<Map<String, dynamic>> filteredactiveinvisits = [];
+//     List<Map<String, dynamic>> patientdiagnosis = [];
+//     List<Map<String, dynamic>> patientalldiagnosis = [];
+//     List<Map<String, dynamic>> patientallobservations = [];
+//     List<dynamic> outvisitsupportingfiles = [];
+//     List<dynamic> invisitsupportingfiles = [];
+//     List<Map<String, dynamic>> complaintdetails = [];
+
+//       List<Map<String, dynamic>> alldoctorsdetails = [];
+//       List<Map<String, dynamic>> todaysappointments = [];
+//   List<Map<String, dynamic>> filteredtodaysappointments = [];
+
+//   bool hideExpiryBanner = false;
+
+
+//    final CacheManager _cache = CacheManager(cacheDuration: Duration(minutes: 10));
+
+//    final String kPatients = 'patients';
+//    final String kProfile  = 'profile';
+//    final String Doctors = 'doctors';
+//    final String Visits = 'visits';
+//    final String PatientOutvisit = 'patientoutvisit';
+//    final String PatientInvisit = 'patientinvisit';
+
+
+//     String invisitId = '';
+//        bool isDeleting = false;
+
+//        bool addinginvisit = false;
+//        bool addingoutvisit = false;  
+//        bool updatinginvisit = false;
+//        bool addingpatient = false;
+//        bool editingpatient = false;
+
+
+//   final SecureStorage secureStorage = SecureStorage();
+
+
+//   Future<void> getadmindetailedprofile(BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getmydetailprofile";
+
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+//     try {
+//       // if (_cache.isCacheValid(kProfile)) return;
+// final cached = _cache.get<List<Map<String, dynamic>>>(kProfile);
+//       if (cached != null) {
+//         admindetailedprofile = cached;
+//         notifyListeners();
+//         return;
+//       }
+
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['myprofile'];
+
+//         if (data is List) {
+//           admindetailedprofile = List<Map<String, dynamic>>.from(data);
+                  
+
+// //  _cache.markCached(kProfile);
+
+//           notifyListeners();
+//         } else if (data is Map) {
+//           admindetailedprofile = [Map<String, dynamic>.from(data)];
+//           print('doctor details : $admindetailedprofile');
+//           // print(doctordetailedprofile);
+//         }
+//         print(admindetailedprofile);
+//         _cache.set(kProfile, admindetailedprofile);
+//         notifyListeners();
+//       } else if(response.statusCode == 401){
+//       await  refreshtoken(context);
+// Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['myprofile'];
+
+//         if (data is List) {
+//           admindetailedprofile = List<Map<String, dynamic>>.from(data);
+          
+
+//           notifyListeners();
+//         } else if (data is Map) {
+//           admindetailedprofile = [Map<String, dynamic>.from(data)];
+//           print('doctor details : $admindetailedprofile');
+//           // print(doctordetailedprofile);
+//         }
+
+//                           _cache.set(kProfile, admindetailedprofile);
+
+//         notifyListeners();
+//       } 
+//        else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+      
+//        else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+// Future<void> getadminprofile(BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getmyprofile";
+
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+//     try {
+
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['myprofile'];
+
+//         if (data is List) {
+//           adminprofile = List<Map<String, dynamic>>.from(data);
+                  
+//           notifyListeners();
+//         } else if (data is Map) {
+//           adminprofile = [Map<String, dynamic>.from(data)];
+
+//         }
+//         print(adminprofile);
+//         notifyListeners();
+//       } else if(response.statusCode == 401){
+//       await  refreshtoken(context);
+// Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['myprofile'];
+
+//         if (data is List) {
+//           adminprofile = List<Map<String, dynamic>>.from(data);
+          
+
+//           notifyListeners();
+//         } else if (data is Map) {
+//           adminprofile = [Map<String, dynamic>.from(data)];
+//           // print(doctordetailedprofile);
+//         }
+
+//         notifyListeners();
+//       } 
+//        else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+      
+//        else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+// Future<void> getpatientbydoctor(BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getpatientbydoctor";
+
+//     Constants.token = await secureStorage.readSecureData('doctortoken') ?? '';
+    
+//     try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.token}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         patients =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+
+//         notifyListeners();
+//       } else if(response.statusCode == 401){
+// await refreshtoken(context);
+// Constants.token = await secureStorage.readSecureData('doctortoken') ?? '';
+// try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.token}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         patients =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+
+//         notifyListeners();
+//       } 
+//       else if (response.statusCode == 404) {
+//         print('No patients found');
+//       } else {
+//         print(response.body);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//       else if (response.statusCode == 404) {
+//         print('No patients found');
+//       } else {
+//         print(response.body);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+
+// Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildContext context ) async {
+//   final String url = searchQuery.isNotEmpty 
+//       ? "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page&search=${Uri.encodeComponent(searchQuery)}"
+//       : "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page";
+
+//   Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+
+//   try {
+
+//     // if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
+//     //   return; // ← Serve from cache, skip API
+//     // }
+
+//     final response = await http.get(
+//       Uri.parse(url),
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': 'Bearer ${Constants.admintoken}',
+//       },
+//     );
+
+//     print("response.statusCode:${response.statusCode}");
+
+//     if (response.statusCode == 200) {
+//       final responseData = jsonDecode(response.body);
+//       print(responseData);
+
+//       // Get new patients from response
+//       List<Map<String, dynamic>> newPatients = json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+
+//       if (page == 1) {
+//         // First page or new search - replace existing data
+//         allpatients = newPatients;
+//         filteredPatients = [...allpatients];
+//       } else {
+//         // Subsequent pages - append data
+//         allpatients.addAll(newPatients);
+//         filteredPatients = [...allpatients];
+//       }
+      
+//       //  if (page == 1 && searchQuery.isEmpty) {
+//       //   _cache.markCached(kPatients); // ← Mark as cached after success
+//       // }
+//       notifyListeners();
+//     } 
+//     else if(response.statusCode == 401) {
+//       print("response check");
+
+//     await  refreshtoken(context);
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//     try {
+//     final response = await http.get(
+//       Uri.parse(url),
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': 'Bearer ${Constants.admintoken}',
+//       },
+//     );
+
+//     if (response.statusCode == 200) {
+//       final responseData = jsonDecode(response.body);
+//       print(responseData);
+
+//       // Get new patients from response
+//       List<Map<String, dynamic>> newPatients = json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+
+//       if (page == 1) {
+//         // First page or new search - replace existing data
+//         allpatients = newPatients;
+//         filteredPatients = [...allpatients];
+//       } else {
+//         // Subsequent pages - append data
+//         allpatients.addAll(newPatients);
+//         filteredPatients = [...allpatients];
+//       }
+      
+//       notifyListeners();
+//     }
+    
+//      else {
+//       print('Error: ${response.statusCode} - ${response.body}');
+//     }
+//   } catch (e) {
+//     print("Exception in getPatientsByPageWithSearch: $e");
+//   }
+
+
+//     }
+//     else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+    
+//      else {
+//       print('Error: ${response.statusCode} - ${response.body}');
+//     }
+//   } catch (e) {
+//     print("Exception in getPatientsByPageWithSearch: $e");
+//   }
+// }
+
+
+
+// Future<void> getPatientsByPage(int page, BuildContext context ) async {
+//   await getPatientsByPageWithSearch(page, '', context);
+// }
+
+//   Future<void> addpatient(String name, String phone, String gender,      
+//       String email, String dob, BuildContext context) async {
+//     try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "name": name,
+//         "gender": gender,
+//         "phone": phone,
+//         "DOB": dob,
+//       };
+
+//       if (email.isNotEmpty) {
+//         requestBody["email"] = email;
+//       }
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addpatient'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 201) {
+//         final responseData = jsonDecode(response.body);
+//         addingpatient = false;
+//         print(responseData);
+//         invalidateCache(key: kPatients);
+        
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Patient Registered successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+//         invalidateCache(key: kPatients);
+//         invalidateCache();
+//         getPatientsByPage(1, context);
+//         Navigator.pop(context);
+//       } else if(response.statusCode == 401){
+
+//     await  refreshtoken(context);
+
+//     try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "name": name,
+//         "gender": gender,
+//         "phone": phone,
+//         "DOB": dob,
+//       };
+
+//       if (email.isNotEmpty) {
+//         requestBody["email"] = email;
+//       }
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addpatient'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 201) {
+//         final responseData = jsonDecode(response.body);
+//         addingpatient = false;
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Patient Registered successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+//         getPatientsByPage(1, context);
+//         Navigator.pop(context);
+//       } 
+//        else {
+//         print(response.body);
+//         addingpatient = false;
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//       }
+//     } catch (e) {
+//       addingpatient = false;
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//     }
+
+
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+//        else {
+//         print(response.body);
+//         addingpatient = false;
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//       }
+//     } catch (e) {
+//       addingpatient = false;
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//     }
+//   }
+
+//   Future<void> getpatient(String id, BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getpatientbyid/$id";
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//     try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['data'];
+
+//         if (data is List) {
+//           patientdetails = List<Map<String, dynamic>>.from(data);
+//           notifyListeners();
+//         } else if (data is Map) {
+//           patientdetails = [Map<String, dynamic>.from(data)];
+//           // print(patientdetails);
+//           notifyListeners();
+//         }
+//         notifyListeners();
+//         // print(patientdetails);
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['data'];
+
+//         if (data is List) {
+//           patientdetails = List<Map<String, dynamic>>.from(data);
+//           notifyListeners();
+//         } else if (data is Map) {
+//           patientdetails = [Map<String, dynamic>.from(data)];
+//           // print(patientdetails);
+//           notifyListeners();
+//         }
+//         notifyListeners();
+//         // print(patientdetails);
+//       } else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//        else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+//   Future<void> editpatient(String id, String name, String dob, String gender,
+//       String email, String phone, BuildContext context) async {
+//     try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       print(
+//           "name: $name gender: $gender DOB: $dob email: $email phone: $phone");
+
+//       final Map<String, dynamic> requestBody = {
+//         "name": name,
+//         "gender": gender,
+//         "DOB": dob,
+//         "phone": phone,
+//         "email": email,
+//       };
+
+//       String url = "${Constants.baseUrl}/api/v1/hospitaladmin/editpatient/$id";
+//       final response = await http.put(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         editingpatient = false;
+//          invalidateCache(key: kPatients);
+//          invalidateCache();
+//         await getpatient(id, context);
+       
+        
+//         notifyListeners();
+//         print(responseData);
+//         final msg = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               "Patient details updated Successfully",
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(msg);
+//         getPatientsByPage(1, context);
+//         // getallpatients();
+//         Navigator.pop(context);
+
+//         notifyListeners();
+//       }
+//       else if(response.statusCode == 401){
+
+//         await refreshtoken(context);
+
+//         try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       print(
+//           "name: $name gender: $gender DOB: $dob email: $email phone: $phone");
+
+//       final Map<String, dynamic> requestBody = {
+//         "name": name,
+//         "gender": gender,
+//         "DOB": dob,
+//         "phone": phone,
+//         "email": email,
+//       };
+
+//       String url = "${Constants.baseUrl}/api/v1/hospitaladmin/editpatient/$id";
+//       final response = await http.put(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         editingpatient = false;
+//         await getpatient(id, context);
+        
+//         notifyListeners();
+//         print(responseData);
+//         final msg = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               "Patient details updated Successfully",
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(msg);
+//         getPatientsByPage(1, context);
+//         // getallpatients();
+//         Navigator.pop(context);
+
+//         notifyListeners();
+//       }else {
+//         final responseData = jsonDecode(response.body);
+//        editingpatient = false;
+//         final msg = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData['msg'],
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(msg);
+//       }
+//     } catch (e) {
+//       editingpatient = false;
+//       final error = SnackBar(
+//           backgroundColor: Colors.red[400], content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//        else {
+//         final responseData = jsonDecode(response.body);
+//        editingpatient = false;
+//         final msg = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData['msg'],
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(msg);
+//       }
+//     } catch (e) {
+//       editingpatient = false;
+//       final error = SnackBar(
+//           backgroundColor: Colors.red[400], content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//     }
+//   }
+
+
+// Future<void> getpatientinvisits(String id, BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitsbypatientid/$id";
+//     // '${Constants.baseUrl}/app/log-in/phone-otp'
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//     try {
+//       // if (_cache.isCacheValid(PatientInvisit)) return;
+//       // final cached = _cache.get<List<Map<String, dynamic>>>(PatientInvisit);
+//       // if (cached != null) {
+//       //   patientinvisits = cached;
+//       //   notifyListeners();
+//       //   return;
+//       // }
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         patientinvisits =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+//             // _cache.markCached(PatientInvisit);
+//                     // _cache.set(PatientInvisit, patientinvisits);
+
+//         notifyListeners();
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         patientinvisits =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+//             // _cache.markCached(PatientInvisit);
+//                                 // _cache.set(PatientInvisit, patientinvisits);
+
+//         notifyListeners();
+//       } 
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       } 
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+//   Future<void> getpatientoutvisits(String id, BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getoutvisitsbypatientid/$id";
+//     // '${Constants.baseUrl}/app/log-in/phone-otp'
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//     try {
+//       // if (_cache.isCacheValid(PatientOutvisit)) return;
+//       // final cached = _cache.get<List<Map<String, dynamic>>>(PatientOutvisit);
+//       // if (cached != null) {
+//       //   patientoutvisits = cached;
+//       //   notifyListeners();
+//       //   return;
+//       // }
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         patientoutvisits =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+//             // _cache.markCached(PatientOutvisit);
+//                     // _cache.set(PatientOutvisit, patientoutvisits);
+
+//         notifyListeners();
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         patientoutvisits =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+//             // _cache.markCached(PatientOutvisit);
+//                                 // _cache.set(PatientOutvisit, patientoutvisits);
+
+//         notifyListeners();
+//       } 
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+
+// Future<void> addoutvisit(
+//       String patientId,
+//       String Chiefcomplaint,
+//       String height,
+//       String weight,
+//       String bp,
+//       String temperature,
+//       String heartrate,
+//       String associatedDoctor,
+//       List<Map<String, dynamic>> vitals,
+//       BuildContext context) async {
+//     try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "chief_complaint": Chiefcomplaint,
+//         "associatedDoctor": associatedDoctor
+//       };
+
+//       if (height.isNotEmpty) {
+//         requestBody["height"] = height;
+//       }
+//       if (weight.isNotEmpty) {
+//         requestBody["weight"] = weight;
+//       }
+//       if (bp.isNotEmpty) {
+//         requestBody["bp"] = bp;
+//       }
+//       if (heartrate.isNotEmpty) {
+//         requestBody["heart_rate"] = heartrate;
+//       }
+//       if (temperature.isNotEmpty) {
+//         requestBody["temperature"] = temperature;
+//       }
+//           if (vitals.isNotEmpty) requestBody["vitals"] = vitals;   // ← NEW
+
+//       print(requestBody);
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addoutvisit/$patientId'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         addingoutvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         invalidateCache(key: PatientOutvisit);
+//         invalidateCache();
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Out Visit added successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//         getpatientoutvisits(patientId, context);
+
+//         notifyListeners();
+
+//         Navigator.pop(context);
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+
+//         try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "chief_complaint": Chiefcomplaint,
+//         "associatedDoctor": associatedDoctor
+//       };
+
+//       if (height.isNotEmpty) {
+//         requestBody["height"] = height;
+//       }
+//       if (weight.isNotEmpty) {
+//         requestBody["weight"] = weight;
+//       }
+//       if (bp.isNotEmpty) {
+//         requestBody["bp"] = bp;
+//       }
+//       if (heartrate.isNotEmpty) {
+//         requestBody["heart_rate"] = heartrate;
+//       }
+//       if (temperature.isNotEmpty) {
+//         requestBody["temperature"] = temperature;
+//       }
+//           if (vitals.isNotEmpty) requestBody["vitals"] = vitals;   // ← NEW
+
+//       print(requestBody);
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addoutvisit/$patientId'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         addingoutvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Out Visit added successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//         getpatientoutvisits(patientId, context);
+
+//         notifyListeners();
+
+//         Navigator.pop(context);
+//       } 
+//        else {
+//         print(response.body);
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         Navigator.pop(context);
+//         addingoutvisit = false;
+//       }
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//       Navigator.pop(context);
+//       addingoutvisit = false;
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+//        else {
+//         print(response.body);
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         Navigator.pop(context);
+//         addingoutvisit = false;
+//       }
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//       Navigator.pop(context);
+//       addingoutvisit = false;
+//     }
+//   }
+
+
+// Future<void> getinvisitbyid(String patientId, String complaintId, BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitbyid/$patientId/$complaintId";
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//     try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['data'];
+//         if (data is List) {
+//           complaintdetails = List<Map<String, dynamic>>.from(data);
+//           notifyListeners();
+//         } else if (data is Map) {
+//           complaintdetails = [Map<String, dynamic>.from(data)];
+//           print(complaintdetails);
+//           notifyListeners();
+//         }
+//         notifyListeners();
+//         // print(patientdetails);
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body)['data'];
+//         if (data is List) {
+//           complaintdetails = List<Map<String, dynamic>>.from(data);
+//           notifyListeners();
+//         } else if (data is Map) {
+//           complaintdetails = [Map<String, dynamic>.from(data)];
+//           print(complaintdetails);
+//           notifyListeners();
+//         }
+//         notifyListeners();
+//         // print(patientdetails);
+//       } 
+//        else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+//        else {
+//         print('${response.body}');
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+
+// Future<void> getdoctorsnurses(BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getalldoctorsnurses";
+//     // '${Constants.baseUrl}/app/log-in/phone-otp'
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//     try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//         alldoctors =
+//             json.decode(response.body)['doctors'].cast<Map<String, dynamic>>();
+//             allnurses = json.decode(response.body)['nurses'].cast<Map<String, dynamic>>();
+//             print('alldoctors $alldoctors');
+//             print('allnurses $allnurses');
+//         notifyListeners();
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//         alldoctors =
+//             json.decode(response.body)['doctors'].cast<Map<String, dynamic>>();
+//             allnurses = json.decode(response.body)['nurses'].cast<Map<String, dynamic>>();
+//             print('alldoctors $alldoctors');
+//             print('allnurses $allnurses');
+//         notifyListeners();
+//       } 
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       } 
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+
+
+//   Future<void> addinvisit(
+//       String patientId,
+//       String Chiefcomplaint,
+//       String consultingdoctor,
+//       String visitingdoctor,
+//       String dutydoctor,
+//       String supportingstaff,
+//       BuildContext context) async {
+//     try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "chief_complaint": Chiefcomplaint,
+//         "consultingDoctor": consultingdoctor,
+//       };
+
+//       if (visitingdoctor.isNotEmpty) {
+//         requestBody["visitingDoctor"] = visitingdoctor;
+//       }
+//       if (dutydoctor.isNotEmpty) {
+//         requestBody["dutyDoctor"] = dutydoctor;
+//       }
+//       if (supportingstaff.isNotEmpty) {
+//         requestBody["associatedNurse"] = supportingstaff;
+//       }
+    
+//       print(requestBody);
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addinvisit/$patientId'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         addinginvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         invalidateCache(key: PatientInvisit);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'In Visit added successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+// invalidateCache();
+//         getpatientinvisits(patientId, context);
+
+//         notifyListeners();
+
+//         Navigator.pop(context);
+//       }else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "chief_complaint": Chiefcomplaint,
+//         "consultingDoctor": consultingdoctor,
+//       };
+
+//       if (visitingdoctor.isNotEmpty) {
+//         requestBody["visitingDoctor"] = visitingdoctor;
+//       }
+//       if (dutydoctor.isNotEmpty) {
+//         requestBody["dutyDoctor"] = dutydoctor;
+//       }
+//       if (supportingstaff.isNotEmpty) {
+//         requestBody["associatedNurse"] = supportingstaff;
+//       }
+    
+//       print(requestBody);
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addinvisit/$patientId'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         addinginvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'In Visit added successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//         getpatientinvisits(patientId, context);
+
+//         notifyListeners();
+
+//         Navigator.pop(context);
+//       }
+//        else {
+//         print(response.body);
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         Navigator.pop(context);
+//         addinginvisit = false;
+//       }
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//       Navigator.pop(context);
+//       addinginvisit = false;
+//     }
+//       }
+
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//        else {
+//         print(response.body);
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         Navigator.pop(context);
+//         addinginvisit = false;
+//       }
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//       Navigator.pop(context);
+//       addinginvisit = false;
+//     }
+//   }
+
+
+//   Future<void> editinvisit(
+//       String patientId,
+//       String complaintId,
+//       String consultingdoctor,
+//       String visitingdoctor,
+//       String dutydoctor,
+//       String supportingstaff,
+//       BuildContext context) async {
+//     try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "consultingDoctor": consultingdoctor,
+//       };
+
+//       if (visitingdoctor.isNotEmpty) {
+//         requestBody["visitingDoctor"] = visitingdoctor;
+//       }
+//       if (dutydoctor.isNotEmpty) {
+//         requestBody["dutyDoctor"] = dutydoctor;
+//       }
+//       if (supportingstaff.isNotEmpty) {
+//         requestBody["associatedNurse"] = supportingstaff;
+//       }
+    
+//       print(requestBody);
+
+//       final response = await http.put(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/editinvisitbyid/$patientId/$complaintId'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         updatinginvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         invalidateCache(key: PatientInvisit);
+//         invalidateCache();
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'In-visit updated successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//         getpatientinvisits(patientId, context);
+//         getinvisitbyid(patientId,complaintId, context);
+        
+//         getactiveinvisits(context);
+
+//         notifyListeners();
+
+//         Navigator.pop(context);
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         try {
+//       Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//       final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final Map<String, dynamic> requestBody = {
+//         "consultingDoctor": consultingdoctor,
+//       };
+
+//       if (visitingdoctor.isNotEmpty) {
+//         requestBody["visitingDoctor"] = visitingdoctor;
+//       }
+//       if (dutydoctor.isNotEmpty) {
+//         requestBody["dutyDoctor"] = dutydoctor;
+//       }
+//       if (supportingstaff.isNotEmpty) {
+//         requestBody["associatedNurse"] = supportingstaff;
+//       }
+    
+//       print(requestBody);
+
+//       final response = await http.put(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/editinvisitbyid/$patientId/$complaintId'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         updatinginvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'In-visit updated successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+// invalidateCache();
+//         getpatientinvisits(patientId, context);
+//         getinvisitbyid(patientId,complaintId, context);
+        
+//         getactiveinvisits(context);
+
+//         notifyListeners();
+
+//         Navigator.pop(context);
+//       } else {
+//         print(response.body);
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+       
+//         Navigator.pop(context);
+//          updatinginvisit = false;
+//       }
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+      
+//       Navigator.pop(context);
+//        updatinginvisit = false;
+//     }
+//       }
+
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//        else {
+//         print(response.body);
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+       
+//         Navigator.pop(context);
+//          updatinginvisit = false;
+//       }
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+      
+//       Navigator.pop(context);
+//        updatinginvisit = false;
+//     }
+//   }
+
+//   Future<void> getactiveinvisits(BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getallactiveinvisits";
+
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+//     try {
+//       // if (_cache.isCacheValid(Visits)) return;
+//       final cached = _cache.get<List<Map<String, dynamic>>>(Visits);
+//       if (cached != null) {
+//         activeinvisits = cached;
+//         notifyListeners();
+//         return;
+//       }
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         activeinvisits =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+// // _cache.markCached(Visits);
+//         _cache.set(Visits, activeinvisits);
+
+//         notifyListeners();
+//       }else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         activeinvisits =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+// // _cache.markCached(Visits);
+//         _cache.set(Visits, activeinvisits);
+
+//         notifyListeners();
+//       }
+//        else if (response.statusCode == 404) {
+//         print('No visits found');
+//       } else {
+//         print(response.body);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+//        else if (response.statusCode == 404) {
+//         print('No visits found');
+//       } else {
+//         print(response.body);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+//   // Future<void> getpatientdiagnosis(String id, int visitindex) async {
+//   //   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getindiagnosis/$id/$visitindex";
+//   //   print(url);
+//   //   // '${Constants.baseUrl}/app/log-in/phone-otp'
+//   //   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+//   //   try {
+//   //     final response = await http.get(
+//   //       Uri.parse(url),
+//   //       headers: <String, String>{
+//   //         'Content-Type': 'application/json',
+//   //         'Authorization': 'Bearer ${Constants.doctortoken}',
+//   //       },
+//   //     );
+
+//   //     if (response.statusCode == 200) {
+//   //       final responseData = jsonDecode(response.body);
+//   //       print(responseData);
+//   //       invisitId = json.decode(response.body)['invisitId'];
+//   //       print(invisitId);
+//   //       patientdiagnosis =
+//   //           json.decode(response.body)['diagnosis'].cast<Map<String, dynamic>>();
+
+//   //       notifyListeners();
+//   //     } else if (response.statusCode == 404) {
+//   //       final responseData = jsonDecode(response.body);
+//   //       // print(responseData);
+//   //     }
+//   //   } catch (e) {
+//   //     print(e);
+//   //   }
+//   // }
+
+//   // Future<void> getallpatientdiagnosis(String id, String complaintid) async {
+//   //   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getalldiagnosis/$id/$complaintid";
+//   //   print(url);
+//   //   // '${Constants.baseUrl}/app/log-in/phone-otp'
+//   //   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
+//   //   try {
+//   //     final response = await http.get(
+//   //       Uri.parse(url),
+//   //       headers: <String, String>{
+//   //         'Content-Type': 'application/json',
+//   //         'Authorization': 'Bearer ${Constants.doctortoken}',
+//   //       },
+//   //     );
+
+//   //     if (response.statusCode == 200) {
+//   //       final responseData = jsonDecode(response.body);
+//   //       print(responseData);
+//   //       // invisitId = json.decode(response.body)['invisitId'];
+//   //       // print(invisitId);
+//   //       patientalldiagnosis =
+//   //           json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+
+//   //       notifyListeners();
+//   //     } else if (response.statusCode == 404) {
+//   //       final responseData = jsonDecode(response.body);
+//   //       // print(responseData);
+//   //     }
+//   //   } catch (e) {
+//   //     print(e);
+//   //   }
+//   // }
+
+
+// Future<void> getalldoctorsdetails(BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getalldoctors";
+//     // '${Constants.baseUrl}/app/log-in/phone-otp'
+//     // Constants.token = await secureStorage.readSecureData('token') ?? '';
+    
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+    
+//     try {
+//       // if (_cache.isCacheValid(Doctors)) return;
+//       final cached = _cache.get<List<Map<String, dynamic>>>(Doctors);
+//       if (cached != null) {
+//         alldoctorsdetails = cached;
+//         notifyListeners();
+//         return;
+//       }
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         alldoctorsdetails =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+//             print('alldoctorsdetails $alldoctorsdetails');
+// // _cache.markCached(Doctors);
+//         _cache.set(Doctors, alldoctorsdetails);
+
+//         notifyListeners();
+//       } else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         alldoctorsdetails =
+//             json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+//             print('alldoctorsdetails $alldoctorsdetails');
+// // _cache.markCached(Doctors);
+//         _cache.set(Doctors, alldoctorsdetails);
+
+//         notifyListeners();
+//       } 
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+//       else if (response.statusCode == 404) {
+//         final responseData = jsonDecode(response.body);
+//         // print(responseData);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+//   String loginTime = '9:00';
+//   String logoutTime = "17:00";
+//   int duration = 30;
+//   String doctorname = '';
+
+//   bool isLoading = true;
+
+//   List<SlotModel> bookedSlots = [];
+//   List<SlotModel> finalSlots = [];
+
+//   /// ✅ 1. First load → fetch timing + booked today
+//   Future<void> loadInitialData(String userid, DateTime date) async {
+//    try{
+//      isLoading = true;
+// Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+
+//     final res = await http.get(
+//       Uri.parse(
+//         "${Constants.baseUrl}/api/v1/hospitaladmin/gettdayschedule/$userid?$date"),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+        
+//         );
+
+//     final data = jsonDecode(res.body);
+//     print(data);
+//     doctorname = data["doctorName"];
+
+//     if(data["doctorTime"] == null){
+//       loginTime = '9:00';
+//       logoutTime = '17:00';
+//       duration = 30;
+//     //    loginTime = data["doctorTime"]["loginTime"];
+//     // logoutTime = data["doctorTime"]["leaveTime"];
+//     // duration = data["doctorTime"]["duration"];
+//     }
+//     else{
+//       // loginTime = '9:00';
+//       // logoutTime = '17:00';
+//       // duration = 30;
+//        loginTime = data["doctorTime"]["loginTime"];
+//     logoutTime = data["doctorTime"]["leaveTime"];
+//     duration = data["doctorTime"]["duration"];
+//     }
+
+//     bookedSlots = (data["slots"] as List)
+//         .map((e) => SlotModel.fromJson(e))
+//         .toList();
+
+//     generateSlots();
+
+//     isLoading = false;
+//     notifyListeners();
+//    }
+//    catch(e){
+//     isLoading = false;
+//     print("error: $e");
+//    }
+//   }
+
+//   /// ✅ 2. Date change → only slots API
+//   Future<void> loadByDate(DateTime date, String userid) async {
+//     try {
+//       isLoading = true;
+//     // notifyListeners();
+
+//     String d = DateFormat("dd-MM-yyyy").format(date);
+
+//     // Constants.token = await secureStorage.readSecureData('token') ?? '';
+// Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+
+//     final res = await http.get(Uri.parse(
+//         "${Constants.baseUrl}/api/v1/hospitaladmin/getschedulebydate/$userid?date=$d"),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//         );
+
+//     final data = jsonDecode(res.body);
+//     print(data);
+    
+//      if(data["doctorTime"] != null){
+//        loginTime = data["doctorTime"]["loginTime"];
+//     logoutTime = data["doctorTime"]["leaveTime"];
+//     duration = data["doctorTime"]["duration"];
+//     }
+//     else{
+//       loginTime = '9:00';
+//       logoutTime = "17:00";
+//       duration = 30;
+//     }
+
+//     bookedSlots = (data["slots"] as List)
+//         .map((e) => SlotModel.fromJson(e))
+//         .toList();
+
+
+//     generateSlots();
+
+//     isLoading = false;
+//     notifyListeners();
+//     } catch (e) {
+//       print("error : $e");
+//     }
+//   }
+
+//   // /// ✅ Generate all slots from timings + merge booked
+//   // void generateSlots() {
+//   //   finalSlots.clear();
+
+//   //   DateTime start = DateTime.parse("2024-01-01 $loginTime:00");
+//   //   DateTime end = DateTime.parse("2024-01-01 $logoutTime:00");
+
+//   //   while (start.isBefore(end)) {
+//   //     final s = DateFormat("HH:mm").format(start);
+//   //     final e = DateFormat("HH:mm").format(start.add(Duration(minutes: duration)));
+
+//   //     SlotModel slot = bookedSlots.firstWhere(
+//   //       (b) => b.startTime == s,
+//   //       orElse: () => SlotModel(startTime: s, endTime: e),
+//   //     );
+
+//   //     finalSlots.add(slot);
+//   //     start = start.add(Duration(minutes: duration));
+//   //   }
+//   // }
+
+// bool isSlotBooked(DateTime slotStart, DateTime slotEnd, List<SlotModel> bookedSlots) {
+//   for (final booked in bookedSlots) {
+//     final bookedStart = DateFormat("HH:mm").parse(booked.startTime);
+//     final bookedEnd = DateFormat("HH:mm").parse(booked.endTime);
+
+//     // OVERLAP CONDITION
+//     if (slotStart.isBefore(bookedEnd) && slotEnd.isAfter(bookedStart)) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
+
+
+
+// //   void generateSlots() {
+// //   final List<SlotModel> all = [];
+
+// //   // Parse login + logout times
+// //   final start = DateFormat("HH:mm").parse(loginTime);
+// //   final end = DateFormat("HH:mm").parse(logoutTime);
+
+// //   DateTime current = start;
+
+// //   while (current.isBefore(end)) {
+// //     final next = current.add(Duration(minutes: duration));
+
+// //     if (!next.isAfter(end)) {
+// //       bool booked = isSlotBooked(current, next, bookedSlots);
+
+
+// //       all.add(
+// //         SlotModel(
+// //           startTime: DateFormat("HH:mm").format(current),
+// //           endTime: DateFormat("HH:mm").format(next),
+// //           patientname: booked ? "BOOKED" : null,
+// //         ),
+// //       );
+// //     }
+
+// //     current = next;
+// //   }
+
+// //   finalSlots = all;
+// // }
+
+
+// void generateSlots() {
+//   List<SlotModel> all = [];
+
+//   final start = DateFormat("HH:mm").parse(loginTime);
+//   final end = DateFormat("HH:mm").parse(logoutTime);
+
+//   DateTime current = start;
+
+//   while (current.isBefore(end)) {
+//     final next = current.add(Duration(minutes: duration));
+//     if (!next.isAfter(end)) {
+
+//       // Check if this slot is already booked from backend
+//       SlotModel? matched;
+
+//       for (var b in bookedSlots) {
+//         final bStart = DateFormat("HH:mm").parse(b.startTime);
+//         final bEnd = DateFormat("HH:mm").parse(b.endTime);
+
+//         // Overlap check
+//         if (current.isBefore(bEnd) && next.isAfter(bStart)) {
+//           matched = b; // this booked slot matches the current slot
+//           break;
+//         }
+//       }
+
+//       // If matched = booked slot from backend → carry real mobile number
+//       all.add(
+//         matched ??
+//             SlotModel(
+//               startTime: DateFormat("HH:mm").format(current),
+//               endTime: DateFormat("HH:mm").format(next),
+//               patientname: null,
+//               patientMobile: "", // free slot → keep empty string
+//             ),
+//       );
+//     }
+
+//     current = next;
+//   }
+
+//   finalSlots = all;
+// }
+
+
+//   /// ✅ Book Slot API
+//   Future<void> bookSlot(String userid,
+//       SlotModel slot, DateTime date, String name, String mobile, BuildContext context) async {
+
+//     // Constants.token = await secureStorage.readSecureData('token') ?? '';
+    
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+    
+//     final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+// try{
+
+    
+// final Map<String, dynamic> requestBody = {
+//          "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+//       "startTime": slot.startTime,
+//       // "endTime": slot.endTime,
+//       "patientname": name,
+//       "patientMobile": mobile,
+//       };
+
+//       print(requestBody);
+
+//     final response = await http.post(
+//         Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/slotbook/$userid"),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 201) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Slot Booked successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//       //  loadInitialData(userid);
+ 
+//   notifyListeners();
+
+//         // Navigator.pop(context);
+//       }else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//           Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//     final headers = await DeviceHeaders.getDeviceHeaders();
+//         try{
+// final Map<String, dynamic> requestBody = {
+//          "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+//       "startTime": slot.startTime,
+//       // "endTime": slot.endTime,
+//       "patientname": name,
+//       "patientMobile": mobile,
+//       };
+
+//       print(requestBody);
+
+//     final response = await http.post(
+//         Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/slotbook/$userid"),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 201) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Slot Booked successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//       //  loadInitialData(userid);
+ 
+//   notifyListeners();
+
+//         // Navigator.pop(context);
+//       }
+//        else {
+//         print(response.body);  
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         // Navigator.pop(context);
+//         addingoutvisit = false;
+//       }
+    
+//    } catch(e){
+//     print(e);
+//     final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//    }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//        else {
+//         print(response.body);  
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         // Navigator.pop(context);
+//         addingoutvisit = false;
+//       }
+    
+//    } catch(e){
+//     print(e);
+//     final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//    }
+
+
+//     // await http.post(
+//     //     Uri.parse("${Constants.baseUrl}/api/v1/admin/slotbook/$userid"),
+//     //     headers: <String, String>{
+//     //       'Content-Type': 'application/json',
+//     //       'Authorization': 'Bearer ${Constants.token}',s
+//     //     },
+//     //     body: body);
+//   }
+
+//   /// ✅ Delete API
+//   Future<void> 
+//   deleteSlot(String userid,SlotModel slot, DateTime date, BuildContext context ) async {
+//         // Constants.token = await secureStorage.readSecureData('token') ?? '';
+
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+//         final headers = await DeviceHeaders.getDeviceHeaders();
+
+//     try{   
+// final Map<String, dynamic> requestBody = {
+//          "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+//       "startTime": slot.startTime,
+//       "endTime": slot.endTime,
+//       };
+
+//     final response = await http.delete(
+//         Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/deleteslot/$userid"),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//       //  loadInitialData(userid);
+ 
+//   notifyListeners();
+
+//         // Navigator.pop(context);
+//       }else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+//         final headers = await DeviceHeaders.getDeviceHeaders();
+//         try{   
+// final Map<String, dynamic> requestBody = {
+//          "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+//       "startTime": slot.startTime,
+//       "endTime": slot.endTime,
+//       };
+
+//     final response = await http.delete(
+//         Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/deleteslot/$userid"),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+//   notifyListeners();
+//       }
+//        else {
+//         print(response.body);  
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         // Navigator.pop(context);
+       
+//       }
+    
+//    } catch(e){
+//     final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//    }
+//       }
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+//        else {
+//         print(response.body);  
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         // Navigator.pop(context);
+       
+//       }
+    
+//    } catch(e){
+//     final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//    }
+   
+//   }
+ 
+
+//  Future<void> updateDoctorTiming(String doctorId, String login, String logout, int duration, DateTime date, BuildContext context) async {
+//   // Constants.token = await secureStorage.readSecureData('token') ?? '';
+// Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+// final headers = await DeviceHeaders.getDeviceHeaders();
+
+//    try{ 
+// final Map<String, dynamic> requestBody = {
+//         "loginTime": login,
+//     "leaveTime": logout,
+//     "duration": duration,
+//     "date": formatDate(date.toString()),
+//       };
+
+//       print(requestBody);
+
+//     final response = await http.put(
+//         Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/updatedoctortime/$doctorId"),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         addingoutvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Timing Updated successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+//         // loadInitialData(doctorId, date);
+//         loadByDate(date, doctorId);
+       
+ 
+//   notifyListeners();
+
+//         // Navigator.pop(context);
+//       }else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+// final headers = await DeviceHeaders.getDeviceHeaders();
+//         try{ 
+// final Map<String, dynamic> requestBody = {
+//         "loginTime": login,
+//     "leaveTime": logout,
+//     "duration": duration,
+//     "date": formatDate(date.toString()),
+//       };
+
+//       print(requestBody);
+
+//     final response = await http.put(
+//         Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/updatedoctortime/$doctorId"),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//           'Content-Type': 'application/json',
+//           ...headers,
+//         },
+//         body: jsonEncode(requestBody),
+//       );
+
+//       if (response.statusCode == 200) {
+//         addingoutvisit = false;
+//         // Successful POST request, handle the response here
+//         final responseData = jsonDecode(response.body);
+//         print(responseData);
+//         notifyListeners();
+
+//         final sucessSnackbar = SnackBar(
+//             backgroundColor: Colors.green[400],
+//             content: Text(
+//               'Timing Updated successfully',
+//               style: TextStyle(color: Colors.grey[50]),
+//             ));
+
+//         ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+//         // loadInitialData(doctorId, date);
+//         loadByDate(date, doctorId);
+       
+ 
+//   notifyListeners();
+
+//         // Navigator.pop(context);
+//       }
+//        else {
+//         print(response.body);  
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         // Navigator.pop(context);
+//         addingoutvisit = false;
+//       }
+    
+//    } catch(e){
+//     final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//    }
+//       }
+
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         // logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+      
+//        else {
+//         print(response.body);  
+//         final responseData = jsonDecode(response.body);
+//         final snackbar = SnackBar(
+//             backgroundColor: Colors.red[400],
+//             content: Text(
+//               responseData["msg"],
+//               style: const TextStyle(fontWeight: FontWeight.bold),
+//             ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+//         // Navigator.pop(context);
+//         addingoutvisit = false;
+//       }
+    
+//    } catch(e){
+//     final error = SnackBar(content: Text(e.toString()));
+//       ScaffoldMessenger.of(context).showSnackBar(error);
+//    }
+
+  
+// }
+
+//   Future<void> gettodaysappointments(BuildContext context) async {
+//     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/gettodaysappointments";
+
+//     Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+    
+//     try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+       
+//         todaysappointments =
+//             json.decode(response.body)['appointments'].cast<Map<String, dynamic>>();
+//         print('todays appointments : $todaysappointments');
+
+//         notifyListeners();
+//       }else if(response.statusCode == 401){
+//         await refreshtoken(context);
+//         Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
+//         try {
+//       final response = await http.get(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ${Constants.admintoken}',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+       
+//         todaysappointments =
+//             json.decode(response.body)['appointments'].cast<Map<String, dynamic>>();
+//         print('todays appointments : $todaysappointments');
+
+//         notifyListeners();
+//       } else if (response.statusCode == 404) {
+//         print('No visits found');
+//       } else {
+//         print(response.body);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//       }
+
+//       else if(response.statusCode == 403 ){
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+      
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         logout();
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//         notifyListeners();
+//       }
+//        else if (response.statusCode == 404) {
+//         print('No visits found');
+//       } else {
+//         print(response.body);
+//       }
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+
+//   Future<void> refreshtoken(BuildContext context) async {
+//     try {
+//       Constants.adminrefreshtoken = await secureStorage.readSecureData('adminrefreshtoken') ?? '';
+//       // final headers = await DeviceHeaders.getDeviceHeaders();
+
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/refreshtokenadminmobile'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.adminrefreshtoken}',
+//           'Content-Type': 'application/json',
+//           // ...headers,
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//        print(response.body);
+//         final responseData = jsonDecode(response.body);
+// await secureStorage.writeSecureData('admintoken', responseData['token']);
+//         await secureStorage.writeSecureData('adminrefreshtoken', responseData['refreshToken']);
+//         await secureStorage.readSecureData('admintoken').then((value) {
+//           Constants.admintoken = value;
+//         });
+
+//   await secureStorage.readSecureData('adminrefreshtoken').then((value) {
+//           Constants.adminrefreshtoken = value;
+//         });
+//         print("Constants.admintoken ${Constants.admintoken}");
+//         print("Constants.adminrefreshtoken ${Constants.adminrefreshtoken}");
+
+
+//         notifyListeners();
+//       } else if (response.statusCode == 401 || response.statusCode == 403) {
+//         await secureStorage.deleteSecureData('admintoken');
+//         await secureStorage.deleteSecureData('adminrefreshtoken');
+//         Constants.admintoken = '';
+//         Constants.adminrefreshtoken = '';
+//         if (context.mounted) context.router.popAndPush(SplashRoute());
+//       } else {
+//         print(
+//             "Refresh failed with status: ${response.statusCode} — ${response.body}");
+//       }
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+//     }
+//   } 
+
+//   Future<void> logout() async {
+//     try {
+//       Constants.adminrefreshtoken = await secureStorage.readSecureData('adminrefreshtoken') ?? '';
+
+
+//       final response = await http.post(
+//         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/logoutphone'),
+//         headers: <String, String>{
+//           'Authorization': 'Bearer ${Constants.adminrefreshtoken}',
+//           'Content-Type': 'application/json',
+//         },
+//       );
+//       print(response);
+//       invalidateCache();
+//       _cache.invalidateAll();
+
+//     } catch (e) {
+//       final error = SnackBar(content: Text(e.toString()));
+     
+//     }
+//   }
+// //   DateTime? getValidityDate() {
+// //   if (adminprofile.isEmpty) return null;
+
+// //   final validTill = adminprofile.first["validity"];
+// //   print("validTill :$validTill");
+// //   if (validTill == null) return null;
+
+// //   return DateTime.parse(validTill); // yyyy-MM-dd
+// // }
+
+// DateTime? getValidityDate() {
+//   if (admindetailedprofile.isEmpty) return null;
+
+//   final hospital = admindetailedprofile.first["associatedHospitalBranch"]
+//       ?["associatedHospital"];
+
+//   final validTill = hospital?["validity"];
+//   print("validTill :$validTill");
+//   if (validTill == null) return null;
+
+//   return DateTime.parse(validTill);
+// }
+
+// void closeExpiryBanner() {
+//   hideExpiryBanner = true;
+//   notifyListeners();
+// }
+
+//   bool get shouldShowExpiryBanner {
+//   final validityDate = getValidityDate();
+//   if (validityDate == null) return false;
+
+//   final daysLeft = remainingDays();
+//   print("daysLeft $daysLeft");
+
+//   return daysLeft <= 7 && daysLeft >= 0 && !hideExpiryBanner;
+// }
+
+
+// int remainingDays() {
+//   final validityDate = getValidityDate();
+//   if (validityDate == null) return 0;
+
+//   final today = DateTime.now();
+//   final diff = validityDate.difference(
+//       DateTime(today.year, today.month, today.day));
+//   // matches Math.ceil in JS
+//   return (diff.inHours / 24).ceil();
+// }
+
+//  void invalidateCache({String? key}) {
+//     if (key != null) {
+//       _cache.invalidate(key);
+//     } else {
+//       _cache.invalidateAll(); // Clears everything
+//     }
+//   }
+
+// void notify() {
+//     notifyListeners();
+//   }
+
+// }
+
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
@@ -25,7 +2810,6 @@ class SlotModel {
     this.patientMobile,
   });
 
-
   factory SlotModel.fromJson(Map<String, dynamic> json) {
     return SlotModel(
       startTime: json["startTime"],
@@ -36,220 +2820,341 @@ class SlotModel {
   }
 }
 
-
- String formatDate(String date) {
-    final parsedDate = DateTime.tryParse(date);
-    if (parsedDate == null) return '';
-    return DateFormat('dd-MM-yyyy').format(parsedDate);
-  }
+String formatDate(String date) {
+  final parsedDate = DateTime.tryParse(date);
+  if (parsedDate == null) return '';
+  return DateFormat('dd-MM-yyyy').format(parsedDate);
+}
 
 class Adminprovider extends ChangeNotifier {
-    List<Map<String, dynamic>> admindetailedprofile = [];
-    List<Map<String, dynamic>> patients = [];
-    List<Map<String, dynamic>> filteredPatients = [];
-    List<Map<String, dynamic>> allpatients = [];
-    List<Map<String, dynamic>> patientdetails = [];
-    List<Map<String, dynamic>> patientinvisits = [];
-    List<Map<String, dynamic>> patientoutvisits = [];
-    List<Map<String, dynamic>> alldoctors = [];
-    List<Map<String, dynamic>> allnurses = [];
-    List<Map<String, dynamic>> gettodaysvisits = [];
-    List<Map<String, dynamic>> filteredvisits = [];
-    List<Map<String, dynamic>> activeinvisits = [];
-    List<Map<String, dynamic>> filteredactiveinvisits = [];
-    List<Map<String, dynamic>> patientdiagnosis = [];
-    List<Map<String, dynamic>> patientalldiagnosis = [];
-    List<Map<String, dynamic>> patientallobservations = [];
-    List<dynamic> outvisitsupportingfiles = [];
-    List<dynamic> invisitsupportingfiles = [];
-    List<Map<String, dynamic>> complaintdetails = [];
+  List<Map<String, dynamic>> admindetailedprofile = [];
+  List<Map<String, dynamic>> adminprofile = [];
 
-      List<Map<String, dynamic>> alldoctorsdetails = [];
-      List<Map<String, dynamic>> todaysappointments = [];
+  List<Map<String, dynamic>> patients = [];
+  List<Map<String, dynamic>> filteredPatients = [];
+  List<Map<String, dynamic>> allpatients = [];
+  List<Map<String, dynamic>> patientdetails = [];
+  List<Map<String, dynamic>> patientinvisits = [];
+  List<Map<String, dynamic>> patientoutvisits = [];
+  List<Map<String, dynamic>> alldoctors = [];
+  List<Map<String, dynamic>> allnurses = [];
+  List<Map<String, dynamic>> gettodaysvisits = [];
+  List<Map<String, dynamic>> filteredvisits = [];
+  List<Map<String, dynamic>> activeinvisits = [];
+  List<Map<String, dynamic>> filteredactiveinvisits = [];
+  List<Map<String, dynamic>> patientdiagnosis = [];
+  List<Map<String, dynamic>> patientalldiagnosis = [];
+  List<Map<String, dynamic>> patientallobservations = [];
+  List<dynamic> outvisitsupportingfiles = [];
+  List<dynamic> invisitsupportingfiles = [];
+  List<Map<String, dynamic>> complaintdetails = [];
+
+  List<Map<String, dynamic>> alldoctorsdetails = [];
+  List<Map<String, dynamic>> todaysappointments = [];
   List<Map<String, dynamic>> filteredtodaysappointments = [];
 
+  bool hideExpiryBanner = false;
 
-   final CacheManager _cache = CacheManager(cacheDuration: Duration(minutes: 10));
+  final CacheManager _cache = CacheManager(cacheDuration: Duration(minutes: 10));
 
-   final String kPatients = 'patients';
-   final String kProfile  = 'profile';
-   final String Doctors = 'doctors';
-   final String Visits = 'visits';
-   final String PatientOutvisit = 'patientoutvisit';
-   final String PatientInvisit = 'patientinvisit';
+  final String kPatients = 'patients';
+  final String kProfile = 'profile';
+  final String Doctors = 'doctors';
+  final String Visits = 'visits';
+  final String PatientOutvisit = 'patientoutvisit';
+  final String PatientInvisit = 'patientinvisit';
 
+  String invisitId = '';
+  bool isDeleting = false;
 
-    String invisitId = '';
-       bool isDeleting = false;
-
-       bool addinginvisit = false;
-       bool addingoutvisit = false;  
-       bool updatinginvisit = false;
-       bool addingpatient = false;
-       bool editingpatient = false;
-
+  bool addinginvisit = false;
+  bool addingoutvisit = false;
+  bool updatinginvisit = false;
+  bool addingpatient = false;
+  bool editingpatient = false;
 
   final SecureStorage secureStorage = SecureStorage();
 
+  // ===========================================================================
+  // CORE AUTH INFRASTRUCTURE
+  // ===========================================================================
+
+  /// Guarantees only ONE refresh-token HTTP call is ever in flight at a time.
+  /// Every caller that hits a 401/403 while a refresh is already running just
+  /// awaits the same Future instead of firing its own refresh request. This is
+  /// what prevents the "random logout" race condition: with refresh-token
+  /// rotation on the backend, two parallel refresh calls using the same old
+  /// refresh token would otherwise cause the second one to fail and log the
+  /// user out even though the first one just succeeded.
+  Future<bool>? _refreshFuture;
+
+  Future<bool> refreshtoken(BuildContext context) {
+    _refreshFuture ??= _doRefresh(context).whenComplete(() {
+      _refreshFuture = null;
+    });
+    return _refreshFuture!;
+  }
+
+  Future<bool> _doRefresh(BuildContext context) async {
+    try {
+      print("Refresh token is called here");
+      final currentRefreshToken =
+          await secureStorage.readSecureData('adminrefreshtoken') ?? '';
+
+      if (currentRefreshToken.isEmpty) {
+        await _forceLogout(context);
+        return false;
+      }
+
+      final response = await http.post(
+        Uri.parse(
+            '${Constants.baseUrl}/api/v1/hospitaladmin/refreshtokenadminmobile'),
+        headers: <String, String>{
+          'Authorization': 'Bearer $currentRefreshToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic>? body;
+        try {
+          body = jsonDecode(response.body);
+        } catch (_) {}
+
+        if (body == null || body['success'] == false) {
+          print("Refresh returned 200 but success:false — $body");
+          await _forceLogout(context);
+          return false;
+        }
+
+        await secureStorage.writeSecureData('admintoken', body['token']);
+        await secureStorage.writeSecureData(
+            'adminrefreshtoken', body['refreshToken']);
+
+        Constants.admintoken = body['token'];
+        Constants.adminrefreshtoken = body['refreshToken'];
+
+        print("Constants.admintoken ${Constants.admintoken}");
+        print("Constants.adminrefreshtoken ${Constants.adminrefreshtoken}");
+
+        notifyListeners();
+        return true;
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        await _forceLogout(context);
+        return false;
+      } else {
+        print(
+            "Refresh failed with status: ${response.statusCode} — ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Exception in refreshtoken: $e");
+      return false;
+    }
+  }
+
+  Future<void> _forceLogout(BuildContext context) async {
+    await secureStorage.deleteSecureData('admintoken');
+    await secureStorage.deleteSecureData('adminrefreshtoken');
+
+    Constants.admintoken = '';
+    Constants.adminrefreshtoken = '';
+
+    await logout();
+    if (context.mounted) context.router.popAndPush(SplashRoute());
+    notifyListeners();
+  }
+
+  /// Generic wrapper for any authenticated request (GET/POST/PUT/DELETE or
+  /// multipart). [requestFn] receives the current token and must build +
+  /// send the request, returning the http.Response. Because [requestFn] is
+  /// re-invoked on retry, it must build a *fresh* request each time it's
+  /// called.
+  ///
+  /// [tokenKey] defaults to 'admintoken' (the normal case for this
+  /// provider). getpatientbydoctor is the one existing exception that reads
+  /// 'doctortoken' instead, so it passes tokenKey: 'doctortoken'.
+  ///
+  /// Handles:
+  ///  - real 401 / 403
+  ///  - the "200 OK but {success:false}" pattern some endpoints use
+  ///  - a single refresh-and-retry, using the single-flight refresh lock
+  ///  - forced logout if the retry also fails
+  ///
+  /// Returns null if the request ultimately failed (network exception,
+  /// logged out, or refresh failed) — callers should treat null as
+  /// "nothing to do, already handled".
+  Future<http.Response?> _sendAuthenticated(
+    BuildContext context,
+    Future<http.Response> Function(String token) requestFn, {
+    String tokenKey = 'admintoken',
+    bool isRetry = false,
+  }) async {
+    final token = await secureStorage.readSecureData(tokenKey) ?? '';
+    if (tokenKey == 'admintoken') {
+      Constants.admintoken = token;
+    }
+
+    http.Response response;
+    try {
+      response = await requestFn(token);
+    } catch (e) {
+      print("Network exception: $e");
+      return null;
+    }
+
+    Map<String, dynamic>? body;
+    try {
+      body = jsonDecode(response.body);
+    } catch (_) {}
+
+    final bool isUnauthorized = response.statusCode == 401 ||
+        response.statusCode == 403 ||
+        (response.statusCode == 200 &&
+            body is Map &&
+            body?['success'] == false);
+
+    if (isUnauthorized) {
+      if (isRetry) {
+        // Already retried once after a refresh and still unauthorized —
+        // the session really is dead.
+        await _forceLogout(context);
+        return null;
+      }
+
+      final refreshed = await refreshtoken(context);
+      if (refreshed) {
+        return _sendAuthenticated(context, requestFn,
+            tokenKey: tokenKey, isRetry: true);
+      }
+      // refreshtoken() already force-logged-out internally on real failure.
+      return null;
+    }
+
+    return response;
+  }
+
+  // ===========================================================================
+  // PROFILE
+  // ===========================================================================
 
   Future<void> getadmindetailedprofile(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getmydetailprofile";
 
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-    try {
-      if (_cache.isCacheValid(kProfile)) return;
-
-
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body)['myprofile'];
-
-        if (data is List) {
-          admindetailedprofile = List<Map<String, dynamic>>.from(data);
-          
- _cache.markCached(kProfile);
-
-          notifyListeners();
-        } else if (data is Map) {
-          admindetailedprofile = [Map<String, dynamic>.from(data)];
-          print('doctor details : $admindetailedprofile');
-          // print(doctordetailedprofile);
-        }
-        notifyListeners();
-      } else if(response.statusCode == 401){
-      await  refreshtoken(context);
-Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body)['myprofile'];
-
-        if (data is List) {
-          admindetailedprofile = List<Map<String, dynamic>>.from(data);
-          
-
-          notifyListeners();
-        } else if (data is Map) {
-          admindetailedprofile = [Map<String, dynamic>.from(data)];
-          print('doctor details : $admindetailedprofile');
-          // print(doctordetailedprofile);
-        }
-        notifyListeners();
-      } 
-       else {
-        print('${response.body}');
-      }
-    } catch (e) {
-      print(e);
+    final cached = _cache.get<List<Map<String, dynamic>>>(kProfile);
+    if (cached != null) {
+      admindetailedprofile = cached;
+      notifyListeners();
+      return;
     }
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    if (response == null) return;
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body)['myprofile'];
+
+      if (data is List) {
+        admindetailedprofile = List<Map<String, dynamic>>.from(data);
+      } else if (data is Map) {
+        admindetailedprofile = [Map<String, dynamic>.from(data)];
+        print('doctor details : $admindetailedprofile');
       }
-      
-       else {
-        print('${response.body}');
-      }
-    } catch (e) {
-      print(e);
+      print(admindetailedprofile);
+      _cache.set(kProfile, admindetailedprofile);
+      notifyListeners();
+    } else {
+      print('${response.body}');
     }
   }
 
+  Future<void> getadminprofile(BuildContext context) async {
+    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getmyprofile";
 
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    if (response == null) return;
 
-Future<void> getpatientbydoctor(BuildContext context) async {
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body)['myprofile'];
+
+      if (data is List) {
+        adminprofile = List<Map<String, dynamic>>.from(data);
+      } else if (data is Map) {
+        adminprofile = [Map<String, dynamic>.from(data)];
+      }
+      print(adminprofile);
+      notifyListeners();
+    } else {
+      print('${response.body}');
+    }
+  }
+
+  // ===========================================================================
+  // PATIENTS
+  // ===========================================================================
+
+  Future<void> getpatientbydoctor(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getpatientbydoctor";
 
-    Constants.token = await secureStorage.readSecureData('doctortoken') ?? '';
-    
-    try {
-      final response = await http.get(
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.token}',
+          'Authorization': 'Bearer $token',
         },
-      );
+      ),
+      tokenKey: 'doctortoken',
+    );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        patients =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
-        notifyListeners();
-      } else if(response.statusCode == 401){
-await refreshtoken(context);
-Constants.token = await secureStorage.readSecureData('doctortoken') ?? '';
-try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.token}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        patients =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
-        notifyListeners();
-      } 
-      else if (response.statusCode == 404) {
-        print('No patients found');
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      print(e);
-    }
-
-      }
-      
-      else if (response.statusCode == 404) {
-        print('No patients found');
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      print(e);
+    if (response.statusCode == 200) {
+      patients =
+          json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+      notifyListeners();
+    } else if (response.statusCode == 404) {
+      print('No patients found');
+    } else {
+      print(response.body);
     }
   }
 
+  Future<void> getPatientsByPageWithSearch(
+      int page, String searchQuery, BuildContext context) async {
+    final String url = searchQuery.isNotEmpty
+        ? "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page&search=${Uri.encodeComponent(searchQuery)}"
+        : "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page";
 
-Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildContext context ) async {
-  final String url = searchQuery.isNotEmpty 
-      ? "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page&search=${Uri.encodeComponent(searchQuery)}"
-      : "${Constants.baseUrl}/api/v1/hospitaladmin/getallpatients?page=$page";
-
-  Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-
-  try {
-
-    if (page == 1 && searchQuery.isEmpty && _cache.isCacheValid(kPatients)) {
-      return; // ← Serve from cache, skip API
-    }
-
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.admintoken}',
-      },
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
     );
+    if (response == null) return;
 
     print("response.statusCode:${response.statusCode}");
 
@@ -257,1003 +3162,477 @@ Future<void> getPatientsByPageWithSearch(int page, String searchQuery, BuildCont
       final responseData = jsonDecode(response.body);
       print(responseData);
 
-      // Get new patients from response
-      List<Map<String, dynamic>> newPatients = json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+      List<Map<String, dynamic>> newPatients =
+          json.decode(response.body)['data'].cast<Map<String, dynamic>>();
 
       if (page == 1) {
-        // First page or new search - replace existing data
         allpatients = newPatients;
         filteredPatients = [...allpatients];
       } else {
-        // Subsequent pages - append data
         allpatients.addAll(newPatients);
         filteredPatients = [...allpatients];
       }
-      
-       if (page == 1 && searchQuery.isEmpty) {
-        _cache.markCached(kPatients); // ← Mark as cached after success
-      }
-      notifyListeners();
-    } 
-    else if(response.statusCode == 401) {
-      print("response check");
 
-    await  refreshtoken(context);
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    try {
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.admintoken}',
+      notifyListeners();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  Future<void> getPatientsByPage(int page, BuildContext context) async {
+    await getPatientsByPageWithSearch(page, '', context);
+  }
+
+  Future<void> addpatient(String name, String phone, String gender,
+      String email, String dob, BuildContext context) async {
+    final Map<String, dynamic> requestBody = {
+      "name": name,
+      "gender": gender,
+      "phone": phone,
+      "DOB": dob,
+    };
+    if (email.isNotEmpty) requestBody["email"] = email;
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
+        final headers = await DeviceHeaders.getDeviceHeaders();
+        return http.post(
+          Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addpatient'),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
       },
     );
 
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      print(responseData);
-
-      // Get new patients from response
-      List<Map<String, dynamic>> newPatients = json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
-      if (page == 1) {
-        // First page or new search - replace existing data
-        allpatients = newPatients;
-        filteredPatients = [...allpatients];
-      } else {
-        // Subsequent pages - append data
-        allpatients.addAll(newPatients);
-        filteredPatients = [...allpatients];
-      }
-      
+    if (response == null) {
+      addingpatient = false;
       notifyListeners();
+      return;
     }
-    
-     else {
-      print('Error: ${response.statusCode} - ${response.body}');
-    }
-  } catch (e) {
-    print("Exception in getPatientsByPageWithSearch: $e");
-  }
 
-
-    }
-    
-     else {
-      print('Error: ${response.statusCode} - ${response.body}');
-    }
-  } catch (e) {
-    print("Exception in getPatientsByPageWithSearch: $e");
-  }
-}
-
-
-
-Future<void> getPatientsByPage(int page, BuildContext context ) async {
-  await getPatientsByPageWithSearch(page, '', context);
-}
-
-  Future<void> addpatient(String name, String phone, String gender,      
-      String email, String dob, BuildContext context) async {
-    try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final Map<String, dynamic> requestBody = {
-        "name": name,
-        "gender": gender,
-        "phone": phone,
-        "DOB": dob,
-      };
-
-      if (email.isNotEmpty) {
-        requestBody["email"] = email;
-      }
-
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addpatient'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
-        addingpatient = false;
-        print(responseData);
-        invalidateCache(key: kPatients);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Patient Registered successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-        invalidateCache(key: kPatients);
-        getPatientsByPage(1, context);
-        Navigator.pop(context);
-      } else if(response.statusCode == 401){
-
-    await  refreshtoken(context);
-
-    try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final Map<String, dynamic> requestBody = {
-        "name": name,
-        "gender": gender,
-        "phone": phone,
-        "DOB": dob,
-      };
-
-      if (email.isNotEmpty) {
-        requestBody["email"] = email;
-      }
-
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addpatient'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
-        addingpatient = false;
-        print(responseData);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Patient Registered successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-        getPatientsByPage(1, context);
-        Navigator.pop(context);
-      } 
-       else {
-        print(response.body);
-        addingpatient = false;
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      }
-    } catch (e) {
+    if (response.statusCode == 201) {
+      final responseData = jsonDecode(response.body);
       addingpatient = false;
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-    }
+      print(responseData);
+      invalidateCache(key: kPatients);
+      invalidateCache();
+      notifyListeners();
 
+      final sucessSnackbar = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            'Patient Registered successfully',
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-      }
-       else {
-        print(response.body);
-        addingpatient = false;
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      }
-    } catch (e) {
+      getPatientsByPage(1, context);
+      Navigator.pop(context);
+    } else {
+      print(response.body);
       addingpatient = false;
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
+      final responseData = jsonDecode(response.body);
+      final snackbar = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData["msg"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      notifyListeners();
     }
   }
 
   Future<void> getpatient(String id, BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getpatientbyid/$id";
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    try {
-      final response = await http.get(
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Authorization': 'Bearer $token',
         },
-      );
+      ),
+    );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body)['data'];
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body)['data'];
 
-        if (data is List) {
-          patientdetails = List<Map<String, dynamic>>.from(data);
-          notifyListeners();
-        } else if (data is Map) {
-          patientdetails = [Map<String, dynamic>.from(data)];
-          // print(patientdetails);
-          notifyListeners();
-        }
-        notifyListeners();
-        // print(patientdetails);
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body)['data'];
-
-        if (data is List) {
-          patientdetails = List<Map<String, dynamic>>.from(data);
-          notifyListeners();
-        } else if (data is Map) {
-          patientdetails = [Map<String, dynamic>.from(data)];
-          // print(patientdetails);
-          notifyListeners();
-        }
-        notifyListeners();
-        // print(patientdetails);
-      } else {
-        print('${response.body}');
+      if (data is List) {
+        patientdetails = List<Map<String, dynamic>>.from(data);
+      } else if (data is Map) {
+        patientdetails = [Map<String, dynamic>.from(data)];
       }
-    } catch (e) {
-      print(e);
-    }
-      }
-      
-       else {
-        print('${response.body}');
-      }
-    } catch (e) {
-      print(e);
+      notifyListeners();
+    } else {
+      print('${response.body}');
     }
   }
 
   Future<void> editpatient(String id, String name, String dob, String gender,
       String email, String phone, BuildContext context) async {
-    try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
+    print("name: $name gender: $gender DOB: $dob email: $email phone: $phone");
 
+    final Map<String, dynamic> requestBody = {
+      "name": name,
+      "gender": gender,
+      "DOB": dob,
+      "phone": phone,
+      "email": email,
+    };
 
-      print(
-          "name: $name gender: $gender DOB: $dob email: $email phone: $phone");
+    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/editpatient/$id";
 
-      final Map<String, dynamic> requestBody = {
-        "name": name,
-        "gender": gender,
-        "DOB": dob,
-        "phone": phone,
-        "email": email,
-      };
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
+        final headers = await DeviceHeaders.getDeviceHeaders();
+        return http.put(
+          Uri.parse(url),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
+      },
+    );
 
-      String url = "${Constants.baseUrl}/api/v1/hospitaladmin/editpatient/$id";
-      final response = await http.put(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        editingpatient = false;
-         invalidateCache(key: kPatients);
-        await getpatient(id, context);
-       
-        
-        notifyListeners();
-        print(responseData);
-        final msg = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              "Patient details updated Successfully",
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(msg);
-        getPatientsByPage(1, context);
-        // getallpatients();
-        Navigator.pop(context);
-
-        notifyListeners();
-      }
-      else if(response.statusCode == 401){
-
-        await refreshtoken(context);
-
-        try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      print(
-          "name: $name gender: $gender DOB: $dob email: $email phone: $phone");
-
-      final Map<String, dynamic> requestBody = {
-        "name": name,
-        "gender": gender,
-        "DOB": dob,
-        "phone": phone,
-        "email": email,
-      };
-
-      String url = "${Constants.baseUrl}/api/v1/hospitaladmin/editpatient/$id";
-      final response = await http.put(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        editingpatient = false;
-        await getpatient(id, context);
-        
-        notifyListeners();
-        print(responseData);
-        final msg = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              "Patient details updated Successfully",
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(msg);
-        getPatientsByPage(1, context);
-        // getallpatients();
-        Navigator.pop(context);
-
-        notifyListeners();
-      }else {
-        final responseData = jsonDecode(response.body);
-       editingpatient = false;
-        final msg = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData['msg'],
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(msg);
-      }
-    } catch (e) {
+    if (response == null) {
       editingpatient = false;
-      final error = SnackBar(
-          backgroundColor: Colors.red[400], content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
+      notifyListeners();
+      return;
     }
-      }
-      
-       else {
-        final responseData = jsonDecode(response.body);
-       editingpatient = false;
-        final msg = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData['msg'],
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(msg);
-      }
-    } catch (e) {
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
       editingpatient = false;
-      final error = SnackBar(
-          backgroundColor: Colors.red[400], content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
+      invalidateCache(key: kPatients);
+      invalidateCache();
+      await getpatient(id, context);
+
+      notifyListeners();
+      print(responseData);
+      final msg = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            "Patient details updated Successfully",
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(msg);
+      getPatientsByPage(1, context);
+      Navigator.pop(context);
+
+      notifyListeners();
+    } else {
+      final responseData = jsonDecode(response.body);
+      editingpatient = false;
+      final msg = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData['msg'],
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(msg);
+      notifyListeners();
     }
   }
 
+  // ===========================================================================
+  // VISITS
+  // ===========================================================================
 
-Future<void> getpatientinvisits(String id, BuildContext context) async {
-    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitsbypatientid/$id";
-    // '${Constants.baseUrl}/app/log-in/phone-otp'
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    try {
-      if (_cache.isCacheValid(PatientInvisit)) return;
-      final response = await http.get(
+  Future<void> getpatientinvisits(String id, BuildContext context) async {
+    String url =
+        "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitsbypatientid/$id";
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Authorization': 'Bearer $token',
         },
-      );
+      ),
+    );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        patientinvisits =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            _cache.markCached(PatientInvisit);
-        notifyListeners();
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        patientinvisits =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            _cache.markCached(PatientInvisit);
-        notifyListeners();
-      } 
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
-    }
-      } 
-      
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      patientinvisits =
+          json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+      notifyListeners();
+    } else if (response.statusCode == 404) {
+      final responseData = jsonDecode(response.body);
+      // print(responseData);
+    } else {
+      print(response.body);
     }
   }
 
   Future<void> getpatientoutvisits(String id, BuildContext context) async {
-    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getoutvisitsbypatientid/$id";
-    // '${Constants.baseUrl}/app/log-in/phone-otp'
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    try {
-      if (_cache.isCacheValid(PatientOutvisit)) return;
-      final response = await http.get(
+    String url =
+        "${Constants.baseUrl}/api/v1/hospitaladmin/getoutvisitsbypatientid/$id";
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Authorization': 'Bearer $token',
         },
-      );
+      ),
+    );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        patientoutvisits =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            _cache.markCached(PatientOutvisit);
-        notifyListeners();
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        patientoutvisits =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            _cache.markCached(PatientOutvisit);
-        notifyListeners();
-      } 
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
-    }
-      }
-      
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      patientoutvisits =
+          json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+      notifyListeners();
+    } else if (response.statusCode == 404) {
+      final responseData = jsonDecode(response.body);
+      // print(responseData);
+    } else {
+      print(response.body);
     }
   }
 
-
-Future<void> addoutvisit(
+  Future<void> addoutvisit(
       String patientId,
-      String cheifcomplaint,
+      String Chiefcomplaint,
       String height,
       String weight,
       String bp,
       String temperature,
       String heartrate,
       String associatedDoctor,
+      List<Map<String, dynamic>> vitals,
       BuildContext context) async {
-    try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
+    final Map<String, dynamic> requestBody = {
+      "chief_complaint": Chiefcomplaint,
+      "associatedDoctor": associatedDoctor
+    };
+    if (height.isNotEmpty) requestBody["height"] = height;
+    if (weight.isNotEmpty) requestBody["weight"] = weight;
+    if (bp.isNotEmpty) requestBody["bp"] = bp;
+    if (heartrate.isNotEmpty) requestBody["heart_rate"] = heartrate;
+    if (temperature.isNotEmpty) requestBody["temperature"] = temperature;
+    if (vitals.isNotEmpty) requestBody["vitals"] = vitals;
+    print(requestBody);
 
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
+        final headers = await DeviceHeaders.getDeviceHeaders();
+        return http.post(
+          Uri.parse(
+              '${Constants.baseUrl}/api/v1/hospitaladmin/addoutvisit/$patientId'),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
+      },
+    );
 
-      final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
-        "associatedDoctor": associatedDoctor
-      };
-
-      if (height.isNotEmpty) {
-        requestBody["height"] = height;
-      }
-      if (weight.isNotEmpty) {
-        requestBody["weight"] = weight;
-      }
-      if (bp.isNotEmpty) {
-        requestBody["bp"] = bp;
-      }
-      if (heartrate.isNotEmpty) {
-        requestBody["heart_rate"] = heartrate;
-      }
-      if (temperature.isNotEmpty) {
-        requestBody["temperature"] = temperature;
-      }
-      print(requestBody);
-
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addoutvisit/$patientId'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        addingoutvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        invalidateCache(key: PatientOutvisit);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Out Visit added successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-        getpatientoutvisits(patientId, context);
-
-        notifyListeners();
-
-        Navigator.pop(context);
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-
-        try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
-        "associatedDoctor": associatedDoctor
-      };
-
-      if (height.isNotEmpty) {
-        requestBody["height"] = height;
-      }
-      if (weight.isNotEmpty) {
-        requestBody["weight"] = weight;
-      }
-      if (bp.isNotEmpty) {
-        requestBody["bp"] = bp;
-      }
-      if (heartrate.isNotEmpty) {
-        requestBody["heart_rate"] = heartrate;
-      }
-      if (temperature.isNotEmpty) {
-        requestBody["temperature"] = temperature;
-      }
-      print(requestBody);
-
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addoutvisit/$patientId'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        addingoutvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Out Visit added successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-        getpatientoutvisits(patientId, context);
-
-        notifyListeners();
-
-        Navigator.pop(context);
-      } 
-       else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        Navigator.pop(context);
-        addingoutvisit = false;
-      }
-    } catch (e) {
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-      Navigator.pop(context);
+    if (response == null) {
       addingoutvisit = false;
+      notifyListeners();
+      return;
     }
-      }
-       else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        Navigator.pop(context);
-        addingoutvisit = false;
-      }
-    } catch (e) {
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
+
+    if (response.statusCode == 200) {
+      addingoutvisit = false;
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      invalidateCache(key: PatientOutvisit);
+      invalidateCache();
+      notifyListeners();
+
+      final sucessSnackbar = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            'Out Visit added successfully',
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+      getpatientoutvisits(patientId, context);
+      notifyListeners();
+      Navigator.pop(context);
+    } else {
+      print(response.body);
+      final responseData = jsonDecode(response.body);
+      final snackbar = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData["msg"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
       Navigator.pop(context);
       addingoutvisit = false;
+      notifyListeners();
     }
   }
 
+  Future<void> getinvisitbyid(
+      String patientId, String complaintId, BuildContext context) async {
+    String url =
+        "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitbyid/$patientId/$complaintId";
 
-Future<void> getinvisitbyid(String patientId, String complaintId, BuildContext context) async {
-    String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getinvisitbyid/$patientId/$complaintId";
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    try {
-      final response = await http.get(
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Authorization': 'Bearer $token',
         },
-      );
+      ),
+    );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body)['data'];
-        if (data is List) {
-          complaintdetails = List<Map<String, dynamic>>.from(data);
-          notifyListeners();
-        } else if (data is Map) {
-          complaintdetails = [Map<String, dynamic>.from(data)];
-          print(complaintdetails);
-          notifyListeners();
-        }
-        notifyListeners();
-        // print(patientdetails);
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body)['data'];
-        if (data is List) {
-          complaintdetails = List<Map<String, dynamic>>.from(data);
-          notifyListeners();
-        } else if (data is Map) {
-          complaintdetails = [Map<String, dynamic>.from(data)];
-          print(complaintdetails);
-          notifyListeners();
-        }
-        notifyListeners();
-        // print(patientdetails);
-      } 
-       else {
-        print('${response.body}');
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body)['data'];
+      if (data is List) {
+        complaintdetails = List<Map<String, dynamic>>.from(data);
+      } else if (data is Map) {
+        complaintdetails = [Map<String, dynamic>.from(data)];
+        print(complaintdetails);
       }
-    } catch (e) {
-      print(e);
-    }
-      }
-       else {
-        print('${response.body}');
-      }
-    } catch (e) {
-      print(e);
+      notifyListeners();
+    } else {
+      print('${response.body}');
     }
   }
 
-
-Future<void> getdoctorsnurses(BuildContext context) async {
+  Future<void> getdoctorsnurses(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getalldoctorsnurses";
-    // '${Constants.baseUrl}/app/log-in/phone-otp'
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    try {
-      final response = await http.get(
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Authorization': 'Bearer $token',
         },
-      );
+      ),
+    );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-        alldoctors =
-            json.decode(response.body)['doctors'].cast<Map<String, dynamic>>();
-            allnurses = json.decode(response.body)['nurses'].cast<Map<String, dynamic>>();
-            print('alldoctors $alldoctors');
-            print('allnurses $allnurses');
-        notifyListeners();
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-        alldoctors =
-            json.decode(response.body)['doctors'].cast<Map<String, dynamic>>();
-            allnurses = json.decode(response.body)['nurses'].cast<Map<String, dynamic>>();
-            print('alldoctors $alldoctors');
-            print('allnurses $allnurses');
-        notifyListeners();
-      } 
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
-    }
-
-      } 
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      alldoctors =
+          json.decode(response.body)['doctors'].cast<Map<String, dynamic>>();
+      allnurses =
+          json.decode(response.body)['nurses'].cast<Map<String, dynamic>>();
+      print('alldoctors $alldoctors');
+      print('allnurses $allnurses');
+      notifyListeners();
+    } else if (response.statusCode == 404) {
+      final responseData = jsonDecode(response.body);
+      // print(responseData);
+    } else {
+      print(response.body);
     }
   }
-
-
 
   Future<void> addinvisit(
       String patientId,
-      String cheifcomplaint,
+      String Chiefcomplaint,
       String consultingdoctor,
       String visitingdoctor,
       String dutydoctor,
       String supportingstaff,
       BuildContext context) async {
-    try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
-        "consultingDoctor": consultingdoctor,
-      };
-
-      if (visitingdoctor.isNotEmpty) {
-        requestBody["visitingDoctor"] = visitingdoctor;
-      }
-      if (dutydoctor.isNotEmpty) {
-        requestBody["dutyDoctor"] = dutydoctor;
-      }
-      if (supportingstaff.isNotEmpty) {
-        requestBody["associatedNurse"] = supportingstaff;
-      }
-    
-      print(requestBody);
-
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addinvisit/$patientId'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        addinginvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        invalidateCache(key: PatientInvisit);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'In Visit added successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-        getpatientinvisits(patientId, context);
-
-        notifyListeners();
-
-        Navigator.pop(context);
-      }else if(response.statusCode == 401){
-        await refreshtoken(context);
-        try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final Map<String, dynamic> requestBody = {
-        "chief_complaint": cheifcomplaint,
-        "consultingDoctor": consultingdoctor,
-      };
-
-      if (visitingdoctor.isNotEmpty) {
-        requestBody["visitingDoctor"] = visitingdoctor;
-      }
-      if (dutydoctor.isNotEmpty) {
-        requestBody["dutyDoctor"] = dutydoctor;
-      }
-      if (supportingstaff.isNotEmpty) {
-        requestBody["associatedNurse"] = supportingstaff;
-      }
-    
-      print(requestBody);
-
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/addinvisit/$patientId'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        addinginvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'In Visit added successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-        getpatientinvisits(patientId, context);
-
-        notifyListeners();
-
-        Navigator.pop(context);
-      }
-       else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        Navigator.pop(context);
-        addinginvisit = false;
-      }
-    } catch (e) {
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-      Navigator.pop(context);
-      addinginvisit = false;
+    final Map<String, dynamic> requestBody = {
+      "chief_complaint": Chiefcomplaint,
+      "consultingDoctor": consultingdoctor,
+    };
+    if (visitingdoctor.isNotEmpty) {
+      requestBody["visitingDoctor"] = visitingdoctor;
     }
-      }
-      
-       else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        Navigator.pop(context);
-        addinginvisit = false;
-      }
-    } catch (e) {
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
+    if (dutydoctor.isNotEmpty) requestBody["dutyDoctor"] = dutydoctor;
+    if (supportingstaff.isNotEmpty) {
+      requestBody["associatedNurse"] = supportingstaff;
+    }
+    print(requestBody);
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
+        final headers = await DeviceHeaders.getDeviceHeaders();
+        return http.post(
+          Uri.parse(
+              '${Constants.baseUrl}/api/v1/hospitaladmin/addinvisit/$patientId'),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
+      },
+    );
+
+    if (response == null) {
+      addinginvisit = false;
+      notifyListeners();
+      return;
+    }
+
+    if (response.statusCode == 200) {
+      addinginvisit = false;
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      invalidateCache(key: PatientInvisit);
+      invalidateCache();
+      notifyListeners();
+
+      final sucessSnackbar = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            'In Visit added successfully',
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+      getpatientinvisits(patientId, context);
+      notifyListeners();
+      Navigator.pop(context);
+    } else {
+      print(response.body);
+      final responseData = jsonDecode(response.body);
+      final snackbar = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData["msg"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
       Navigator.pop(context);
       addinginvisit = false;
+      notifyListeners();
     }
   }
-
 
   Future<void> editinvisit(
       String patientId,
@@ -1263,355 +3642,157 @@ Future<void> getdoctorsnurses(BuildContext context) async {
       String dutydoctor,
       String supportingstaff,
       BuildContext context) async {
-    try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final Map<String, dynamic> requestBody = {
-        "consultingDoctor": consultingdoctor,
-      };
-
-      if (visitingdoctor.isNotEmpty) {
-        requestBody["visitingDoctor"] = visitingdoctor;
-      }
-      if (dutydoctor.isNotEmpty) {
-        requestBody["dutyDoctor"] = dutydoctor;
-      }
-      if (supportingstaff.isNotEmpty) {
-        requestBody["associatedNurse"] = supportingstaff;
-      }
-    
-      print(requestBody);
-
-      final response = await http.put(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/editinvisitbyid/$patientId/$complaintId'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        updatinginvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        invalidateCache(key: PatientInvisit);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'In-visit updated successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-        getpatientinvisits(patientId, context);
-        getinvisitbyid(patientId,complaintId, context);
-        
-        getactiveinvisits(context);
-
-        notifyListeners();
-
-        Navigator.pop(context);
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-        try {
-      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-      final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final Map<String, dynamic> requestBody = {
-        "consultingDoctor": consultingdoctor,
-      };
-
-      if (visitingdoctor.isNotEmpty) {
-        requestBody["visitingDoctor"] = visitingdoctor;
-      }
-      if (dutydoctor.isNotEmpty) {
-        requestBody["dutyDoctor"] = dutydoctor;
-      }
-      if (supportingstaff.isNotEmpty) {
-        requestBody["associatedNurse"] = supportingstaff;
-      }
-    
-      print(requestBody);
-
-      final response = await http.put(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/editinvisitbyid/$patientId/$complaintId'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        updatinginvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'In-visit updated successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-        getpatientinvisits(patientId, context);
-        getinvisitbyid(patientId,complaintId, context);
-        
-        getactiveinvisits(context);
-
-        notifyListeners();
-
-        Navigator.pop(context);
-      } else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-       
-        Navigator.pop(context);
-         updatinginvisit = false;
-      }
-    } catch (e) {
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-      
-      Navigator.pop(context);
-       updatinginvisit = false;
+    final Map<String, dynamic> requestBody = {
+      "consultingDoctor": consultingdoctor,
+    };
+    if (visitingdoctor.isNotEmpty) {
+      requestBody["visitingDoctor"] = visitingdoctor;
     }
-      }
-      
-       else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-       
-        Navigator.pop(context);
-         updatinginvisit = false;
-      }
-    } catch (e) {
-      final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-      
+    if (dutydoctor.isNotEmpty) requestBody["dutyDoctor"] = dutydoctor;
+    if (supportingstaff.isNotEmpty) {
+      requestBody["associatedNurse"] = supportingstaff;
+    }
+    print(requestBody);
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
+        final headers = await DeviceHeaders.getDeviceHeaders();
+        return http.put(
+          Uri.parse(
+              '${Constants.baseUrl}/api/v1/hospitaladmin/editinvisitbyid/$patientId/$complaintId'),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
+      },
+    );
+
+    if (response == null) {
+      updatinginvisit = false;
+      notifyListeners();
+      return;
+    }
+
+    if (response.statusCode == 200) {
+      updatinginvisit = false;
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      invalidateCache(key: PatientInvisit);
+      invalidateCache();
+      notifyListeners();
+
+      final sucessSnackbar = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            'In-visit updated successfully',
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+
+      getpatientinvisits(patientId, context);
+      getinvisitbyid(patientId, complaintId, context);
+      getactiveinvisits(context);
+
+      notifyListeners();
       Navigator.pop(context);
-       updatinginvisit = false;
+    } else {
+      print(response.body);
+      final responseData = jsonDecode(response.body);
+      final snackbar = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData["msg"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      Navigator.pop(context);
+      updatinginvisit = false;
+      notifyListeners();
     }
   }
 
   Future<void> getactiveinvisits(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getallactiveinvisits";
 
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-    try {
-      if (_cache.isCacheValid(Visits)) return;
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        activeinvisits =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-_cache.markCached(Visits);
-        notifyListeners();
-      }else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        activeinvisits =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-_cache.markCached(Visits);
-        notifyListeners();
-      }
-       else if (response.statusCode == 404) {
-        print('No visits found');
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      print(e);
+    final cached = _cache.get<List<Map<String, dynamic>>>(Visits);
+    if (cached != null) {
+      activeinvisits = cached;
+      notifyListeners();
+      return;
     }
-      }
-       else if (response.statusCode == 404) {
-        print('No visits found');
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      print(e);
+
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    if (response == null) return;
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      activeinvisits =
+          json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+      _cache.set(Visits, activeinvisits);
+      notifyListeners();
+    } else if (response.statusCode == 404) {
+      print('No visits found');
+    } else {
+      print(response.body);
     }
   }
 
-  // Future<void> getpatientdiagnosis(String id, int visitindex) async {
-  //   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getindiagnosis/$id/$visitindex";
-  //   print(url);
-  //   // '${Constants.baseUrl}/app/log-in/phone-otp'
-  //   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse(url),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer ${Constants.doctortoken}',
-  //       },
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body);
-  //       print(responseData);
-  //       invisitId = json.decode(response.body)['invisitId'];
-  //       print(invisitId);
-  //       patientdiagnosis =
-  //           json.decode(response.body)['diagnosis'].cast<Map<String, dynamic>>();
-
-  //       notifyListeners();
-  //     } else if (response.statusCode == 404) {
-  //       final responseData = jsonDecode(response.body);
-  //       // print(responseData);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-  // Future<void> getallpatientdiagnosis(String id, String complaintid) async {
-  //   String url = "${Constants.baseUrl}/api/v1/hospitaldoctor/getalldiagnosis/$id/$complaintid";
-  //   print(url);
-  //   // '${Constants.baseUrl}/app/log-in/phone-otp'
-  //   Constants.doctortoken = await secureStorage.readSecureData('doctortoken') ?? '';
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse(url),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer ${Constants.doctortoken}',
-  //       },
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body);
-  //       print(responseData);
-  //       // invisitId = json.decode(response.body)['invisitId'];
-  //       // print(invisitId);
-  //       patientalldiagnosis =
-  //           json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-
-  //       notifyListeners();
-  //     } else if (response.statusCode == 404) {
-  //       final responseData = jsonDecode(response.body);
-  //       // print(responseData);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-
-Future<void> getalldoctorsdetails(BuildContext context) async {
+  Future<void> getalldoctorsdetails(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/getalldoctors";
-    // '${Constants.baseUrl}/app/log-in/phone-otp'
-    // Constants.token = await secureStorage.readSecureData('token') ?? '';
-    
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-    
-    try {
-      if (_cache.isCacheValid(Doctors)) return;
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        alldoctorsdetails =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            print('alldoctorsdetails $alldoctorsdetails');
-_cache.markCached(Doctors);
-        notifyListeners();
-      } else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        alldoctorsdetails =
-            json.decode(response.body)['data'].cast<Map<String, dynamic>>();
-            print('alldoctorsdetails $alldoctorsdetails');
-_cache.markCached(Doctors);
-        notifyListeners();
-      } 
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
+    final cached = _cache.get<List<Map<String, dynamic>>>(Doctors);
+    if (cached != null) {
+      alldoctorsdetails = cached;
+      notifyListeners();
+      return;
     }
 
-      }
-      else if (response.statusCode == 404) {
-        final responseData = jsonDecode(response.body);
-        // print(responseData);
-      }
-    } catch (e) {
-      print(e);
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    if (response == null) return;
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      alldoctorsdetails =
+          json.decode(response.body)['data'].cast<Map<String, dynamic>>();
+      print('alldoctorsdetails $alldoctorsdetails');
+      _cache.set(Doctors, alldoctorsdetails);
+      notifyListeners();
+    } else if (response.statusCode == 404) {
+      final responseData = jsonDecode(response.body);
+      // print(responseData);
+    } else {
+      print(response.body);
     }
   }
+
+  // ===========================================================================
+  // DOCTOR SCHEDULE / SLOTS
+  // (left untouched — original had no refresh-token handling here)
+  // ===========================================================================
 
   String loginTime = '9:00';
   String logoutTime = "17:00";
@@ -1625,743 +3806,353 @@ _cache.markCached(Doctors);
 
   /// ✅ 1. First load → fetch timing + booked today
   Future<void> loadInitialData(String userid, DateTime date) async {
-   try{
-     isLoading = true;
-Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
+    try {
+      isLoading = true;
+      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
 
-    final res = await http.get(
-      Uri.parse(
-        "${Constants.baseUrl}/api/v1/hospitaladmin/gettdayschedule/$userid?$date"),
+      final res = await http.get(
+        Uri.parse(
+            "${Constants.baseUrl}/api/v1/hospitaladmin/gettdayschedule/$userid?$date"),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${Constants.admintoken}',
         },
-        
-        );
+      );
 
-    final data = jsonDecode(res.body);
-    print(data);
-    doctorname = data["doctorName"];
+      final data = jsonDecode(res.body);
+      print(data);
+      doctorname = data["doctorName"];
 
-    if(data["doctorTime"] == null){
-      loginTime = '9:00';
-      logoutTime = '17:00';
-      duration = 30;
-    //    loginTime = data["doctorTime"]["loginTime"];
-    // logoutTime = data["doctorTime"]["leaveTime"];
-    // duration = data["doctorTime"]["duration"];
+      if (data["doctorTime"] == null) {
+        loginTime = '9:00';
+        logoutTime = '17:00';
+        duration = 30;
+      } else {
+        loginTime = data["doctorTime"]["loginTime"];
+        logoutTime = data["doctorTime"]["leaveTime"];
+        duration = data["doctorTime"]["duration"];
+      }
+
+      bookedSlots =
+          (data["slots"] as List).map((e) => SlotModel.fromJson(e)).toList();
+
+      generateSlots();
+
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      print("error: $e");
     }
-    else{
-      // loginTime = '9:00';
-      // logoutTime = '17:00';
-      // duration = 30;
-       loginTime = data["doctorTime"]["loginTime"];
-    logoutTime = data["doctorTime"]["leaveTime"];
-    duration = data["doctorTime"]["duration"];
-    }
-
-    bookedSlots = (data["slots"] as List)
-        .map((e) => SlotModel.fromJson(e))
-        .toList();
-
-    generateSlots();
-
-    isLoading = false;
-    notifyListeners();
-   }
-   catch(e){
-    isLoading = false;
-    print("error: $e");
-   }
   }
 
   /// ✅ 2. Date change → only slots API
   Future<void> loadByDate(DateTime date, String userid) async {
     try {
       isLoading = true;
-    // notifyListeners();
 
-    String d = DateFormat("dd-MM-yyyy").format(date);
+      String d = DateFormat("dd-MM-yyyy").format(date);
 
-    // Constants.token = await secureStorage.readSecureData('token') ?? '';
-Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
+      Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
 
-    final res = await http.get(Uri.parse(
-        "${Constants.baseUrl}/api/v1/hospitaladmin/getschedulebydate/$userid?date=$d"),
+      final res = await http.get(
+        Uri.parse(
+            "${Constants.baseUrl}/api/v1/hospitaladmin/getschedulebydate/$userid?date=$d"),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${Constants.admintoken}',
         },
-        );
+      );
 
-    final data = jsonDecode(res.body);
-    print(data);
-    
-     if(data["doctorTime"] != null){
-       loginTime = data["doctorTime"]["loginTime"];
-    logoutTime = data["doctorTime"]["leaveTime"];
-    duration = data["doctorTime"]["duration"];
-    }
-    else{
-      loginTime = '9:00';
-      logoutTime = "17:00";
-      duration = 30;
-    }
+      final data = jsonDecode(res.body);
+      print(data);
 
-    bookedSlots = (data["slots"] as List)
-        .map((e) => SlotModel.fromJson(e))
-        .toList();
+      if (data["doctorTime"] != null) {
+        loginTime = data["doctorTime"]["loginTime"];
+        logoutTime = data["doctorTime"]["leaveTime"];
+        duration = data["doctorTime"]["duration"];
+      } else {
+        loginTime = '9:00';
+        logoutTime = "17:00";
+        duration = 30;
+      }
 
+      bookedSlots =
+          (data["slots"] as List).map((e) => SlotModel.fromJson(e)).toList();
 
-    generateSlots();
+      generateSlots();
 
-    isLoading = false;
-    notifyListeners();
+      isLoading = false;
+      notifyListeners();
     } catch (e) {
       print("error : $e");
     }
   }
 
-  // /// ✅ Generate all slots from timings + merge booked
-  // void generateSlots() {
-  //   finalSlots.clear();
+  bool isSlotBooked(
+      DateTime slotStart, DateTime slotEnd, List<SlotModel> bookedSlots) {
+    for (final booked in bookedSlots) {
+      final bookedStart = DateFormat("HH:mm").parse(booked.startTime);
+      final bookedEnd = DateFormat("HH:mm").parse(booked.endTime);
 
-  //   DateTime start = DateTime.parse("2024-01-01 $loginTime:00");
-  //   DateTime end = DateTime.parse("2024-01-01 $logoutTime:00");
-
-  //   while (start.isBefore(end)) {
-  //     final s = DateFormat("HH:mm").format(start);
-  //     final e = DateFormat("HH:mm").format(start.add(Duration(minutes: duration)));
-
-  //     SlotModel slot = bookedSlots.firstWhere(
-  //       (b) => b.startTime == s,
-  //       orElse: () => SlotModel(startTime: s, endTime: e),
-  //     );
-
-  //     finalSlots.add(slot);
-  //     start = start.add(Duration(minutes: duration));
-  //   }
-  // }
-
-bool isSlotBooked(DateTime slotStart, DateTime slotEnd, List<SlotModel> bookedSlots) {
-  for (final booked in bookedSlots) {
-    final bookedStart = DateFormat("HH:mm").parse(booked.startTime);
-    final bookedEnd = DateFormat("HH:mm").parse(booked.endTime);
-
-    // OVERLAP CONDITION
-    if (slotStart.isBefore(bookedEnd) && slotEnd.isAfter(bookedStart)) {
-      return true;
+      // OVERLAP CONDITION
+      if (slotStart.isBefore(bookedEnd) && slotEnd.isAfter(bookedStart)) {
+        return true;
+      }
     }
+    return false;
   }
-  return false;
-}
 
+  void generateSlots() {
+    List<SlotModel> all = [];
 
+    final start = DateFormat("HH:mm").parse(loginTime);
+    final end = DateFormat("HH:mm").parse(logoutTime);
 
-//   void generateSlots() {
-//   final List<SlotModel> all = [];
+    DateTime current = start;
 
-//   // Parse login + logout times
-//   final start = DateFormat("HH:mm").parse(loginTime);
-//   final end = DateFormat("HH:mm").parse(logoutTime);
+    while (current.isBefore(end)) {
+      final next = current.add(Duration(minutes: duration));
+      if (!next.isAfter(end)) {
+        // Check if this slot is already booked from backend
+        SlotModel? matched;
 
-//   DateTime current = start;
+        for (var b in bookedSlots) {
+          final bStart = DateFormat("HH:mm").parse(b.startTime);
+          final bEnd = DateFormat("HH:mm").parse(b.endTime);
 
-//   while (current.isBefore(end)) {
-//     final next = current.add(Duration(minutes: duration));
-
-//     if (!next.isAfter(end)) {
-//       bool booked = isSlotBooked(current, next, bookedSlots);
-
-
-//       all.add(
-//         SlotModel(
-//           startTime: DateFormat("HH:mm").format(current),
-//           endTime: DateFormat("HH:mm").format(next),
-//           patientname: booked ? "BOOKED" : null,
-//         ),
-//       );
-//     }
-
-//     current = next;
-//   }
-
-//   finalSlots = all;
-// }
-
-
-void generateSlots() {
-  List<SlotModel> all = [];
-
-  final start = DateFormat("HH:mm").parse(loginTime);
-  final end = DateFormat("HH:mm").parse(logoutTime);
-
-  DateTime current = start;
-
-  while (current.isBefore(end)) {
-    final next = current.add(Duration(minutes: duration));
-    if (!next.isAfter(end)) {
-
-      // Check if this slot is already booked from backend
-      SlotModel? matched;
-
-      for (var b in bookedSlots) {
-        final bStart = DateFormat("HH:mm").parse(b.startTime);
-        final bEnd = DateFormat("HH:mm").parse(b.endTime);
-
-        // Overlap check
-        if (current.isBefore(bEnd) && next.isAfter(bStart)) {
-          matched = b; // this booked slot matches the current slot
-          break;
+          // Overlap check
+          if (current.isBefore(bEnd) && next.isAfter(bStart)) {
+            matched = b; // this booked slot matches the current slot
+            break;
+          }
         }
+
+        // If matched = booked slot from backend → carry real mobile number
+        all.add(
+          matched ??
+              SlotModel(
+                startTime: DateFormat("HH:mm").format(current),
+                endTime: DateFormat("HH:mm").format(next),
+                patientname: null,
+                patientMobile: "", // free slot → keep empty string
+              ),
+        );
       }
 
-      // If matched = booked slot from backend → carry real mobile number
-      all.add(
-        matched ??
-            SlotModel(
-              startTime: DateFormat("HH:mm").format(current),
-              endTime: DateFormat("HH:mm").format(next),
-              patientname: null,
-              patientMobile: "", // free slot → keep empty string
-            ),
-      );
+      current = next;
     }
 
-    current = next;
+    finalSlots = all;
   }
-
-  finalSlots = all;
-}
-
 
   /// ✅ Book Slot API
-  Future<void> bookSlot(String userid,
-      SlotModel slot, DateTime date, String name, String mobile, BuildContext context) async {
-
-    // Constants.token = await secureStorage.readSecureData('token') ?? '';
-    
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-    
-    final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-try{
-
-    
-final Map<String, dynamic> requestBody = {
-         "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+  Future<void> bookSlot(String userid, SlotModel slot, DateTime date,
+      String name, String mobile, BuildContext context) async {
+    final Map<String, dynamic> requestBody = {
+      "bookingDate": DateFormat("dd-MM-yyyy").format(date),
       "startTime": slot.startTime,
-      // "endTime": slot.endTime,
       "patientname": name,
       "patientMobile": mobile,
-      };
+    };
+    print(requestBody);
 
-      print(requestBody);
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
+        final headers = await DeviceHeaders.getDeviceHeaders();
+        return http.post(
+          Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/slotbook/$userid"),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
+      },
+    );
 
-    final response = await http.post(
-        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/slotbook/$userid"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: jsonEncode(requestBody),
-      );
+    if (response == null) return;
 
-      if (response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
+    if (response.statusCode == 201) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      notifyListeners();
 
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Slot Booked successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
+      final sucessSnackbar = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            'Slot Booked successfully',
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-      //  loadInitialData(userid);
- 
-  notifyListeners();
-
-        // Navigator.pop(context);
-      }else if(response.statusCode == 401){
-        await refreshtoken(context);
-          Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    final headers = await DeviceHeaders.getDeviceHeaders();
-        try{
-final Map<String, dynamic> requestBody = {
-         "bookingDate": DateFormat("dd-MM-yyyy").format(date),
-      "startTime": slot.startTime,
-      // "endTime": slot.endTime,
-      "patientname": name,
-      "patientMobile": mobile,
-      };
-
-      print(requestBody);
-
-    final response = await http.post(
-        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/slotbook/$userid"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Slot Booked successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-      //  loadInitialData(userid);
- 
-  notifyListeners();
-
-        // Navigator.pop(context);
-      }
-       else {
-        print(response.body);  
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        // Navigator.pop(context);
-        addingoutvisit = false;
-      }
-    
-   } catch(e){
-    print(e);
-    final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-   }
-      }
-      
-       else {
-        print(response.body);  
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        // Navigator.pop(context);
-        addingoutvisit = false;
-      }
-    
-   } catch(e){
-    print(e);
-    final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-   }
-
-
-    // await http.post(
-    //     Uri.parse("${Constants.baseUrl}/api/v1/admin/slotbook/$userid"),
-    //     headers: <String, String>{
-    //       'Content-Type': 'application/json',
-    //       'Authorization': 'Bearer ${Constants.token}',s
-    //     },
-    //     body: body);
+      notifyListeners();
+    } else {
+      print(response.body);
+      final responseData = jsonDecode(response.body);
+      final snackbar = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData["msg"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      addingoutvisit = false;
+    }
   }
 
   /// ✅ Delete API
-  Future<void> 
-  deleteSlot(String userid,SlotModel slot, DateTime date, BuildContext context ) async {
-        // Constants.token = await secureStorage.readSecureData('token') ?? '';
-
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-        final headers = await DeviceHeaders.getDeviceHeaders();
-
-    try{   
-final Map<String, dynamic> requestBody = {
-         "bookingDate": DateFormat("dd-MM-yyyy").format(date),
+  Future<void> deleteSlot(
+      String userid, SlotModel slot, DateTime date, BuildContext context) async {
+    final Map<String, dynamic> requestBody = {
+      "bookingDate": DateFormat("dd-MM-yyyy").format(date),
       "startTime": slot.startTime,
       "endTime": slot.endTime,
-      };
+    };
 
-    final response = await http.delete(
-        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/deleteslot/$userid"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              responseData["msg"],
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-      //  loadInitialData(userid);
- 
-  notifyListeners();
-
-        // Navigator.pop(context);
-      }else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
         final headers = await DeviceHeaders.getDeviceHeaders();
-        try{   
-final Map<String, dynamic> requestBody = {
-         "bookingDate": DateFormat("dd-MM-yyyy").format(date),
-      "startTime": slot.startTime,
-      "endTime": slot.endTime,
-      };
+        return http.delete(
+          Uri.parse(
+              "${Constants.baseUrl}/api/v1/hospitaladmin/deleteslot/$userid"),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
+      },
+    );
 
-    final response = await http.delete(
-        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/deleteslot/$userid"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: jsonEncode(requestBody),
-      );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      notifyListeners();
 
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              responseData["msg"],
-              style: TextStyle(color: Colors.grey[50]),
-            ));
+      final sucessSnackbar = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            responseData["msg"],
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
 
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-
-  notifyListeners();
-      }
-       else {
-        print(response.body);  
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        // Navigator.pop(context);
-       
-      }
-    
-   } catch(e){
-    final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-   }
-      }
-       else {
-        print(response.body);  
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        // Navigator.pop(context);
-       
-      }
-    
-   } catch(e){
-    final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-   }
-   
+      notifyListeners();
+    } else {
+      print(response.body);
+      final responseData = jsonDecode(response.body);
+      final snackbar = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData["msg"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    }
   }
- 
 
- Future<void> updateDoctorTiming(String doctorId, String login, String logout, int duration, DateTime date, BuildContext context) async {
-  // Constants.token = await secureStorage.readSecureData('token') ?? '';
-Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-final headers = await DeviceHeaders.getDeviceHeaders();
+  Future<void> updateDoctorTiming(String doctorId, String login,
+      String logout, int duration, DateTime date, BuildContext context) async {
+    final Map<String, dynamic> requestBody = {
+      "loginTime": login,
+      "leaveTime": logout,
+      "duration": duration,
+      "date": formatDate(date.toString()),
+    };
+    print(requestBody);
 
-   try{ 
-final Map<String, dynamic> requestBody = {
-        "loginTime": login,
-    "leaveTime": logout,
-    "duration": duration,
-    "date": formatDate(date.toString()),
-      };
+    final response = await _sendAuthenticated(
+      context,
+      (token) async {
+        final headers = await DeviceHeaders.getDeviceHeaders();
+        return http.put(
+          Uri.parse(
+              "${Constants.baseUrl}/api/v1/hospitaladmin/updatedoctortime/$doctorId"),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...headers,
+          },
+          body: jsonEncode(requestBody),
+        );
+      },
+    );
 
-      print(requestBody);
+    if (response == null) return;
 
-    final response = await http.put(
-        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/updatedoctortime/$doctorId"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
+    if (response.statusCode == 200) {
+      addingoutvisit = false;
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+      notifyListeners();
 
-      if (response.statusCode == 200) {
-        addingoutvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
+      final sucessSnackbar = SnackBar(
+          backgroundColor: Colors.green[400],
+          content: Text(
+            'Timing Updated successfully',
+            style: TextStyle(color: Colors.grey[50]),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
+      loadByDate(date, doctorId);
 
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Timing Updated successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-        // loadInitialData(doctorId, date);
-        loadByDate(date, doctorId);
-       
- 
-  notifyListeners();
-
-        // Navigator.pop(context);
-      }else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-final headers = await DeviceHeaders.getDeviceHeaders();
-        try{ 
-final Map<String, dynamic> requestBody = {
-        "loginTime": login,
-    "leaveTime": logout,
-    "duration": duration,
-    "date": formatDate(date.toString()),
-      };
-
-      print(requestBody);
-
-    final response = await http.put(
-        Uri.parse("${Constants.baseUrl}/api/v1/hospitaladmin/updatedoctortime/$doctorId"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.admintoken}',
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        addingoutvisit = false;
-        // Successful POST request, handle the response here
-        final responseData = jsonDecode(response.body);
-        print(responseData);
-        notifyListeners();
-
-        final sucessSnackbar = SnackBar(
-            backgroundColor: Colors.green[400],
-            content: Text(
-              'Timing Updated successfully',
-              style: TextStyle(color: Colors.grey[50]),
-            ));
-
-        ScaffoldMessenger.of(context).showSnackBar(sucessSnackbar);
-        // loadInitialData(doctorId, date);
-        loadByDate(date, doctorId);
-       
- 
-  notifyListeners();
-
-        // Navigator.pop(context);
-      }
-       else {
-        print(response.body);  
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        // Navigator.pop(context);
-        addingoutvisit = false;
-      }
-    
-   } catch(e){
-    final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-   }
-      }
-      
-       else {
-        print(response.body);  
-        final responseData = jsonDecode(response.body);
-        final snackbar = SnackBar(
-            backgroundColor: Colors.red[400],
-            content: Text(
-              responseData["msg"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        // Navigator.pop(context);
-        addingoutvisit = false;
-      }
-    
-   } catch(e){
-    final error = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(error);
-   }
-
-  
-}
+      notifyListeners();
+    } else {
+      print(response.body);
+      final responseData = jsonDecode(response.body);
+      final snackbar = SnackBar(
+          backgroundColor: Colors.red[400],
+          content: Text(
+            responseData["msg"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      addingoutvisit = false;
+    }
+  }
 
   Future<void> gettodaysappointments(BuildContext context) async {
     String url = "${Constants.baseUrl}/api/v1/hospitaladmin/gettodaysappointments";
 
-    Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-    
-    try {
-      final response = await http.get(
+    final response = await _sendAuthenticated(
+      context,
+      (token) => http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
+          'Authorization': 'Bearer $token',
         },
-      );
+      ),
+    );
+    if (response == null) return;
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-       
-        todaysappointments =
-            json.decode(response.body)['appointments'].cast<Map<String, dynamic>>();
-        print('todays appointments : $todaysappointments');
-
-        notifyListeners();
-      }else if(response.statusCode == 401){
-        await refreshtoken(context);
-        Constants.admintoken = await secureStorage.readSecureData('admintoken') ?? '';
-        try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${Constants.admintoken}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-       
-        todaysappointments =
-            json.decode(response.body)['appointments'].cast<Map<String, dynamic>>();
-        print('todays appointments : $todaysappointments');
-
-        notifyListeners();
-      } else if (response.statusCode == 404) {
-        print('No visits found');
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      print(e);
-    }
-      }
-       else if (response.statusCode == 404) {
-        print('No visits found');
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      print(e);
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      todaysappointments =
+          json.decode(response.body)['appointments'].cast<Map<String, dynamic>>();
+      print('todays appointments : $todaysappointments');
+      notifyListeners();
+    } else if (response.statusCode == 404) {
+      print('No visits found');
+    } else {
+      print(response.body);
     }
   }
 
-  Future<void> refreshtoken(BuildContext context) async {
-    try {
-      Constants.adminrefreshtoken = await secureStorage.readSecureData('adminrefreshtoken') ?? '';
-      // final headers = await DeviceHeaders.getDeviceHeaders();
-
-
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/refreshtokenadminmobile'),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${Constants.adminrefreshtoken}',
-          'Content-Type': 'application/json',
-          // ...headers,
-        },
-      );
-
-      if (response.statusCode == 200) {
-       print(response.body);
-        final responseData = jsonDecode(response.body);
-await secureStorage.writeSecureData('admintoken', responseData['token']);
-        await secureStorage.writeSecureData('adminrefreshtoken', responseData['refreshToken']);
-        await secureStorage.readSecureData('admintoken').then((value) {
-          Constants.admintoken = value;
-        });
-
-  await secureStorage.readSecureData('adminrefreshtoken').then((value) {
-          Constants.adminrefreshtoken = value;
-        });
-        print("Constants.admintoken ${Constants.admintoken}");
-        print("Constants.adminrefreshtoken ${Constants.adminrefreshtoken}");
-
-
-        notifyListeners();
-      } else {
-        print(response.body);
-        final responseData = jsonDecode(response.body);
-        
-         secureStorage.deleteSecureData('admintoken');
-        secureStorage.deleteSecureData('adminrefreshtoken');
-        print("token : ${Constants.admintoken}");
-        print("refresh token : ${Constants.adminrefreshtoken}");
-        context.router.popAndPush(SplashRoute());
-       
-      }
-    } catch (e) {
-      final error = SnackBar(content: Text(e.toString()));
-    }
-  } 
+  // ===========================================================================
+  // LOGOUT / CACHE / MISC
+  // ===========================================================================
 
   Future<void> logout() async {
     try {
-      Constants.adminrefreshtoken = await secureStorage.readSecureData('adminrefreshtoken') ?? '';
-
+      Constants.adminrefreshtoken =
+          await secureStorage.readSecureData('adminrefreshtoken') ?? '';
 
       final response = await http.post(
         Uri.parse('${Constants.baseUrl}/api/v1/hospitaladmin/logoutphone'),
@@ -2372,14 +4163,52 @@ await secureStorage.writeSecureData('admintoken', responseData['token']);
       );
       print(response);
       invalidateCache();
-
+      _cache.invalidateAll();
     } catch (e) {
       final error = SnackBar(content: Text(e.toString()));
-     
     }
   }
 
- void invalidateCache({String? key}) {
+  DateTime? getValidityDate() {
+    if (admindetailedprofile.isEmpty) return null;
+
+    final hospital = admindetailedprofile.first["associatedHospitalBranch"]
+        ?["associatedHospital"];
+
+    final validTill = hospital?["validity"];
+    print("validTill :$validTill");
+    if (validTill == null) return null;
+
+    return DateTime.parse(validTill);
+  }
+
+  void closeExpiryBanner() {
+    hideExpiryBanner = true;
+    notifyListeners();
+  }
+
+  bool get shouldShowExpiryBanner {
+    final validityDate = getValidityDate();
+    if (validityDate == null) return false;
+
+    final daysLeft = remainingDays();
+    print("daysLeft $daysLeft");
+
+    return daysLeft <= 7 && daysLeft >= 0 && !hideExpiryBanner;
+  }
+
+  int remainingDays() {
+    final validityDate = getValidityDate();
+    if (validityDate == null) return 0;
+
+    final today = DateTime.now();
+    final diff =
+        validityDate.difference(DateTime(today.year, today.month, today.day));
+    // matches Math.ceil in JS
+    return (diff.inHours / 24).ceil();
+  }
+
+  void invalidateCache({String? key}) {
     if (key != null) {
       _cache.invalidate(key);
     } else {
@@ -2387,8 +4216,7 @@ await secureStorage.writeSecureData('admintoken', responseData['token']);
     }
   }
 
-void notify() {
+  void notify() {
     notifyListeners();
   }
-
 }

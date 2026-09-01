@@ -81,62 +81,62 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
                                                             fontWeight: FontWeight.bold,
                                                           ),),),
                                 ),
-                                SizedBox(
-                                    height: MediaQuery.of(context).size.height*0.75,
-                                    child: ListView.builder(
-                                      itemCount: adminpageprovider
-                                          .alldoctorsdetails.length,
-                                      itemBuilder: (context, index) {
-                                        final item = adminpageprovider
-                                            .alldoctorsdetails[index];
-                                    
-                                        return AdminModel(
-                                          name: item['name'],
-                                          adminId: item['userid'],
-                                          createdAt: formatDate(item['createdAt']),
-                                          phone: item['phone'],
-                                          onView: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return ViewAdminModel(
-                                                  name: item['name'],
-                                                  adminId: item['userid'],
-                                                  email: item['email'] ?? "",
-                                                  phonenumber: item['phone'] ?? 0,
-                                                  createdat:
-                                                      formatDate(item['createdAt']),
-                                                  gender: item['gender'],
-                                                  doctorgegnum: item[
-                                                          'doctorRegistrationNumber'] ??
-                                                      '',
-                                                  qualification:
-                                                      item['qualification'] ?? '',
-                                                  specialization:
-                                                      item['specialization'] ?? '',
-                                                  secondaryphone:
-                                                      item['phone2'].toString() ??
-                                                          '',
-                                                  boardofregistration: item[
-                                                          'board_of_registration'] ??
-                                                      "",
-                                                  yearofregistration:
-                                                      item['year_of_registration']
-                                                              .toString() ??
-                                                          '',
-                                                  
-                                                );
-                                              },
-                                            );
-                                          },
-                                          scheduleonTap: () {
-                                            context.router.push(SlotRoute(patientId:item['userid'],
-                                            doctorname: item['name'],));
-                                          },
-                                        );
-                                      },
-                                    ),
+                                SizedBox(height: 10,),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: adminpageprovider
+                                        .alldoctorsdetails.length,
+                                    itemBuilder: (context, index) {
+                                      final item = adminpageprovider
+                                          .alldoctorsdetails[index];
+                                  
+                                      return AdminModel(
+                                        name: item['name'],
+                                        adminId: item['userid'],
+                                        createdAt: formatDate(item['createdAt']),
+                                        phone: item['phone'],
+                                        onView: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return ViewAdminModel(
+                                                name: item['name'],
+                                                adminId: item['userid'],
+                                                email: item['email'] ?? "",
+                                                phonenumber: item['phone'] ?? 0,
+                                                createdat:
+                                                    formatDate(item['createdAt']),
+                                                gender: item['gender'],
+                                                doctorgegnum: item[
+                                                        'doctorRegistrationNumber'] ??
+                                                    '',
+                                                qualification:
+                                                    item['qualification'] ?? '',
+                                                specialization:
+                                                    item['specialization'] ?? '',
+                                                secondaryphone:
+                                                    item['phone2'].toString() ??
+                                                        '',
+                                                boardofregistration: item[
+                                                        'board_of_registration'] ??
+                                                    "",
+                                                yearofregistration:
+                                                    item['year_of_registration']
+                                                            .toString() ??
+                                                        '',
+                                                
+                                              );
+                                            },
+                                          );
+                                        },
+                                        scheduleonTap: () {
+                                          context.router.push(SlotRoute(patientId:item['userid'],
+                                          doctorname: item['name'],));
+                                        },
+                                      );
+                                    },
                                   ),
+                                ),
                               ],
                             ));
                   }
@@ -911,7 +911,7 @@ class ViewAdminModel extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         const Text(
-                          "Admin / Doctor Details",
+                          "Admin Details",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

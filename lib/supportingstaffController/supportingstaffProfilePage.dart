@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/provider/supportingstaffProvider.dart';
+import 'package:hospital_mobile_app/service/cacheManager.dart';
 import 'package:hospital_mobile_app/service/constant.dart';
 import 'package:hospital_mobile_app/service/secure_storage.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
@@ -21,6 +22,7 @@ class SupportingStaffProfilePage extends StatefulWidget {
 class _SupportingStaffProfilePageState extends State<SupportingStaffProfilePage> {
   late Future fetchsupportingstaffprofile;
   final SecureStorage secureStorage = SecureStorage();
+  CacheManager cache = CacheManager();
 
   @override
   void initState() {
@@ -115,6 +117,7 @@ class _SupportingStaffProfilePageState extends State<SupportingStaffProfilePage>
         ]),
         icon: Icons.local_hospital,
         children: [
+          _logoInfoRow(hospital['logo'], "Hospital Logo"),
           _infoRow(Icons.badge, "Hospital ID", hospital['userid']),
           _infoRow(Icons.local_hospital, "Hospital Name", hospital['name']),
           _infoRow(Icons.email, "Email", hospital['email']),
@@ -512,7 +515,7 @@ class _SupportingStaffProfilePageState extends State<SupportingStaffProfilePage>
                       secureStorage.deleteSecureData('admintoken');
                       secureStorage.deleteSecureData('nursetoken');
                       supportingstaffprovider.logout();
-                
+                cache.invalidateAll();
                       setState(() {});
                       Constants.token =
                           await secureStorage.readSecureData('token') ?? '';
@@ -658,6 +661,91 @@ Widget _infoRow(IconData icon, String label, String value) {
     ),
   );
 }
+
+Widget _logoInfoRow(String? logoUrl, String label) {
+  final bool hasNetworkLogo = logoUrl != null && logoUrl.trim().isNotEmpty;
+
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          // decoration: BoxDecoration(
+          //   color: AppColors.primary,
+          //   borderRadius: BorderRadius.circular(8),
+          // ),
+          child: hasNetworkLogo
+                ? Image.network(
+                    logoUrl,
+                    width: 30,
+                    height: 34,
+                    fit: BoxFit.cover,
+                    // If the network image fails to load, fall back to asset
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/default_hospital_logo.png',
+                        width: 30,
+                        height: 34,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const SizedBox(
+                        width: 30,
+                        height: 34,
+                        child: Center(
+                          child: SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                // No URL from backend -> use asset directly
+                : Image.asset(
+                    'assets/images/doclogo.png',
+                    width: 30,
+                    height: 34,
+                    fit: BoxFit.cover,
+                  ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                hasNetworkLogo ? "Custom logo" : "Default logo",
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
   //  Widget _buildShimmerLoading() {
   //   return SizedBox(
   //     height: MediaQuery.of(context).size.height * 0.74,

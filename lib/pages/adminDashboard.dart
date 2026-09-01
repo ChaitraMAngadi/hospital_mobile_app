@@ -4,7 +4,9 @@ import 'package:hospital_mobile_app/adminController/adminActiveInvisitPage.dart'
 import 'package:hospital_mobile_app/adminController/adminProfilePage.dart';
 import 'package:hospital_mobile_app/adminController/allPatientsPage.dart';
 import 'package:hospital_mobile_app/adminController/doctorDetailsPage.dart';
+import 'package:hospital_mobile_app/provider/adminProvider.dart';
 import 'package:hospital_mobile_app/theme/app_colors.dart';
+import 'package:provider/provider.dart';
 
 
 @RoutePage()
@@ -26,7 +28,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // ✅ Fetch once, after first frame — not during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<Adminprovider>().getadmindetailedprofile(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Adminprovider adminprovider = context.watch<Adminprovider>();
     return Scaffold(
        appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -38,7 +50,16 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           fontWeight: FontWeight.bold,
           color: AppColors.primary,
         ),)),
-      body: _pages[_selectedIndex],
+      // body: _pages[_selectedIndex],
+      body:  Column(
+          children: [
+            if (adminprovider.shouldShowExpiryBanner)
+            const ExpiryAlertBanner(),
+          Expanded(
+            child: _pages[_selectedIndex],
+          ),
+          ],
+        ),
       bottomNavigationBar: 
       BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
@@ -72,6 +93,69 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               // selectedItemColor: const Color(0xFF0857C0),
               onTap: (index) => setState(() => _selectedIndex = index),
             ),
+    );
+  }
+}
+
+
+
+class ExpiryAlertBanner extends StatelessWidget {
+  const ExpiryAlertBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<Adminprovider>();
+    final daysLeft = provider.remainingDays();
+
+    return Container(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFD2691E),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.warning_amber_rounded, color: Colors.white),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Account Validity Warning",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  daysLeft > 0
+                      ? "Your account validity is expiring in $daysLeft days. "
+                          "Please complete the payment on the payments page to "
+                          "continue using your account without any disruption."
+                      : "Your account will expire today. Please complete the "
+                          "payment to reactivate.",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () => provider.closeExpiryBanner(),
+            child: const Icon(Icons.close, color: Colors.white, size: 18),
+          ),
+        ],
+      ),
     );
   }
 }
